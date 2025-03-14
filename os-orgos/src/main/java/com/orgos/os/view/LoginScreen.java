@@ -1,21 +1,19 @@
 package com.orgos.os.view;
 
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import com.orgos.os.dao.DatabaseConnection;
-
-import javax.swing.JLabel;
-import java.awt.Color;
-import java.awt.Font;
-import javax.swing.SwingConstants;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.awt.event.ActionEvent;
+import com.orgos.os.controller.LoginController;
 
 public class LoginScreen extends JFrame {
 
@@ -67,9 +65,12 @@ public class LoginScreen extends JFrame {
 		contentPane.add(passwordField);
 		
 		JButton loginButton = new JButton("Login");
+		LoginController controller = new LoginController(this);
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				String username = usernameField.getText();
+				String password = new String(passwordField.getPassword());
+				controller.autenticar(username, password);
 			}
 		});
 		loginButton.setBounds(453, 253, 90, 36);

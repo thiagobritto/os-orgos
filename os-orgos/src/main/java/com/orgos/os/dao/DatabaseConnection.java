@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class DatabaseConnection {
 
-	public static Connection getConnection() throws SQLException, ClassNotFoundException {
+	public static Connection getConnection() throws SQLException {
 		String resource = DatabaseConnection.class.getResource("/os-orgos.db").getPath();
 		return DriverManager.getConnection("jdbc:sqlite:" + resource);
 	}
