@@ -21,6 +21,7 @@ public class LoginScreen extends JFrame {
 	private JPanel contentPane;
 	private JTextField usernameField;
 	private JPasswordField passwordField;
+	private LoginController controller;
 
 	/**
 	 * Create the frame.
@@ -48,7 +49,7 @@ public class LoginScreen extends JFrame {
 		contentPane.add(panel);
 		
 		JLabel lblNewLabel_1 = new JLabel("Usuário");
-		lblNewLabel_1.setBounds(453, 100, 52, 16);
+		lblNewLabel_1.setBounds(453, 108, 52, 16);
 		contentPane.add(lblNewLabel_1);
 		
 		usernameField = new JTextField();
@@ -65,7 +66,7 @@ public class LoginScreen extends JFrame {
 		contentPane.add(passwordField);
 		
 		JButton loginButton = new JButton("Login");
-		LoginController controller = new LoginController(this);
+		controller = new LoginController(this);
 		loginButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String username = usernameField.getText();
