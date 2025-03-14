@@ -24,7 +24,7 @@ public class LoginController {
 			new DashboardScreen(usuario).setVisible(true);
 			view.dispose();
 		} else {
-			JOptionPane.showMessageDialog(view, "Usuário ou senha invalidos!", "Erro", JOptionPane.ERROR_MESSAGE);
+			view.exibirMensagemErro("Usuário ou senha invalidos!");
 		}
 	}
 
