@@ -17,7 +17,6 @@ public class UsuarioService {
 
 	// Método para cadastrar um novo usuário
 	public boolean cadastrarUsuario(String username, String password) {
-		//return usuarioDAO.cadastrarUsuario(username, password);
-		return false;
+		return usuarioDAO.cadastrarUsuario(username, password);
 	}
 }

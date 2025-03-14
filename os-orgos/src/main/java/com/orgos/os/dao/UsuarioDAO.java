@@ -12,7 +12,7 @@ public class UsuarioDAO {
 
 	public Usuario autenticar(String username, String password) {
 		String sql = "SELECT rowId, password_hash FROM usuarios WHERE username = ?";
-		
+
 		try (Connection conn = DatabaseConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -31,5 +31,24 @@ public class UsuarioDAO {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public boolean cadastrarUsuario(String username, String password) {
+		String sql = "INSERT INTO usuarios (username, password_hash) VALUES (?, ?)";
+
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			String hashedPassword = PasswordUtil.hashPassword(password);
+			pstmt.setString(1, username);
+			pstmt.setString(2, hashedPassword);
+
+			int rowsAffected = pstmt.executeUpdate();
+			return rowsAffected > 0;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 }
