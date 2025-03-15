@@ -36,8 +36,8 @@ public class LoginScreen extends JFrame {
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		setContentPane(contentPane);
 		
 		JLabel lblNewLabel = new JLabel("LOGIN");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);

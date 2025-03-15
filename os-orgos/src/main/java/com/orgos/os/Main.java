@@ -2,7 +2,7 @@ package com.orgos.os;
 
 import java.awt.EventQueue;
 
-import com.formdev.flatlaf.themes.FlatMacLightLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import com.orgos.os.view.LoginScreen;
 
 public class Main {
@@ -11,7 +11,7 @@ public class Main {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					FlatMacLightLaf.setup();
+					FlatLightLaf.setup();
 					new LoginScreen().setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

@@ -1,7 +1,5 @@
 package com.orgos.os.controller;
 
-import javax.swing.JOptionPane;
-
 import com.orgos.os.model.Usuario;
 import com.orgos.os.service.UsuarioService;
 import com.orgos.os.view.DashboardScreen;
