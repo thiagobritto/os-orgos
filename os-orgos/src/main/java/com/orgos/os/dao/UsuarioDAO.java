@@ -101,4 +101,39 @@ public class UsuarioDAO {
 		}
 	}
 
+	public boolean adicionarPermissao(int usuarioId, Funcionalidade funcionalidade) {
+		String sql = "INSERT INTO permissoes (usuario_id, funcionalidade) VALUES (?, ?)";
+
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setInt(1, usuarioId);
+			pstmt.setString(2, funcionalidade.toString());
+
+			int rowsAffected = pstmt.executeUpdate();
+			return rowsAffected > 0;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean removerPermissao(int usuarioId, Funcionalidade funcionalidade) {
+		String sql = "DELETE FROM permissoes WHERE usuario_id = ? AND funcionalidade = ?";
+		
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setInt(1, usuarioId);
+			pstmt.setString(2, funcionalidade.toString());
+
+			int rowsAffected = pstmt.executeUpdate();
+			return rowsAffected > 0;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 }
