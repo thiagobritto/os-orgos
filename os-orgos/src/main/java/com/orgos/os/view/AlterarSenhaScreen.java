@@ -15,7 +15,7 @@ import javax.swing.border.EmptyBorder;
 import com.orgos.os.controller.AlterarSenhaController;
 import com.orgos.os.model.Usuario;
 
-public class AlterarSenhaScreen extends JDialog {
+public class AlterarSenhaScreen extends JDialogScreen {
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
@@ -82,5 +82,9 @@ public class AlterarSenhaScreen extends JDialog {
 		});
 		alterarButton.setBounds(22, 145, 242, 30);
 		contentPanel.add(alterarButton);
+	}
+
+	public void exibirMensagem(String mensagem) {
+		JOptionPane.showMessageDialog(this, mensagem);
 	}
 }

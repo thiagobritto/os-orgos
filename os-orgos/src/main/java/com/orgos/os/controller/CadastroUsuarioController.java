@@ -18,7 +18,7 @@ public class CadastroUsuarioController {
 		if (sucesso) {
             view.mostrarMensagem("Usuário cadastrado com sucesso!");
         } else {
-            view.mostrarMensagem("Erro ao cadastrar usuário.");
+            view.mostrarMensagem("Erro ao cadastrar usuário. Verifique se o username já existe.");
         }
 	}
 	

@@ -27,7 +27,7 @@ import com.orgos.os.controller.GerenciarUsuariosController;
 import com.orgos.os.model.Usuario;
 import com.orgos.os.model.UsuarioTableModel;
 
-public class GerenciarUsuariosScreen extends JDialog {
+public class GerenciarUsuariosScreen extends JDialogScreen {
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
@@ -190,11 +190,11 @@ public class GerenciarUsuariosScreen extends JDialog {
 	}
 
 	public void exibirMenssagem(String menssagem) {
-		JOptionPane.showMessageDialog(GerenciarUsuariosScreen.this, menssagem);
+		JOptionPane.showMessageDialog(this, menssagem);
 	}
 
 	public boolean comfirmarExclusao(String mensagem) {
-		int resposta = JOptionPane.showConfirmDialog(GerenciarUsuariosScreen.this, mensagem, "Confirmação de Exclusão",
+		int resposta = JOptionPane.showConfirmDialog(this, mensagem, "Confirmação de Exclusão",
 				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
 		return resposta == JOptionPane.YES_OPTION;

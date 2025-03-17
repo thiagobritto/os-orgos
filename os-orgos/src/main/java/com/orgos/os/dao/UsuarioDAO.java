@@ -128,7 +128,7 @@ public class UsuarioDAO {
 	}
 
 	public boolean cadastrarUsuario(String username, String password) {
-		if (usuarioExixte(username)) {
+		if (existeUsuario(username)) {
 			return false;
 		}
 
@@ -148,8 +148,27 @@ public class UsuarioDAO {
 			return false;
 		}
 	}
+	
+	public boolean trocarSenha(int usuarioId, String password) {
+		String sql = "UPDATE usuarios SET password_hash = ? WHERE id_usuario = ?";
+		
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-	public boolean usuarioExixte(String username) {
+			String hashedPassword = PasswordUtil.hashPassword(password);
+			pstmt.setString(1, hashedPassword);
+			pstmt.setInt(2, usuarioId);
+
+			int rowsAffected = pstmt.executeUpdate();
+			return rowsAffected > 0;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean existeUsuario(String username) {
 		String sql = "SELECT id_usuario FROM usuarios WHERE username = ?";
 
 		try (Connection conn = DatabaseConnection.getConnection();

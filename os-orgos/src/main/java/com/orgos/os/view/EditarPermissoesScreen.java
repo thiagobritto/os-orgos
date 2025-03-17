@@ -15,7 +15,7 @@ import com.orgos.os.controller.EditarPermissoesController;
 import com.orgos.os.model.Funcionalidade;
 import com.orgos.os.model.Usuario;
 
-public class EditarPermissoesScreen extends JDialog {
+public class EditarPermissoesScreen extends JDialogScreen {
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();

@@ -17,7 +17,7 @@ import javax.swing.border.EmptyBorder;
 
 import com.orgos.os.controller.CadastroUsuarioController;
 
-public class CadastroUsuarioScreen extends JDialog {
+public class CadastroUsuarioScreen extends JDialogScreen {
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();

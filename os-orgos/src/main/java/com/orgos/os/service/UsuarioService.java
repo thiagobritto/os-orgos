@@ -18,9 +18,6 @@ public class UsuarioService {
 		return usuarioDAO.autenticar(username, password);
 	}
 
-	public boolean cadastrarUsuario(String username, String password) {
-		return usuarioDAO.cadastrarUsuario(username, password);
-	}
 
 	public List<Usuario> listarTodos() {
 		return usuarioDAO.listarTodos();
@@ -38,6 +35,14 @@ public class UsuarioService {
 		return usuarioDAO.buscarPermissoes(usuarioId);
 	}
 
+	public boolean cadastrarUsuario(String username, String password) {
+		return usuarioDAO.cadastrarUsuario(username, password);
+	}
+	
+	public boolean trocarSenha(int usuarioId, String password) {
+		return usuarioDAO.trocarSenha(usuarioId, password);
+	}
+	
 	public boolean removerUsuario(int usuarioId) {
 		return usuarioDAO.removerUsuario(usuarioId);
 	}
