@@ -22,7 +22,7 @@ public class EditarPermissoesController {
 
 	public void carregarFuncionalidades() {
 		Funcionalidade[] funcionalidades = Funcionalidade.values();
-		view.exibirFoncionalidades(funcionalidades);
+		view.exibirFuncionalidades(funcionalidades);
 	}
 	
 	public boolean usuarioTemPermissao(Funcionalidade funcionalidade) {

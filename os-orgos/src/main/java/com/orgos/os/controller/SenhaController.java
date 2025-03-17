@@ -2,14 +2,14 @@ package com.orgos.os.controller;
 
 import com.orgos.os.model.Usuario;
 import com.orgos.os.service.UsuarioService;
-import com.orgos.os.view.AlterarSenhaScreen;
+import com.orgos.os.view.SenhaScreen;
 
-public class AlterarSenhaController {
-	private AlterarSenhaScreen view;
+public class SenhaController {
+	private SenhaScreen view;
 	private Usuario usuario;
 	private UsuarioService usuarioServico;
 
-	public AlterarSenhaController(AlterarSenhaScreen view, Usuario usuario) {
+	public SenhaController(SenhaScreen view, Usuario usuario) {
 		super();
 		this.view = view;
 		this.usuario = usuario;

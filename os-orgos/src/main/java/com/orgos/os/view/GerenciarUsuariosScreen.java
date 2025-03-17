@@ -82,6 +82,7 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		contentPanel.add(buttonPanel);
 
 		JButton novoButton = new JButton("Novo");
+		novoButton.setMnemonic(KeyEvent.VK_N);
 		novoButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -92,14 +93,15 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		});
 		buttonPanel.add(novoButton);
 
-		JButton alterarSenhaButton = new JButton("Alterar senha");
+		JButton alterarSenhaButton = new JButton("Trocar senha");
+		alterarSenhaButton.setMnemonic(KeyEvent.VK_S);
 		alterarSenhaButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (controller.usuarioSelecionado()) {
 					JFrame owner = (JFrame) GerenciarUsuariosScreen.this.getOwner();
 					Usuario usuario = controller.getUsuario();
-					new AlterarSenhaScreen(owner, usuario).setVisible(true);
+					new SenhaScreen(owner, usuario).setVisible(true);
 				} else {
 					exibirMenssagem("Selecione um 'Usuário' para continuar!");
 				}
@@ -108,6 +110,7 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		buttonPanel.add(alterarSenhaButton);
 
 		JButton excluirUsuarioButton = new JButton("Excluir usuário");
+		excluirUsuarioButton.setMnemonic(KeyEvent.VK_E);
 		excluirUsuarioButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -121,6 +124,7 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		buttonPanel.add(excluirUsuarioButton);
 
 		JButton editarPermicoesButton = new JButton("Editar Permissões");
+		editarPermicoesButton.setMnemonic(KeyEvent.VK_P);
 		editarPermicoesButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

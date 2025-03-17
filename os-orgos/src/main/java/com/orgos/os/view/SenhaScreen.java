@@ -12,23 +12,23 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
 
-import com.orgos.os.controller.AlterarSenhaController;
+import com.orgos.os.controller.SenhaController;
 import com.orgos.os.model.Usuario;
 
-public class AlterarSenhaScreen extends JDialogScreen {
+public class SenhaScreen extends JDialogScreen {
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private JPasswordField passwordField;
 	private JPasswordField confirmPasswordField;
-	private AlterarSenhaController controller;
+	private SenhaController controller;
 
 	/**
 	 * Create the dialog.
 	 */
-	public AlterarSenhaScreen(JFrame owner, Usuario usuario) {
+	public SenhaScreen(JFrame owner, Usuario usuario) {
 		super(owner, true);
-		this.controller = new AlterarSenhaController(this, usuario);
+		this.controller = new SenhaController(this, usuario);
 		this.initCoponent();
 	}
 
@@ -65,13 +65,13 @@ public class AlterarSenhaScreen extends JDialogScreen {
 				String confirmPassword = new String(confirmPasswordField.getPassword());
 				
 				if (password.isEmpty()) {
-					JOptionPane.showMessageDialog(AlterarSenhaScreen.this, "O campo 'Senha' é obrigatório.", "Erro",
+					JOptionPane.showMessageDialog(SenhaScreen.this, "O campo 'Senha' é obrigatório.", "Erro",
 							JOptionPane.ERROR_MESSAGE);
 					passwordField.requestFocus();
 					return;
 				}
 				if (!password.equals(confirmPassword)) {
-					JOptionPane.showMessageDialog(AlterarSenhaScreen.this, "As senhas não coincidem.", "Erro",
+					JOptionPane.showMessageDialog(SenhaScreen.this, "As senhas não coincidem.", "Erro",
 							JOptionPane.ERROR_MESSAGE);
 					passwordField.requestFocus();
 					return;
