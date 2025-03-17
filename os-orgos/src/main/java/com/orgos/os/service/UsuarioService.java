@@ -26,6 +26,22 @@ public class UsuarioService {
 		return usuarioDAO.listarTodos();
 	}
 
+	public Usuario buscarUsuarioPorId(int usuarioId) {
+		return usuarioDAO.buscarUsuarioPorId(usuarioId);
+	}
+
+	public List<Usuario> buscarUsuariosPorNome(String nome) {
+		return usuarioDAO.buscarUsuariosPorNome(nome);
+	}
+
+	public List<Permissao> buscarPermissoes(int usuarioId) {
+		return usuarioDAO.buscarPermissoes(usuarioId);
+	}
+
+	public boolean removerUsuario(int usuarioId) {
+		return usuarioDAO.removerUsuario(usuarioId);
+	}
+
 	public boolean adicionarPermissao(int usuarioId, Funcionalidade funcionalidade) {
 		return usuarioDAO.adicionarPermissao(usuarioId, funcionalidade);
 	}
@@ -34,7 +50,4 @@ public class UsuarioService {
 		return usuarioDAO.removerPermissao(usuarioId, funcionalidade);
 	}
 
-	public List<Permissao> buscarPermissoes(int usuarioId) {
-		return usuarioDAO.buscarPermissoes(usuarioId);
-	}
 }

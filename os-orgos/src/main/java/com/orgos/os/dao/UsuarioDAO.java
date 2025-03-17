@@ -82,15 +82,97 @@ public class UsuarioDAO {
 		return usuarios;
 	}
 
-	public boolean cadastrarUsuario(String username, String password) {
-		String sql = "INSERT INTO usuarios (username, password_hash) VALUES (?, ?)";
+	public Usuario buscarUsuarioPorId(int usuarioId) {
+		String sql = "SELECT id_usuario, username FROM usuarios WHERE id_usuario = ?";
 
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setInt(1, usuarioId);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					int id = rs.getInt("id_usuario");
+					String username = rs.getString("username");
+					List<Permissao> permissoes = buscarPermissoes(id);
+					return new Usuario(id, username, permissoes);
+				}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public List<Usuario> buscarUsuariosPorNome(String nome) {
+		String sql = "SELECT id_usuario, username FROM usuarios WHERE username LIKE ?";
+		List<Usuario> usuarios = new ArrayList<>();
+
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setString(1, "%" + nome + "%");
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					int id = rs.getInt("id_usuario");
+					String username = rs.getString("username");
+					List<Permissao> permissoes = buscarPermissoes(id);
+					usuarios.add(new Usuario(id, username, permissoes));
+				}
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return usuarios;
+	}
+
+	public boolean cadastrarUsuario(String username, String password) {
+		if (usuarioExixte(username)) {
+			return false;
+		}
+
+		String sql = "INSERT INTO usuarios (username, password_hash) VALUES (?, ?)";
 		try (Connection conn = DatabaseConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
 			String hashedPassword = PasswordUtil.hashPassword(password);
 			pstmt.setString(1, username);
 			pstmt.setString(2, hashedPassword);
+
+			int rowsAffected = pstmt.executeUpdate();
+			return rowsAffected > 0;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean usuarioExixte(String username) {
+		String sql = "SELECT id_usuario FROM usuarios WHERE username = ?";
+
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setString(1, username);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				return rs.next();
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return true;
+		}
+	}
+
+	public boolean removerUsuario(int usuarioId) {
+		String sql = "DELETE FROM usuarios WHERE id_usuario = ?";
+
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setInt(1, usuarioId);
 
 			int rowsAffected = pstmt.executeUpdate();
 			return rowsAffected > 0;
@@ -121,7 +203,7 @@ public class UsuarioDAO {
 
 	public boolean removerPermissao(int usuarioId, Funcionalidade funcionalidade) {
 		String sql = "DELETE FROM permissoes WHERE usuario_id = ? AND funcionalidade = ?";
-		
+
 		try (Connection conn = DatabaseConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -136,4 +218,5 @@ public class UsuarioDAO {
 			return false;
 		}
 	}
+
 }

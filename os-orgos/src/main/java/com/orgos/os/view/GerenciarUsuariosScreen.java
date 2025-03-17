@@ -3,6 +3,8 @@ package com.orgos.os.view;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
@@ -66,7 +68,9 @@ public class GerenciarUsuariosScreen extends JDialog {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				int usuarioIndex = listagemUsuariosTable.getSelectedRow();
-				controller.setUsuario(usuarioIndex);
+				if (usuarioIndex >= 0) {
+					controller.setUsuario(usuarioIndex);
+				}
 			}
 		});
 		listagemUsuariosTable.getColumnModel().getColumn(0).setMaxWidth(120);
@@ -77,14 +81,24 @@ public class GerenciarUsuariosScreen extends JDialog {
 		buttonPanel.setLayout(new GridLayout(6, 1, 5, 5));
 		contentPanel.add(buttonPanel);
 
+		JButton novoButton = new JButton("Novo");
+		novoButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFrame owner = (JFrame) GerenciarUsuariosScreen.this.getOwner();
+				new CadastroUsuarioScreen(owner).setVisible(true);
+				controller.carregarUsuarios();
+			}
+		});
+		buttonPanel.add(novoButton);
+
 		JButton alterarSenhaButton = new JButton("Alterar senha");
 		alterarSenhaButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Usuario usuario = controller.getUsuario();
-				
-				if (usuario != null) {
+				if (controller.usuarioSelecionado()) {
 					JFrame owner = (JFrame) GerenciarUsuariosScreen.this.getOwner();
+					Usuario usuario = controller.getUsuario();
 					new AlterarSenhaScreen(owner, usuario).setVisible(true);
 				} else {
 					exibirMenssagem("Selecione um 'Usuário' para continuar!");
@@ -94,16 +108,25 @@ public class GerenciarUsuariosScreen extends JDialog {
 		buttonPanel.add(alterarSenhaButton);
 
 		JButton excluirUsuarioButton = new JButton("Excluir usuário");
+		excluirUsuarioButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (controller.usuarioSelecionado()) {
+					controller.removerUsuario();
+				} else {
+					exibirMenssagem("Selecione um 'Usuário' para continuar!");
+				}
+			}
+		});
 		buttonPanel.add(excluirUsuarioButton);
 
 		JButton editarPermicoesButton = new JButton("Editar Permissões");
 		editarPermicoesButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Usuario usuario = controller.getUsuario();
-				
-				if (usuario != null) {
+				if (controller.usuarioSelecionado()) {
 					JFrame owner = (JFrame) GerenciarUsuariosScreen.this.getOwner();
+					Usuario usuario = controller.getUsuario();
 					new EditarPermissoesScreen(owner, usuario).setVisible(true);
 				} else {
 					exibirMenssagem("Selecione um 'Usuário' para continuar!");
@@ -117,6 +140,16 @@ public class GerenciarUsuariosScreen extends JDialog {
 		contentPanel.add(lblNewLabel);
 
 		pesquisaField = new JTextField();
+		pesquisaField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					int modoIndex = pesquisaComboBox.getSelectedIndex();
+					String pesquisa = pesquisaField.getText();
+					controller.buscarUsuario(pesquisa, modoIndex);
+				}
+			}
+		});
 		pesquisaField.setBounds(120, 280, 280, 30);
 		contentPanel.add(pesquisaField);
 		pesquisaField.setColumns(10);
@@ -126,6 +159,15 @@ public class GerenciarUsuariosScreen extends JDialog {
 		contentPanel.add(pesquisaComboBox);
 
 		JButton pesquisaButton = new JButton("Pesquisar");
+		pesquisaButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int modoIndex = pesquisaComboBox.getSelectedIndex();
+				String pesquisa = pesquisaField.getText();
+
+				controller.buscarUsuario(pesquisa, modoIndex);
+			}
+		});
 		pesquisaButton.setBounds(410, 280, 120, 30);
 		contentPanel.add(pesquisaButton);
 
@@ -149,5 +191,12 @@ public class GerenciarUsuariosScreen extends JDialog {
 
 	public void exibirMenssagem(String menssagem) {
 		JOptionPane.showMessageDialog(GerenciarUsuariosScreen.this, menssagem);
+	}
+
+	public boolean comfirmarExclusao(String mensagem) {
+		int resposta = JOptionPane.showConfirmDialog(GerenciarUsuariosScreen.this, mensagem, "Confirmação de Exclusão",
+				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
+		return resposta == JOptionPane.YES_OPTION;
 	}
 }
