@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
@@ -157,17 +155,12 @@ public class DashboardScreen extends JFrame {
 
         int userSelection = fileChooser.showSaveDialog(this);
         if (userSelection == JFileChooser.APPROVE_OPTION) {
-            File diretorio = fileChooser.getSelectedFile();
-
-            // Gera o nome do arquivo com data e hora
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String nomeArquivo = "backup_" + timeStamp + ".db";
-            File arquivoBackup = new File(diretorio, nomeArquivo);
-
-            // Chama o controller para exportar o backup
-            boolean sucesso = backupController.exportarBackup(arquivoBackup.getAbsolutePath());
+        	File diretorio = fileChooser.getSelectedFile();
+        	// Chama o controller para exportar o backup
+            boolean sucesso = backupController.exportarBackup(diretorio);
             if (sucesso) {
-                JOptionPane.showMessageDialog(this, "Backup exportado com sucesso para:\n" + arquivoBackup.getAbsolutePath());
+            	String caminhoDestino = backupController.getCaminhoDestino();
+                JOptionPane.showMessageDialog(this, "Backup exportado com sucesso para:\n" + caminhoDestino);
             } else {
                 JOptionPane.showMessageDialog(this, "Erro ao exportar backup.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
@@ -182,10 +175,9 @@ public class DashboardScreen extends JFrame {
 
         int userSelection = fileChooser.showOpenDialog(this);
         if (userSelection == JFileChooser.APPROVE_OPTION) {
-            File arquivoBackup = fileChooser.getSelectedFile();
-
-            // Chama o controller para importar o backup
-            boolean sucesso = backupController.importarBackup(arquivoBackup.getAbsolutePath());
+        	File arquivoBackup = fileChooser.getSelectedFile();
+        	// Chama o controller para importar o backup
+            boolean sucesso = backupController.importarBackup(arquivoBackup);
             if (sucesso) {
                 JOptionPane.showMessageDialog(this, "Backup importado com sucesso!");
             } else {
