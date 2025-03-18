@@ -24,6 +24,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.orgos.os.controller.GerenciarUsuariosController;
+import com.orgos.os.model.Funcionalidade;
 import com.orgos.os.model.Usuario;
 import com.orgos.os.model.UsuarioTableModel;
 
@@ -31,18 +32,19 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
+	private GerenciarUsuariosController controller;
+	
 	private JTable listagemUsuariosTable;
 	private JComboBox<String> pesquisaComboBox;
 	private JTextField pesquisaField;
-	private GerenciarUsuariosController controller;
 	private UsuarioTableModel usuarioTableModel;
 
 	/**
 	 * Create the dialog.
 	 */
-	public GerenciarUsuariosScreen(JFrame owner) {
+	public GerenciarUsuariosScreen(JFrame owner, Usuario usuario) {
 		super(owner, true);
-		this.controller = new GerenciarUsuariosController(this);
+		this.controller = new GerenciarUsuariosController(this, usuario);
 		this.initCoponent();
 		this.controller.carregarDadosPesquisa();
 		this.controller.carregarUsuarios();
@@ -78,15 +80,17 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		buttonPanel.setLayout(new GridLayout(6, 1, 5, 5));
 		contentPanel.add(buttonPanel);
 
-		JButton novoButton = new JButton("Novo");
-		novoButton.setMnemonic(KeyEvent.VK_N);
-		novoButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				novoUsuario();
-			}
-		});
-		buttonPanel.add(novoButton);
+		if (controller.usuarioTemPermissao(Funcionalidade.CADASTRAR_USUARIO)) {
+			JButton novoButton = new JButton("Novo");
+			novoButton.setMnemonic(KeyEvent.VK_N);
+			novoButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					novoUsuario();
+				}
+			});
+			buttonPanel.add(novoButton);			
+		}
 
 		JButton alterarSenhaButton = new JButton("Trocar senha");
 		alterarSenhaButton.setMnemonic(KeyEvent.VK_S);

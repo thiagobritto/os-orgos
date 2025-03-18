@@ -6,6 +6,7 @@ import com.orgos.os.model.Funcionalidade;
 import com.orgos.os.model.Permissao;
 import com.orgos.os.model.Usuario;
 import com.orgos.os.service.UsuarioService;
+import com.orgos.os.util.PermissaoUtil;
 import com.orgos.os.view.EditarPermissoesScreen;
 
 public class EditarPermissoesController {
@@ -26,8 +27,7 @@ public class EditarPermissoesController {
 	}
 	
 	public boolean usuarioTemPermissao(Funcionalidade funcionalidade) {
-		List<Permissao> permissoes = usuario.getPermissoes();
-		return permissoes.stream().anyMatch(p -> p.getFuncionalidade().equals(funcionalidade));
+		return PermissaoUtil.temPermissao(usuario, funcionalidade);
 	}
 
 	public void atualizarPermissao(Funcionalidade funcionalidade, boolean permitir) {

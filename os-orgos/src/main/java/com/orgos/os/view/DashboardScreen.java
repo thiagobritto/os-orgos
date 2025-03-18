@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 
 import com.orgos.os.controller.BackupController;
 import com.orgos.os.controller.DashboardController;
+import com.orgos.os.model.Funcionalidade;
 import com.orgos.os.model.Usuario;
 
 public class DashboardScreen extends JFrame {
@@ -28,7 +29,7 @@ public class DashboardScreen extends JFrame {
 	private JDesktopPane desktopPane;
 	private JLabel usernameLabel;
 	private DashboardController controller;
-	 private BackupController backupController;
+	private BackupController backupController;
 
 	/**
 	 * Create the frame.
@@ -36,7 +37,7 @@ public class DashboardScreen extends JFrame {
 	public DashboardScreen(Usuario usuario) {
 		this.controller = new DashboardController(this, usuario);
 		this.backupController = new BackupController();
-		
+
 		this.initCoponent();
 		this.controller.carregarDadosUsuario();
 	}
@@ -53,22 +54,26 @@ public class DashboardScreen extends JFrame {
 
 		JMenu arquivoMenu = new JMenu("Arquivo");
 		menuBar.add(arquivoMenu);
-		
-		JMenuItem arquivoExportarBackupMenuItem = new JMenuItem("Exportar Backup");
-		arquivoExportarBackupMenuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				exportarBackup();
-			}
-		});
-		arquivoMenu.add(arquivoExportarBackupMenuItem);
-		
-		JMenuItem arquivoImportarBackupMenuItem = new JMenuItem("Importar Backup");
-		arquivoImportarBackupMenuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				importarBackup();
-			}
-		});
-		arquivoMenu.add(arquivoImportarBackupMenuItem);
+
+		if (controller.usuarioTemPermissao(Funcionalidade.EXPORTAR_BACKUP)) {
+			JMenuItem arquivoExportarBackupMenuItem = new JMenuItem("Exportar Backup");
+			arquivoExportarBackupMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					exportarBackup();
+				}
+			});
+			arquivoMenu.add(arquivoExportarBackupMenuItem);
+		}
+
+		if (controller.usuarioTemPermissao(Funcionalidade.IMPORTAR_BACKUP)) {
+			JMenuItem arquivoImportarBackupMenuItem = new JMenuItem("Importar Backup");
+			arquivoImportarBackupMenuItem.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					importarBackup();
+				}
+			});
+			arquivoMenu.add(arquivoImportarBackupMenuItem);
+		}
 
 		JMenuItem arquivoSobreMenuItem = new JMenuItem("Sobre");
 		arquivoMenu.add(arquivoSobreMenuItem);
@@ -90,36 +95,46 @@ public class DashboardScreen extends JFrame {
 		JMenuItem cadastroServicoMenuItem = new JMenuItem("Serviço");
 		cadastroMenu.add(cadastroServicoMenuItem);
 
-		JMenu cadastroUsuarioMenu = new JMenu("Usuário");
-		cadastroMenu.add(cadastroUsuarioMenu);
+		if (controller.usuarioTemPermissao(Funcionalidade.CADASTRAR_USUARIO)
+				|| controller.usuarioTemPermissao(Funcionalidade.GERENCIAR_USUARIO)) {
+			JMenu cadastroUsuarioMenu = new JMenu("Usuário");
+			cadastroMenu.add(cadastroUsuarioMenu);
 
-		JMenuItem cadastroUsuarioNovoMenuItem = new JMenuItem("Novo");
-		cadastroUsuarioNovoMenuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new CadastroUsuarioScreen(DashboardScreen.this).setVisible(true);
+			if (controller.usuarioTemPermissao(Funcionalidade.CADASTRAR_USUARIO)) {
+				JMenuItem cadastroUsuarioNovoMenuItem = new JMenuItem("Novo");
+				cadastroUsuarioNovoMenuItem.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						new CadastroUsuarioScreen(DashboardScreen.this).setVisible(true);
+					}
+				});
+				cadastroUsuarioMenu.add(cadastroUsuarioNovoMenuItem);
 			}
-		});
-		cadastroUsuarioMenu.add(cadastroUsuarioNovoMenuItem);
 
-		JMenuItem cadastroUsuarioGerenciarMenuItem = new JMenuItem("Gerenciar");
-		cadastroUsuarioGerenciarMenuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new GerenciarUsuariosScreen(DashboardScreen.this).setVisible(true);
+			if (controller.usuarioTemPermissao(Funcionalidade.GERENCIAR_USUARIO)) {
+				JMenuItem cadastroUsuarioGerenciarMenuItem = new JMenuItem("Gerenciar");
+				cadastroUsuarioGerenciarMenuItem.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						Usuario usuario = controller.getUsuario();
+						new GerenciarUsuariosScreen(DashboardScreen.this, usuario).setVisible(true);
+					}
+				});
+				cadastroUsuarioMenu.add(cadastroUsuarioGerenciarMenuItem);
 			}
-		});
-		cadastroUsuarioMenu.add(cadastroUsuarioGerenciarMenuItem);
+		}
 
-		JMenu relatorioMenu = new JMenu("Relatório");
-		menuBar.add(relatorioMenu);
+		if (controller.usuarioTemPermissao(Funcionalidade.VISUALIZAR_RELATORIOS)) {
+			JMenu relatorioMenu = new JMenu("Relatório");
+			menuBar.add(relatorioMenu);
 
-		JMenuItem relatorioClienteMenuItem = new JMenuItem("Cliente");
-		relatorioMenu.add(relatorioClienteMenuItem);
+			JMenuItem relatorioClienteMenuItem = new JMenuItem("Cliente");
+			relatorioMenu.add(relatorioClienteMenuItem);
 
-		JMenuItem relatorioServicoMenuItem = new JMenuItem("Serviço");
-		relatorioMenu.add(relatorioServicoMenuItem);
+			JMenuItem relatorioServicoMenuItem = new JMenuItem("Serviço");
+			relatorioMenu.add(relatorioServicoMenuItem);
 
-		JMenuItem relatorioUsuarioMenuItem = new JMenuItem("Usuário");
-		relatorioMenu.add(relatorioUsuarioMenuItem);
+			JMenuItem relatorioUsuarioMenuItem = new JMenuItem("Usuário");
+			relatorioMenu.add(relatorioUsuarioMenuItem);
+		}
 
 		setJMenuBar(menuBar);
 
@@ -146,44 +161,44 @@ public class DashboardScreen extends JFrame {
 	public void exibirDadosUsuario(String username, int id) {
 		usernameLabel.setText(username.toUpperCase());
 	}
-	
+
 	// Método para exportar o backup
-    private void exportarBackup() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Escolha o diretório para salvar o backup");
-        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+	private void exportarBackup() {
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogTitle("Escolha o diretório para salvar o backup");
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        int userSelection = fileChooser.showSaveDialog(this);
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-        	File diretorio = fileChooser.getSelectedFile();
-        	// Chama o controller para exportar o backup
-            boolean sucesso = backupController.exportarBackup(diretorio);
-            if (sucesso) {
-            	String caminhoDestino = backupController.getCaminhoDestino();
-                JOptionPane.showMessageDialog(this, "Backup exportado com sucesso para:\n" + caminhoDestino);
-            } else {
-                JOptionPane.showMessageDialog(this, "Erro ao exportar backup.", "Erro", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
+		int userSelection = fileChooser.showSaveDialog(this);
+		if (userSelection == JFileChooser.APPROVE_OPTION) {
+			File diretorio = fileChooser.getSelectedFile();
+			// Chama o controller para exportar o backup
+			boolean sucesso = backupController.exportarBackup(diretorio);
+			if (sucesso) {
+				String caminhoDestino = backupController.getCaminhoDestino();
+				JOptionPane.showMessageDialog(this, "Backup exportado com sucesso para:\n" + caminhoDestino);
+			} else {
+				JOptionPane.showMessageDialog(this, "Erro ao exportar backup.", "Erro", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
 
-    // Método para importar o backup
-    private void importarBackup() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Selecione o arquivo de backup");
-        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Arquivos SQLite (*.db)", "db"));
+	// Método para importar o backup
+	private void importarBackup() {
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogTitle("Selecione o arquivo de backup");
+		fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Arquivos SQLite (*.db)", "db"));
 
-        int userSelection = fileChooser.showOpenDialog(this);
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-        	File arquivoBackup = fileChooser.getSelectedFile();
-        	// Chama o controller para importar o backup
-            boolean sucesso = backupController.importarBackup(arquivoBackup);
-            if (sucesso) {
-                JOptionPane.showMessageDialog(this, "Backup importado com sucesso!");
-            } else {
-                JOptionPane.showMessageDialog(this, "Erro ao importar backup.", "Erro", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-    
+		int userSelection = fileChooser.showOpenDialog(this);
+		if (userSelection == JFileChooser.APPROVE_OPTION) {
+			File arquivoBackup = fileChooser.getSelectedFile();
+			// Chama o controller para importar o backup
+			boolean sucesso = backupController.importarBackup(arquivoBackup);
+			if (sucesso) {
+				JOptionPane.showMessageDialog(this, "Backup importado com sucesso!");
+			} else {
+				JOptionPane.showMessageDialog(this, "Erro ao importar backup.", "Erro", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
 }

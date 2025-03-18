@@ -2,8 +2,10 @@ package com.orgos.os.controller;
 
 import java.util.List;
 
+import com.orgos.os.model.Funcionalidade;
 import com.orgos.os.model.Usuario;
 import com.orgos.os.service.UsuarioService;
+import com.orgos.os.util.PermissaoUtil;
 import com.orgos.os.view.GerenciarUsuariosScreen;
 
 public class GerenciarUsuariosController {
@@ -11,11 +13,13 @@ public class GerenciarUsuariosController {
 	private GerenciarUsuariosScreen view;
 	private UsuarioService usuarioService;
 	private List<Usuario> usuarios;
+	private Usuario usuarioOperador;
 	private Usuario usuario;
 
-	public GerenciarUsuariosController(GerenciarUsuariosScreen view) {
+	public GerenciarUsuariosController(GerenciarUsuariosScreen view, Usuario usuarioOperador) {
 		super();
 		this.view = view;
+		this.usuarioOperador = usuarioOperador;
 		this.usuarioService = new UsuarioService();
 	}
 
@@ -72,6 +76,10 @@ public class GerenciarUsuariosController {
 		
 		view.exibirMenssagem("Usuario excluido com sucesso!");
 		carregarUsuarios();
+	}
+
+	public boolean usuarioTemPermissao(Funcionalidade funcionalidade) {
+		return PermissaoUtil.temPermissao(usuarioOperador, funcionalidade);
 	}
 
 }
