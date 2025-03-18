@@ -32,8 +32,8 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private JTable listagemUsuariosTable;
-	private JTextField pesquisaField;
 	private JComboBox<String> pesquisaComboBox;
+	private JTextField pesquisaField;
 	private GerenciarUsuariosController controller;
 	private UsuarioTableModel usuarioTableModel;
 
@@ -67,10 +67,7 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		listagemUsuariosTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				int usuarioIndex = listagemUsuariosTable.getSelectedRow();
-				if (usuarioIndex >= 0) {
-					controller.setUsuario(usuarioIndex);
-				}
+				selecionarUsuario();
 			}
 		});
 		listagemUsuariosTable.getColumnModel().getColumn(0).setMaxWidth(120);
@@ -86,9 +83,7 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		novoButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFrame owner = (JFrame) GerenciarUsuariosScreen.this.getOwner();
-				new CadastroUsuarioScreen(owner).setVisible(true);
-				controller.carregarUsuarios();
+				novoUsuario();
 			}
 		});
 		buttonPanel.add(novoButton);
@@ -98,13 +93,7 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		alterarSenhaButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (controller.usuarioSelecionado()) {
-					JFrame owner = (JFrame) GerenciarUsuariosScreen.this.getOwner();
-					Usuario usuario = controller.getUsuario();
-					new SenhaScreen(owner, usuario).setVisible(true);
-				} else {
-					exibirMenssagem("Selecione um 'Usuário' para continuar!");
-				}
+				alterarSenha();
 			}
 		});
 		buttonPanel.add(alterarSenhaButton);
@@ -114,30 +103,20 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		excluirUsuarioButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (controller.usuarioSelecionado()) {
-					controller.removerUsuario();
-				} else {
-					exibirMenssagem("Selecione um 'Usuário' para continuar!");
-				}
+				excluirUsuario();
 			}
 		});
 		buttonPanel.add(excluirUsuarioButton);
 
-		JButton editarPermicoesButton = new JButton("Editar Permissões");
-		editarPermicoesButton.setMnemonic(KeyEvent.VK_P);
-		editarPermicoesButton.addActionListener(new ActionListener() {
+		JButton editarPermissoesButton = new JButton("Editar Permissões");
+		editarPermissoesButton.setMnemonic(KeyEvent.VK_P);
+		editarPermissoesButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (controller.usuarioSelecionado()) {
-					JFrame owner = (JFrame) GerenciarUsuariosScreen.this.getOwner();
-					Usuario usuario = controller.getUsuario();
-					new EditarPermissoesScreen(owner, usuario).setVisible(true);
-				} else {
-					exibirMenssagem("Selecione um 'Usuário' para continuar!");
-				}
+				editarPermissoes();
 			}
 		});
-		buttonPanel.add(editarPermicoesButton);
+		buttonPanel.add(editarPermissoesButton);
 
 		JLabel lblNewLabel = new JLabel("Encotrar usuário por:");
 		lblNewLabel.setBounds(10, 260, 280, 14);
@@ -148,9 +127,7 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					int modoIndex = pesquisaComboBox.getSelectedIndex();
-					String pesquisa = pesquisaField.getText();
-					controller.buscarUsuario(pesquisa, modoIndex);
+					pesquisar();
 				}
 			}
 		});
@@ -166,10 +143,7 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		pesquisaButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int modoIndex = pesquisaComboBox.getSelectedIndex();
-				String pesquisa = pesquisaField.getText();
-
-				controller.buscarUsuario(pesquisa, modoIndex);
+				pesquisar();
 			}
 		});
 		pesquisaButton.setBounds(410, 280, 120, 30);
@@ -182,8 +156,8 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		SwingUtilities.invokeLater(() -> pesquisaField.requestFocus());
 	}
 
-	public void exibirDadosPesquisa(String[] dadosPesquisa) {
-		pesquisaComboBox.setModel(new DefaultComboBoxModel<>(dadosPesquisa));
+	public void exibirDadosPesquisa(String[] items) {
+		pesquisaComboBox.setModel(new DefaultComboBoxModel<>(items));
 		pesquisaComboBox.setSelectedIndex(1);
 	}
 
@@ -197,10 +171,64 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		JOptionPane.showMessageDialog(this, menssagem);
 	}
 
-	public boolean comfirmarExclusao(String mensagem) {
-		int resposta = JOptionPane.showConfirmDialog(this, mensagem, "Confirmação de Exclusão",
-				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+	public void selecionarUsuario() {
+		int usuarioIndex = listagemUsuariosTable.getSelectedRow();
+		if (usuarioIndex >= 0) {
+			controller.setUsuario(usuarioIndex);
+		}
+	}
 
-		return resposta == JOptionPane.YES_OPTION;
+	public void novoUsuario() {
+		JFrame owner = (JFrame) this.getOwner();
+		new CadastroUsuarioScreen(owner).setVisible(true);
+		controller.carregarUsuarios();
+	}
+
+	public void alterarSenha() {
+		if (controller.usuarioSelecionado()) {
+			JFrame owner = (JFrame) getOwner();
+			Usuario usuario = controller.getUsuario();
+			new SenhaScreen(owner, usuario).setVisible(true);
+		} else {
+			exibirMenssagem("Selecione um 'Usuário' para continuar!");
+		}
+	}
+
+	public void excluirUsuario() {
+		if (controller.usuarioSelecionado()) {
+			Usuario usuario = controller.getUsuario();
+			int id = usuario.getId();
+			String username = usuario.getUsername();
+			
+			int resposta = JOptionPane.showConfirmDialog(
+					this, 
+					"Tem certeza que deseja excluir este usuário? (" + id + " - " + username + ") ",
+					"Confirmação de Exclusão", 
+					JOptionPane.YES_NO_OPTION, 
+					JOptionPane.WARNING_MESSAGE);
+
+			if (resposta == JOptionPane.YES_OPTION) {
+				controller.removerUsuario();
+			}
+
+		} else {
+			exibirMenssagem("Selecione um 'Usuário' para continuar!");
+		}
+	}
+
+	public void editarPermissoes() {
+		if (controller.usuarioSelecionado()) {
+			JFrame owner = (JFrame) getOwner();
+			Usuario usuario = controller.getUsuario();
+			new EditarPermissoesScreen(owner, usuario).setVisible(true);
+		} else {
+			exibirMenssagem("Selecione um 'Usuário' para continuar!");
+		}
+	}
+
+	public void pesquisar() {
+		int index = pesquisaComboBox.getSelectedIndex();
+		String pesquisa = pesquisaField.getText();
+		controller.buscarUsuario(pesquisa, index);
 	}
 }

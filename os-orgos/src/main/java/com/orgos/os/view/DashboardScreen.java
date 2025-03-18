@@ -19,11 +19,11 @@ import com.orgos.os.model.Usuario;
 public class DashboardScreen extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	private JMenuBar menuBar;
 	private JPanel contentPane;
 	private JDesktopPane desktopPane;
-	private DashboardController controller;
-	private JMenuBar menuBar;
 	private JLabel usernameLabel;
+	private DashboardController controller;
 
 	/**
 	 * Create the frame.
@@ -46,11 +46,16 @@ public class DashboardScreen extends JFrame {
 
 		JMenu arquivoMenu = new JMenu("Arquivo");
 		menuBar.add(arquivoMenu);
-		
+
 		JMenuItem arquivoSobreMenuItem = new JMenuItem("Sobre");
 		arquivoMenu.add(arquivoSobreMenuItem);
 
 		JMenuItem arquivoSairMenuItem = new JMenuItem("Sair");
+		arquivoSairMenuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
 		arquivoMenu.add(arquivoSairMenuItem);
 
 		JMenu cadastroMenu = new JMenu("Cadastro");
@@ -61,10 +66,10 @@ public class DashboardScreen extends JFrame {
 
 		JMenuItem cadastroServicoMenuItem = new JMenuItem("Serviço");
 		cadastroMenu.add(cadastroServicoMenuItem);
-		
+
 		JMenu cadastroUsuarioMenu = new JMenu("Usuário");
 		cadastroMenu.add(cadastroUsuarioMenu);
-		
+
 		JMenuItem cadastroUsuarioNovoMenuItem = new JMenuItem("Novo");
 		cadastroUsuarioNovoMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -72,7 +77,7 @@ public class DashboardScreen extends JFrame {
 			}
 		});
 		cadastroUsuarioMenu.add(cadastroUsuarioNovoMenuItem);
-		
+
 		JMenuItem cadastroUsuarioGerenciarMenuItem = new JMenuItem("Gerenciar");
 		cadastroUsuarioGerenciarMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -80,7 +85,6 @@ public class DashboardScreen extends JFrame {
 			}
 		});
 		cadastroUsuarioMenu.add(cadastroUsuarioGerenciarMenuItem);
-		
 
 		JMenu relatorioMenu = new JMenu("Relatório");
 		menuBar.add(relatorioMenu);
@@ -90,7 +94,7 @@ public class DashboardScreen extends JFrame {
 
 		JMenuItem relatorioServicoMenuItem = new JMenuItem("Serviço");
 		relatorioMenu.add(relatorioServicoMenuItem);
-		
+
 		JMenuItem relatorioUsuarioMenuItem = new JMenuItem("Usuário");
 		relatorioMenu.add(relatorioUsuarioMenuItem);
 
