@@ -61,25 +61,24 @@ public class UsuarioDAO {
 	}
 
 	public List<Usuario> listarTodos() {
-		String sql = "SELECT id_usuario, username FROM usuarios";
-		List<Usuario> usuarios = new ArrayList<>();
+	    String sql = "SELECT id_usuario, username FROM usuarios";
+	    List<Usuario> usuarios = new ArrayList<>();
 
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	    try (Connection conn = DatabaseConnection.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql);
+	         ResultSet rs = pstmt.executeQuery()) {
 
-			try (ResultSet rs = pstmt.executeQuery()) {
-				while (rs.next()) {
-					int id = rs.getInt("id_usuario");
-					String username = rs.getString("username");
-					List<Permissao> permissoes = buscarPermissoes(id);
-					usuarios.add(new Usuario(id, username, permissoes));
-				}
-			}
+	        while (rs.next()) {
+	            int id = rs.getInt("id_usuario");
+	            String username = rs.getString("username");
+	            List<Permissao> permissoes = buscarPermissoes(id); // Busca as permissões do usuário
+	            usuarios.add(new Usuario(id, username, permissoes));
+	        }
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return usuarios;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return usuarios;
 	}
 
 	public Usuario buscarUsuarioPorId(int usuarioId) {
@@ -148,10 +147,10 @@ public class UsuarioDAO {
 			return false;
 		}
 	}
-	
+
 	public boolean trocarSenha(int usuarioId, String password) {
 		String sql = "UPDATE usuarios SET password_hash = ? WHERE id_usuario = ?";
-		
+
 		try (Connection conn = DatabaseConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 

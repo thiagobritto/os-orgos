@@ -5,10 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnection {
-
-	public static Connection getConnection() throws SQLException {
-		String resource = DatabaseConnection.class.getResource("/os-orgos.db").getPath();
-		return DriverManager.getConnection("jdbc:sqlite:" + resource);
-	}
-
+	
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection("jdbc:sqlite:BANCO/os-orgos.db");
+    }
+    
 }
