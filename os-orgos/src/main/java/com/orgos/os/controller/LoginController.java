@@ -2,27 +2,26 @@ package com.orgos.os.controller;
 
 import com.orgos.os.model.Usuario;
 import com.orgos.os.service.UsuarioService;
-import com.orgos.os.view.DashboardScreen;
-import com.orgos.os.view.LoginScreen;
+import com.orgos.os.util.AppFactory;
+import com.orgos.os.view.LoginScreenInterface;
 
 public class LoginController {
-	private LoginScreen view;
+	private LoginScreenInterface screen;
 	private UsuarioService usuarioService;
 
-	public LoginController(LoginScreen view) {
+	public LoginController(LoginScreenInterface screen, UsuarioService usuarioService) {
 		super();
-		this.view = view;
-		this.usuarioService = new UsuarioService();
+		this.screen = screen;
+		this.usuarioService = usuarioService;
 	}
 
 	public void autenticar(String username, String password) {
 		Usuario usuario = usuarioService.autenticar(username, password);
-
 		if (usuario != null) {
-			new DashboardScreen(usuario).setVisible(true);
-			view.dispose();
+			AppFactory.getDashboardScreen(usuario).setVisible(true);
+			screen.close();
 		} else {
-			view.exibirMensagemErro("Usuário ou senha invalidos!");
+			screen.exibirMensagemErro("Usuário ou senha invalidos!");
 		}
 	}
 

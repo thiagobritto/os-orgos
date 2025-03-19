@@ -3,7 +3,7 @@ package com.orgos.os;
 import java.awt.EventQueue;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import com.orgos.os.view.LoginScreen;
+import com.orgos.os.util.AppFactory;
 
 public class Main {
 
@@ -12,12 +12,16 @@ public class Main {
 			public void run() {
 				try {
 					FlatLightLaf.setup();
-					new LoginScreen().setVisible(true);
+					abrirLoginScreen();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
+	}
+
+	private static void abrirLoginScreen() {
+		AppFactory.getLoginScreen().setVisible(true);
 	}
 
 }

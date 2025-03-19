@@ -16,12 +16,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import com.orgos.os.controller.BackupController;
 import com.orgos.os.controller.DashboardController;
 import com.orgos.os.model.Funcionalidade;
 import com.orgos.os.model.Usuario;
+import com.orgos.os.util.PermissaoUtil;
 
-public class DashboardScreen extends JFrame {
+public class DashboardScreen extends JFrame implements DashboardScreenInterface {
 
 	private static final long serialVersionUID = 1L;
 	private JMenuBar menuBar;
@@ -29,17 +29,16 @@ public class DashboardScreen extends JFrame {
 	private JDesktopPane desktopPane;
 	private JLabel usernameLabel;
 	private DashboardController controller;
-	private BackupController backupController;
+	private Usuario usuario;
 
 	/**
 	 * Create the frame.
 	 */
-	public DashboardScreen(Usuario usuario) {
-		this.controller = new DashboardController(this, usuario);
-		this.backupController = new BackupController();
-
+	public DashboardScreen(DashboardController controller, Usuario usuario) {
+		this.controller = controller;
+		this.usuario = usuario;
+		
 		this.initCoponent();
-		this.controller.carregarDadosUsuario();
 	}
 
 	private void initCoponent() {
@@ -55,7 +54,7 @@ public class DashboardScreen extends JFrame {
 		JMenu arquivoMenu = new JMenu("Arquivo");
 		menuBar.add(arquivoMenu);
 
-		if (controller.usuarioTemPermissao(Funcionalidade.EXPORTAR_BACKUP)) {
+		if (PermissaoUtil.temPermissao(usuario, Funcionalidade.EXPORTAR_BACKUP)) {
 			JMenuItem arquivoExportarBackupMenuItem = new JMenuItem("Exportar Backup");
 			arquivoExportarBackupMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -65,7 +64,7 @@ public class DashboardScreen extends JFrame {
 			arquivoMenu.add(arquivoExportarBackupMenuItem);
 		}
 
-		if (controller.usuarioTemPermissao(Funcionalidade.IMPORTAR_BACKUP)) {
+		if (PermissaoUtil.temPermissao(usuario, Funcionalidade.IMPORTAR_BACKUP)) {
 			JMenuItem arquivoImportarBackupMenuItem = new JMenuItem("Importar Backup");
 			arquivoImportarBackupMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -81,7 +80,7 @@ public class DashboardScreen extends JFrame {
 		JMenuItem arquivoSairMenuItem = new JMenuItem("Sair");
 		arquivoSairMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				dispose();
+				close();
 			}
 		});
 		arquivoMenu.add(arquivoSairMenuItem);
@@ -95,34 +94,33 @@ public class DashboardScreen extends JFrame {
 		JMenuItem cadastroServicoMenuItem = new JMenuItem("Serviço");
 		cadastroMenu.add(cadastroServicoMenuItem);
 
-		if (controller.usuarioTemPermissao(Funcionalidade.CADASTRAR_USUARIO)
-				|| controller.usuarioTemPermissao(Funcionalidade.GERENCIAR_USUARIO)) {
+		if (PermissaoUtil.temPermissao(usuario, Funcionalidade.CADASTRAR_USUARIO)
+				|| PermissaoUtil.temPermissao(usuario, Funcionalidade.GERENCIAR_USUARIO)) {
 			JMenu cadastroUsuarioMenu = new JMenu("Usuário");
 			cadastroMenu.add(cadastroUsuarioMenu);
 
-			if (controller.usuarioTemPermissao(Funcionalidade.CADASTRAR_USUARIO)) {
+			if (PermissaoUtil.temPermissao(usuario, Funcionalidade.CADASTRAR_USUARIO)) {
 				JMenuItem cadastroUsuarioNovoMenuItem = new JMenuItem("Novo");
 				cadastroUsuarioNovoMenuItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						new CadastroUsuarioScreen(DashboardScreen.this).setVisible(true);
+						abrirTelaCadastroUsuario();
 					}
 				});
 				cadastroUsuarioMenu.add(cadastroUsuarioNovoMenuItem);
 			}
 
-			if (controller.usuarioTemPermissao(Funcionalidade.GERENCIAR_USUARIO)) {
+			if (PermissaoUtil.temPermissao(usuario, Funcionalidade.GERENCIAR_USUARIO)) {
 				JMenuItem cadastroUsuarioGerenciarMenuItem = new JMenuItem("Gerenciar");
 				cadastroUsuarioGerenciarMenuItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						Usuario usuario = controller.getUsuario();
-						new GerenciarUsuariosScreen(DashboardScreen.this, usuario).setVisible(true);
+						abrirTelaGerenciarUsuario();
 					}
 				});
 				cadastroUsuarioMenu.add(cadastroUsuarioGerenciarMenuItem);
 			}
 		}
 
-		if (controller.usuarioTemPermissao(Funcionalidade.VISUALIZAR_RELATORIOS)) {
+		if (PermissaoUtil.temPermissao(usuario, Funcionalidade.VISUALIZAR_RELATORIOS)) {
 			JMenu relatorioMenu = new JMenu("Relatório");
 			menuBar.add(relatorioMenu);
 
@@ -152,18 +150,20 @@ public class DashboardScreen extends JFrame {
 		JLabel lblNewLabel = new JLabel("Logado como:");
 		fooderPane.add(lblNewLabel);
 
-		usernameLabel = new JLabel("");
+		String username = usuario.getUsername();
+		usernameLabel = new JLabel(username.toUpperCase());
 		fooderPane.add(usernameLabel);
 
 		setContentPane(contentPane);
 	}
 
-	public void exibirDadosUsuario(String username, int id) {
-		usernameLabel.setText(username.toUpperCase());
+	@Override
+	public void close() {
+		dispose();
 	}
 
-	// Método para exportar o backup
-	private void exportarBackup() {
+	@Override
+	public void exportarBackup() {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setDialogTitle("Escolha o diretório para salvar o backup");
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -171,19 +171,12 @@ public class DashboardScreen extends JFrame {
 		int userSelection = fileChooser.showSaveDialog(this);
 		if (userSelection == JFileChooser.APPROVE_OPTION) {
 			File diretorio = fileChooser.getSelectedFile();
-			// Chama o controller para exportar o backup
-			boolean sucesso = backupController.exportarBackup(diretorio);
-			if (sucesso) {
-				String caminhoDestino = backupController.getCaminhoDestino();
-				JOptionPane.showMessageDialog(this, "Backup exportado com sucesso para:\n" + caminhoDestino);
-			} else {
-				JOptionPane.showMessageDialog(this, "Erro ao exportar backup.", "Erro", JOptionPane.ERROR_MESSAGE);
-			}
+			controller.exportarBackup(diretorio);
 		}
 	}
 
-	// Método para importar o backup
-	private void importarBackup() {
+	@Override
+	public void importarBackup() {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setDialogTitle("Selecione o arquivo de backup");
 		fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Arquivos SQLite (*.db)", "db"));
@@ -191,14 +184,33 @@ public class DashboardScreen extends JFrame {
 		int userSelection = fileChooser.showOpenDialog(this);
 		if (userSelection == JFileChooser.APPROVE_OPTION) {
 			File arquivoBackup = fileChooser.getSelectedFile();
-			// Chama o controller para importar o backup
-			boolean sucesso = backupController.importarBackup(arquivoBackup);
-			if (sucesso) {
-				JOptionPane.showMessageDialog(this, "Backup importado com sucesso!");
-			} else {
-				JOptionPane.showMessageDialog(this, "Erro ao importar backup.", "Erro", JOptionPane.ERROR_MESSAGE);
-			}
+			controller.importarBackup(arquivoBackup);
 		}
 	}
+
+	@Override
+	public void abrirTelaCadastroUsuario() {
+		new CadastroUsuarioScreen(this).setVisible(true);
+	}
+
+	@Override
+	public void abrirTelaGerenciarUsuario() {
+		new GerenciarUsuariosScreen(this, usuario).setVisible(true);
+	}
+
+	public void setController(DashboardController controller) {
+		this.controller = controller;
+	}
+
+	@Override
+	public void exibirMensagem(String menssagem) {
+		JOptionPane.showMessageDialog(this, menssagem);
+	}
+
+	@Override
+	public void exibirMensagemErro(String menssagem) {
+		JOptionPane.showMessageDialog(this, menssagem, "Erro", JOptionPane.ERROR_MESSAGE);
+	}
+
 
 }

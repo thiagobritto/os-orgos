@@ -7,12 +7,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.orgos.os.model.Funcionalidade;
 import com.orgos.os.model.Permissao;
 import com.orgos.os.model.Usuario;
 import com.orgos.os.util.PasswordUtil;
 
 public class UsuarioDAO {
+	private static final Logger logger = LogManager.getLogger(UsuarioDAO.class);
 
 	public Usuario autenticar(String username, String password) {
 		String sql = "SELECT id_usuario, password_hash FROM usuarios WHERE username = ?";
@@ -27,13 +31,14 @@ public class UsuarioDAO {
 					if (PasswordUtil.checkPassword(password, hashedPassword)) {
 						int id = rs.getInt("id_usuario");
 						List<Permissao> permissoes = buscarPermissoes(id);
+
 						return new Usuario(id, username, permissoes);
 					}
 				}
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("Erro ao autenticar o usuário: " + e.getMessage(), e);
 		}
 		return null;
 	}
@@ -50,35 +55,37 @@ public class UsuarioDAO {
 				while (rs.next()) {
 					int id = rs.getInt("id_permissoes");
 					Funcionalidade funcionalidade = Funcionalidade.valueOf(rs.getString("funcionalidade"));
+
 					permissoes.add(new Permissao(id, usuarioId, funcionalidade));
 				}
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("Erro ao buscar permissões do usuário (" + usuarioId + "):" + e.getMessage(), e);
 		}
 		return permissoes;
 	}
 
 	public List<Usuario> listarTodos() {
-	    String sql = "SELECT id_usuario, username FROM usuarios";
-	    List<Usuario> usuarios = new ArrayList<>();
+		String sql = "SELECT id_usuario, username FROM usuarios";
+		List<Usuario> usuarios = new ArrayList<>();
 
-	    try (Connection conn = DatabaseConnection.getConnection();
-	         PreparedStatement pstmt = conn.prepareStatement(sql);
-	         ResultSet rs = pstmt.executeQuery()) {
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				ResultSet rs = pstmt.executeQuery()) {
 
-	        while (rs.next()) {
-	            int id = rs.getInt("id_usuario");
-	            String username = rs.getString("username");
-	            List<Permissao> permissoes = buscarPermissoes(id); // Busca as permissões do usuário
-	            usuarios.add(new Usuario(id, username, permissoes));
-	        }
+			while (rs.next()) {
+				int id = rs.getInt("id_usuario");
+				String username = rs.getString("username");
+				List<Permissao> permissoes = buscarPermissoes(id); // Busca as permissões do usuário
 
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	    return usuarios;
+				usuarios.add(new Usuario(id, username, permissoes));
+			}
+
+		} catch (SQLException e) {
+			logger.error("Erro ao listar usuários: " + e.getMessage(), e);
+		}
+		return usuarios;
 	}
 
 	public Usuario buscarUsuarioPorId(int usuarioId) {
@@ -93,12 +100,13 @@ public class UsuarioDAO {
 					int id = rs.getInt("id_usuario");
 					String username = rs.getString("username");
 					List<Permissao> permissoes = buscarPermissoes(id);
+
 					return new Usuario(id, username, permissoes);
 				}
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("Erro ao buscar o usuário (" + usuarioId + "):" + e.getMessage(), e);
 		}
 		return null;
 	}
@@ -116,22 +124,20 @@ public class UsuarioDAO {
 					int id = rs.getInt("id_usuario");
 					String username = rs.getString("username");
 					List<Permissao> permissoes = buscarPermissoes(id);
+
 					usuarios.add(new Usuario(id, username, permissoes));
 				}
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("Erro ao buscar o usuário (" + nome + "):" + e.getMessage(), e);
 		}
 		return usuarios;
 	}
 
 	public boolean cadastrarUsuario(String username, String password) {
-		if (existeUsuario(username)) {
-			return false;
-		}
-
 		String sql = "INSERT INTO usuarios (username, password_hash) VALUES (?, ?)";
+
 		try (Connection conn = DatabaseConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -143,7 +149,7 @@ public class UsuarioDAO {
 			return rowsAffected > 0;
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("Erro ao cadastrar o usuário (" + username + "):" + e.getMessage(), e);
 			return false;
 		}
 	}
@@ -162,7 +168,7 @@ public class UsuarioDAO {
 			return rowsAffected > 0;
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("Erro ao trocar senha do usuário (" + usuarioId + "):" + e.getMessage(), e);
 			return false;
 		}
 	}
@@ -179,7 +185,7 @@ public class UsuarioDAO {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("Erro ao verificar existência do usuário (" + username + "):" + e.getMessage(), e);
 			return true;
 		}
 	}
@@ -196,7 +202,7 @@ public class UsuarioDAO {
 			return rowsAffected > 0;
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("Erro ao remover o usuário (" + usuarioId + "):" + e.getMessage(), e);
 			return false;
 		}
 	}
@@ -214,7 +220,7 @@ public class UsuarioDAO {
 			return rowsAffected > 0;
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("Erro ao adicionar permissão ao usuário (" + usuarioId + "):" + e.getMessage(), e);
 			return false;
 		}
 	}
@@ -232,7 +238,7 @@ public class UsuarioDAO {
 			return rowsAffected > 0;
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error("Erro ao remover permissão do usuário (" + usuarioId + "):" + e.getMessage(), e);
 			return false;
 		}
 	}
