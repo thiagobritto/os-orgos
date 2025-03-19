@@ -45,12 +45,12 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 	public GerenciarUsuariosScreen(JFrame owner, Usuario usuario) {
 		super(owner, true);
 		this.controller = new GerenciarUsuariosController(this, usuario);
-		this.initCoponent();
+		this.initComponent();
 		this.controller.carregarDadosPesquisa();
 		this.controller.carregarUsuarios();
 	}
 
-	private void initCoponent() {
+	private void initComponent() {
 		setTitle("Gerenciar Usuários");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setSize(800, 540);

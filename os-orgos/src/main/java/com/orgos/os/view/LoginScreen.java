@@ -32,10 +32,10 @@ public class LoginScreen extends JFrame implements LoginScreenInterface {
 	 */
 	public LoginScreen(LoginController controller) {
 		this.controller = controller;
-		this.initCoponent();
+		this.initComponent();
 	}
 
-	private void initCoponent() {
+	private void initComponent() {
 		setTitle("Login");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(800, 500);

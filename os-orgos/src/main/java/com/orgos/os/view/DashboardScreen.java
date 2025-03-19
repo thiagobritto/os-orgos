@@ -38,10 +38,10 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 		this.controller = controller;
 		this.usuario = usuario;
 		
-		this.initCoponent();
+		this.initComponent();
 	}
 
-	private void initCoponent() {
+	private void initComponent() {
 		setTitle("Dashboaed");
 		setSize(1280, 720);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

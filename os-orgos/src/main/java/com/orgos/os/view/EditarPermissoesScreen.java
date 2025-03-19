@@ -31,12 +31,12 @@ public class EditarPermissoesScreen extends JDialogScreen {
 	public EditarPermissoesScreen(JFrame owner, Usuario usuario) {
 		super(owner, true);
 		this.controller = new EditarPermissoesController(this, usuario);
-		this.initCoponent();
+		this.initComponent();
 		this.controller.carregarDadosUsuario();
 		this.controller.carregarFuncionalidades();
 	}
 	
-	private void initCoponent() {
+	private void initComponent() {
 		setTitle("Editar Permissões");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setSize(800, 540);

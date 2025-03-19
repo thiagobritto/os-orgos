@@ -29,10 +29,10 @@ public class SenhaScreen extends JDialogScreen {
 	public SenhaScreen(JFrame owner, Usuario usuario) {
 		super(owner, true);
 		this.controller = new SenhaController(this, usuario);
-		this.initCoponent();
+		this.initComponent();
 	}
 
-	private void initCoponent() {
+	private void initComponent() {
 		setTitle("Alterar Senha");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setSize(300, 235);

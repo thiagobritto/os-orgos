@@ -32,10 +32,10 @@ public class CadastroUsuarioScreen extends JDialogScreen {
 	public CadastroUsuarioScreen(JFrame owner) {
 		super(owner, true);
 		this.controller = new CadastroUsuarioController(this);
-		this.initCoponent();
+		this.initComponent();
 	}
 
-	private void initCoponent() {
+	private void initComponent() {
 		setTitle("Cadastro de Usuário");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setSize(800, 540);
