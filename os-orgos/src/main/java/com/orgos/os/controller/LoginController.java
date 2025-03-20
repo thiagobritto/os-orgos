@@ -1,8 +1,10 @@
 package com.orgos.os.controller;
 
+import com.orgos.os.model.SessaoUsuario;
 import com.orgos.os.model.Usuario;
 import com.orgos.os.service.UsuarioService;
 import com.orgos.os.util.AppFactory;
+import com.orgos.os.view.DashboardScreen;
 import com.orgos.os.view.LoginScreenInterface;
 
 public class LoginController {
@@ -18,7 +20,12 @@ public class LoginController {
 	public void autenticar(String username, String password) {
 		Usuario usuario = usuarioService.autenticar(username, password);
 		if (usuario != null) {
-			AppFactory.getDashboardScreen(usuario).setVisible(true);
+			SessaoUsuario.getInstancia().setUsuarioLogado(usuario);
+
+			DashboardScreen dashboardScreen = AppFactory.getDashboardScreen();
+			dashboardScreen.atualizarComponents();
+			dashboardScreen.setVisible(true);
+
 			screen.close();
 		} else {
 			screen.exibirMensagemErro("Usuário ou senha invalidos!");

@@ -18,8 +18,7 @@ import javax.swing.JPanel;
 
 import com.orgos.os.controller.DashboardController;
 import com.orgos.os.model.Funcionalidade;
-import com.orgos.os.model.Usuario;
-import com.orgos.os.util.PermissaoUtil;
+import com.orgos.os.model.SessaoUsuario;
 
 public class DashboardScreen extends JFrame implements DashboardScreenInterface {
 
@@ -27,17 +26,13 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 	private JMenuBar menuBar;
 	private JPanel contentPane;
 	private JDesktopPane desktopPane;
-	private JLabel usernameLabel;
 	private DashboardController controller;
-	private Usuario usuario;
 
 	/**
 	 * Create the frame.
 	 */
-	public DashboardScreen(DashboardController controller, Usuario usuario) {
+	public DashboardScreen(DashboardController controller) {
 		this.controller = controller;
-		this.usuario = usuario;
-		
 		this.initComponent();
 	}
 
@@ -54,7 +49,7 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 		JMenu arquivoMenu = new JMenu("Arquivo");
 		menuBar.add(arquivoMenu);
 
-		if (PermissaoUtil.temPermissao(usuario, Funcionalidade.EXPORTAR_BACKUP)) {
+		if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.EXPORTAR_BACKUP)) {
 			JMenuItem arquivoExportarBackupMenuItem = new JMenuItem("Exportar Backup");
 			arquivoExportarBackupMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -64,7 +59,7 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 			arquivoMenu.add(arquivoExportarBackupMenuItem);
 		}
 
-		if (PermissaoUtil.temPermissao(usuario, Funcionalidade.IMPORTAR_BACKUP)) {
+		if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.IMPORTAR_BACKUP)) {
 			JMenuItem arquivoImportarBackupMenuItem = new JMenuItem("Importar Backup");
 			arquivoImportarBackupMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -94,12 +89,12 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 		JMenuItem cadastroServicoMenuItem = new JMenuItem("Serviço");
 		cadastroMenu.add(cadastroServicoMenuItem);
 
-		if (PermissaoUtil.temPermissao(usuario, Funcionalidade.CADASTRAR_USUARIO)
-				|| PermissaoUtil.temPermissao(usuario, Funcionalidade.GERENCIAR_USUARIO)) {
+		if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.CADASTRAR_USUARIO)
+				|| SessaoUsuario.getInstancia().temPermissao(Funcionalidade.GERENCIAR_USUARIO)) {
 			JMenu cadastroUsuarioMenu = new JMenu("Usuário");
 			cadastroMenu.add(cadastroUsuarioMenu);
 
-			if (PermissaoUtil.temPermissao(usuario, Funcionalidade.CADASTRAR_USUARIO)) {
+			if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.CADASTRAR_USUARIO)) {
 				JMenuItem cadastroUsuarioNovoMenuItem = new JMenuItem("Novo");
 				cadastroUsuarioNovoMenuItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -109,7 +104,7 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 				cadastroUsuarioMenu.add(cadastroUsuarioNovoMenuItem);
 			}
 
-			if (PermissaoUtil.temPermissao(usuario, Funcionalidade.GERENCIAR_USUARIO)) {
+			if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.GERENCIAR_USUARIO)) {
 				JMenuItem cadastroUsuarioGerenciarMenuItem = new JMenuItem("Gerenciar");
 				cadastroUsuarioGerenciarMenuItem.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
@@ -120,7 +115,7 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 			}
 		}
 
-		if (PermissaoUtil.temPermissao(usuario, Funcionalidade.VISUALIZAR_RELATORIOS)) {
+		if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.VISUALIZAR_RELATORIOS)) {
 			JMenu relatorioMenu = new JMenu("Relatório");
 			menuBar.add(relatorioMenu);
 
@@ -150,16 +145,17 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 		JLabel lblNewLabel = new JLabel("Logado como:");
 		fooderPane.add(lblNewLabel);
 
-		String username = usuario.getUsername();
-		usernameLabel = new JLabel(username.toUpperCase());
-		fooderPane.add(usernameLabel);
+		if (SessaoUsuario.getInstancia().iniciada()) {
+			JLabel usernameLabel = new JLabel(SessaoUsuario.getInstancia().getUsuarioLogado().getUsername().toUpperCase());
+			fooderPane.add(usernameLabel);			
+		}
 
 		setContentPane(contentPane);
 	}
 
 	@Override
 	public void close() {
-		dispose();
+		System.exit(0);
 	}
 
 	@Override
@@ -175,6 +171,14 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 		}
 	}
 
+	public void atualizarComponents() {
+		this.initComponent();;
+	}
+	
+	public void setController(DashboardController controller) {
+		this.controller = controller;
+	}
+	
 	@Override
 	public void importarBackup() {
 		JFileChooser fileChooser = new JFileChooser();
@@ -195,11 +199,7 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 
 	@Override
 	public void abrirTelaGerenciarUsuario() {
-		new GerenciarUsuariosScreen(this, usuario).setVisible(true);
-	}
-
-	public void setController(DashboardController controller) {
-		this.controller = controller;
+		new GerenciarUsuariosScreen(this).setVisible(true);
 	}
 
 	@Override

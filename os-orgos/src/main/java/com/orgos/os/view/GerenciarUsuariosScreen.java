@@ -25,6 +25,7 @@ import javax.swing.event.ListSelectionListener;
 
 import com.orgos.os.controller.GerenciarUsuariosController;
 import com.orgos.os.model.Funcionalidade;
+import com.orgos.os.model.SessaoUsuario;
 import com.orgos.os.model.Usuario;
 import com.orgos.os.model.UsuarioTableModel;
 
@@ -42,9 +43,9 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 	/**
 	 * Create the dialog.
 	 */
-	public GerenciarUsuariosScreen(JFrame owner, Usuario usuario) {
+	public GerenciarUsuariosScreen(JFrame owner) {
 		super(owner, true);
-		this.controller = new GerenciarUsuariosController(this, usuario);
+		this.controller = new GerenciarUsuariosController(this);
 		this.initComponent();
 		this.controller.carregarDadosPesquisa();
 		this.controller.carregarUsuarios();
@@ -80,7 +81,7 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		buttonPanel.setLayout(new GridLayout(6, 1, 5, 5));
 		contentPanel.add(buttonPanel);
 
-		if (controller.usuarioTemPermissao(Funcionalidade.CADASTRAR_USUARIO)) {
+		if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.CADASTRAR_USUARIO)) {
 			JButton novoButton = new JButton("Novo");
 			novoButton.setMnemonic(KeyEvent.VK_N);
 			novoButton.addActionListener(new ActionListener() {

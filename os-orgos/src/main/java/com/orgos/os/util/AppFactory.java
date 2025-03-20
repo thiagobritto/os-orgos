@@ -2,7 +2,6 @@ package com.orgos.os.util;
 
 import com.orgos.os.controller.DashboardController;
 import com.orgos.os.controller.LoginController;
-import com.orgos.os.model.Usuario;
 import com.orgos.os.service.BackupService;
 import com.orgos.os.service.UsuarioService;
 import com.orgos.os.view.DashboardScreen;
@@ -14,29 +13,19 @@ public class AppFactory {
 	private static UsuarioService usuarioService = new UsuarioService();
 	private static BackupService backupService = new BackupService();
 
-	private static LoginScreen loginScreen;
-	private static LoginController loginController;
-	
-	private static DashboardScreen dashboardScreen;
-	private static DashboardController dashboardController;
+	private static LoginScreen loginScreen = new LoginScreen(null);
+	private static LoginController loginController = new LoginController(loginScreen, usuarioService);
+
+	private static DashboardScreen dashboardScreen = new DashboardScreen(null);
+	private static DashboardController dashboardController = new DashboardController(dashboardScreen, backupService);
 
 	// Métodos para obter instâncias
 	public static LoginScreen getLoginScreen() {
-		if (loginScreen == null)
-			loginScreen = new LoginScreen(null);
-		if (loginController == null)
-			loginController = new LoginController(loginScreen, usuarioService);
-		
 		loginScreen.setController(loginController);
 		return loginScreen;
 	}
 
-	public static DashboardScreen getDashboardScreen(Usuario usuario) {
-		if (dashboardScreen == null)
-			dashboardScreen = new DashboardScreen(null, usuario);	
-		if (dashboardController == null)
-			dashboardController = new DashboardController(dashboardScreen, backupService);
-		
+	public static DashboardScreen getDashboardScreen() {
 		dashboardScreen.setController(dashboardController);
 		return dashboardScreen;
 	}
