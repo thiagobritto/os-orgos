@@ -27,6 +27,7 @@ public class AppFactory {
 
 	public static DashboardScreen getDashboardScreen() {
 		dashboardScreen.setController(dashboardController);
+		dashboardScreen.atualizarComponents();
 		return dashboardScreen;
 	}
 

@@ -21,11 +21,7 @@ public class LoginController {
 		Usuario usuario = usuarioService.autenticar(username, password);
 		if (usuario != null) {
 			SessaoUsuario.getInstancia().setUsuarioLogado(usuario);
-
-			DashboardScreen dashboardScreen = AppFactory.getDashboardScreen();
-			dashboardScreen.atualizarComponents();
-			dashboardScreen.setVisible(true);
-
+			AppFactory.getDashboardScreen().setVisible(true);
 			screen.close();
 		} else {
 			screen.exibirMensagemErro("Usuário ou senha invalidos!");
