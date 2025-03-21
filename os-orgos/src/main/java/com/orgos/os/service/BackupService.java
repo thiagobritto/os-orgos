@@ -8,12 +8,12 @@ import java.nio.file.StandardCopyOption;
 
 public class BackupService {
 
-	private final String source = "BANCO/os-orgos.db";
+	private final String SOURSE = "BANCO/os-orgos.db";
 	
 	// Método para exportar o banco de dados
     public boolean exportarBackup(String caminhoDestino) {
     	try {        	
-        	Files.copy(Path.of(source), Path.of(caminhoDestino), StandardCopyOption.REPLACE_EXISTING);
+        	Files.copy(Path.of(SOURSE), Path.of(caminhoDestino), StandardCopyOption.REPLACE_EXISTING);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -31,7 +31,7 @@ public class BackupService {
         }
         
         try {
-        	Files.copy(arquivoBackup.toPath(), Path.of(source), StandardCopyOption.REPLACE_EXISTING);
+        	Files.copy(arquivoBackup.toPath(), Path.of(SOURSE), StandardCopyOption.REPLACE_EXISTING);
             return true;
         } catch (IOException e) {
             e.printStackTrace();

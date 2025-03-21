@@ -1,6 +1,7 @@
 package com.orgos.os.view;
 
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -37,10 +38,12 @@ public class LoginScreen extends JFrame implements LoginScreenInterface {
 
 	private void initComponent() {
 		setTitle("Login");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(800, 500);
 		setLocationRelativeTo(null);
 		setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(LoginScreen.class.getResource("/images/logo_jframe_48x48.png")));
 
 		getRootPane().registerKeyboardAction(e -> dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -91,7 +94,7 @@ public class LoginScreen extends JFrame implements LoginScreenInterface {
 	public void setController(LoginController loginController) {
 		this.controller = loginController;
 	}
-	
+
 	@Override
 	public void login() {
 		String username = usernameField.getText();
@@ -103,11 +106,10 @@ public class LoginScreen extends JFrame implements LoginScreenInterface {
 	public void close() {
 		dispose();
 	}
-	
+
 	@Override
 	public void exibirMensagemErro(String message) {
 		JOptionPane.showMessageDialog(this, message, "Erro", JOptionPane.ERROR_MESSAGE);
 	}
 
-	
 }

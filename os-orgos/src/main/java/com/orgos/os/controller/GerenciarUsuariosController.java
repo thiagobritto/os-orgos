@@ -1,77 +1,49 @@
 package com.orgos.os.controller;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.orgos.os.model.Usuario;
-import com.orgos.os.service.UsuarioService;
-import com.orgos.os.view.GerenciarUsuariosScreen;
+import com.orgos.os.view.GerenciarUsuariosScreenInterface;
 
 public class GerenciarUsuariosController {
-	private final String[] indices = { "Código", "Nome" };
-	private GerenciarUsuariosScreen view;
-	private UsuarioService usuarioService;
-	private List<Usuario> usuarios;
-	private Usuario usuario;
+	private final String[] CHAVES_PESQUISA = { "Código", "Nome" };
 
-	public GerenciarUsuariosController(GerenciarUsuariosScreen view) {
+	private GerenciarUsuariosScreenInterface screen;
+	private UsuarioController usuarioController;
+
+	public GerenciarUsuariosController(GerenciarUsuariosScreenInterface screen, UsuarioController usuarioController) {
 		super();
-		this.view = view;
-		this.usuarioService = new UsuarioService();
+		this.screen = screen;
+		this.usuarioController = usuarioController;
 	}
 
-	public void carregarDadosPesquisa() {
-		view.exibirDadosPesquisa(indices);
+	public void carregarTela() {
+		screen.exibirChavesPesquisa(CHAVES_PESQUISA);
+
+		List<Usuario> usuarios = usuarioController.listarTodos();
+		screen.exibieUsuarios(usuarios);
 	}
 
-	public void carregarUsuarios() {
-		usuarios = usuarioService.listarTodos();
-		view.atualizarListaUsuarios(usuarios);
-	}
+	public void buscarUsuarios(int chave, String valorDigitado) {
+		String valor = valorDigitado.trim();
+		List<Usuario> usuarios = Collections.emptyList();
 
-	public void setUsuario(int usuarioIndex) {
-		usuario = usuarios.get(usuarioIndex);
-	}
-
-	public Usuario getUsuario() {
-		return usuario;
-	}
-	
-	public boolean usuarioSelecionado() {
-		return usuario != null;
-	}
-
-	public void buscarUsuario(String pesquisa, int index) {
-		String indice = indices[index];
-		
-		if ("".equals(pesquisa.trim())) {
-			carregarUsuarios();
-		} else if ("Código".equals(indice)) {
-			int usuarioId = 0;
+		if (valor.isEmpty()) {
+			usuarios = usuarioController.listarTodos();
+		} else if (chave == 0) { // codigo
 			try {
-				usuarioId = Integer.parseInt(pesquisa);
+				int id = Integer.parseInt(valor);
+				usuarios = List.of(usuarioController.buscarUsuarioPorId(id));
 			} catch (NumberFormatException e) {
+				screen.exibirMensagem("Consulta invalida! \n" + CHAVES_PESQUISA[chave] + ": " + valorDigitado);
 				return;
 			}
-
-			Usuario usuario = usuarioService.buscarUsuarioPorId(usuarioId);
-			if (usuario != null) {
-				usuarios = List.of(usuario);
-				view.atualizarListaUsuarios(usuarios);
-			}
-		} else if ("Nome".equals(indice)) {
-			usuarios = usuarioService.buscarUsuariosPorNome(pesquisa);
-			view.atualizarListaUsuarios(usuarios);
+		} else if (chave == 1) { // nome
+			usuarios = usuarioController.buscarUsuariosPorNome(valor);
 		}
 
-		usuario = null;
-	}
-
-	public void removerUsuario() {
-		int usuarioId = usuario.getId();
-		usuarioService.removerUsuario(usuarioId);
-		
-		view.exibirMenssagem("Usuario excluido com sucesso!");
-		carregarUsuarios();
+		screen.exibieUsuarios(usuarios);
 	}
 
 }

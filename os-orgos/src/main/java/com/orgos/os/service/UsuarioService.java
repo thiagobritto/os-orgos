@@ -10,8 +10,8 @@ import com.orgos.os.model.Usuario;
 public class UsuarioService {
 	private UsuarioDAO usuarioDAO;
 
-	public UsuarioService() {
-		this.usuarioDAO = new UsuarioDAO();
+	public UsuarioService(UsuarioDAO usuarioDAO) {
+		this.usuarioDAO = usuarioDAO;
 	}
 
 	public Usuario autenticar(String username, String password) {

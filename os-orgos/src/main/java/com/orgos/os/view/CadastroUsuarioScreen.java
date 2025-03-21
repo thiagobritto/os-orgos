@@ -29,13 +29,13 @@ public class CadastroUsuarioScreen extends JDialogScreen {
 	/**
 	 * Create the dialog.
 	 */
-	public CadastroUsuarioScreen(JFrame owner) {
+	public CadastroUsuarioScreen(JFrame owner, CadastroUsuarioController controller) {
 		super(owner, true);
-		this.controller = new CadastroUsuarioController(this);
-		this.initComponent();
+		this.controller = controller;
+		this.iniciarComponentes();
 	}
 
-	private void initComponent() {
+	private void iniciarComponentes() {
 		setTitle("Cadastro de Usuário");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setSize(800, 540);
@@ -76,8 +76,8 @@ public class CadastroUsuarioScreen extends JDialogScreen {
 		confirmPasswordField.setBounds(453, 250, 320, 36);
 		contentPanel.add(confirmPasswordField);
 
-		JButton loginButton = new JButton("Cadastrar");
-		loginButton.addActionListener(new ActionListener() {
+		JButton cadastrarButton = new JButton("Cadastrar");
+		cadastrarButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String username = usernameField.getText();
 				String password = new String(passwordField.getPassword());
@@ -105,12 +105,16 @@ public class CadastroUsuarioScreen extends JDialogScreen {
 				controller.cadastrarUsuario(username, password);
 			}
 		});
-		loginButton.setBounds(453, 310, 90, 36);
-		contentPanel.add(loginButton);
+		cadastrarButton.setBounds(453, 310, 90, 36);
+		contentPanel.add(cadastrarButton);
 	}
 
 	public void mostrarMensagem(String mensagem) {
 		JOptionPane.showMessageDialog(this, mensagem);
+	}
+
+	public void setController(CadastroUsuarioController controller) {
+		this.controller = controller;
 	}
 
 }

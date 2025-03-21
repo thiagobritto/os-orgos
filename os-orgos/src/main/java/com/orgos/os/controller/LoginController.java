@@ -4,7 +4,6 @@ import com.orgos.os.model.SessaoUsuario;
 import com.orgos.os.model.Usuario;
 import com.orgos.os.service.UsuarioService;
 import com.orgos.os.util.AppFactory;
-import com.orgos.os.view.DashboardScreen;
 import com.orgos.os.view.LoginScreenInterface;
 
 public class LoginController {

@@ -1,6 +1,5 @@
 package com.orgos.os.model;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
@@ -10,15 +9,14 @@ public class UsuarioTableModel extends AbstractTableModel {
 	private static final long serialVersionUID = 1L;
 	private static final String[] COLUMNS = {"Código", "Nome"};
 	private List<Usuario> usuarios;
-
-	public UsuarioTableModel() {
-		super();
-		this.usuarios = Collections.emptyList();
-	}
 	
 	public UsuarioTableModel(List<Usuario> usuarios) {
 		super();
 		this.usuarios = usuarios;
+	}
+	
+	public Usuario getValue(int rowIndex) {
+		return usuarios.get(rowIndex);
 	}
 
 	@Override

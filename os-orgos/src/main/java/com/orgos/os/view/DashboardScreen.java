@@ -2,6 +2,7 @@ package com.orgos.os.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -19,6 +20,7 @@ import javax.swing.JPanel;
 import com.orgos.os.controller.DashboardController;
 import com.orgos.os.model.Funcionalidade;
 import com.orgos.os.model.SessaoUsuario;
+import com.orgos.os.util.AppFactory;
 
 public class DashboardScreen extends JFrame implements DashboardScreenInterface {
 
@@ -33,15 +35,39 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 	 */
 	public DashboardScreen(DashboardController controller) {
 		this.controller = controller;
-		this.initComponent();
 	}
 
-	private void initComponent() {
+	private void iniciarComponentes() {
 		setTitle("Dashboaed");
 		setSize(1280, 720);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
+		setIconImage(
+				Toolkit.getDefaultToolkit().getImage(LoginScreen.class.getResource("/images/logo_jframe_48x48.png")));
+
+		// content
+		contentPane = new JPanel();
+		contentPane.setLayout(new BorderLayout(0, 0));
+
+		desktopPane = new JDesktopPane();
+		desktopPane.setBackground(Color.BLUE);
+		contentPane.add(desktopPane, BorderLayout.CENTER);
+
+		JPanel fooderPane = new JPanel();
+		contentPane.add(fooderPane, BorderLayout.SOUTH);
+
+		JLabel lblNewLabel = new JLabel("Logado como:");
+		fooderPane.add(lblNewLabel);
+
+		if (SessaoUsuario.getInstancia().iniciada()) {
+			String username = SessaoUsuario.getInstancia().getUsuarioLogado().getUsername();
+			
+			JLabel usernameLabel = new JLabel(username.toUpperCase());
+			fooderPane.add(usernameLabel);
+		}
+
+		setContentPane(contentPane);
 
 		// menu
 		menuBar = new JMenuBar();
@@ -84,6 +110,12 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 		menuBar.add(cadastroMenu);
 
 		JMenuItem cadastroClienteMenuItem = new JMenuItem("Cliente");
+		cadastroClienteMenuItem.addActionListener(new ActionListener() {	
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new CadastroClienteScreen(DashboardScreen.this).setVisible(true);
+			}
+		});
 		cadastroMenu.add(cadastroClienteMenuItem);
 
 		JMenuItem cadastroServicoMenuItem = new JMenuItem("Serviço");
@@ -131,26 +163,14 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 
 		setJMenuBar(menuBar);
 
-		// content
-		contentPane = new JPanel();
-		contentPane.setLayout(new BorderLayout(0, 0));
+	}
 
-		desktopPane = new JDesktopPane();
-		desktopPane.setBackground(Color.BLUE);
-		contentPane.add(desktopPane, BorderLayout.CENTER);
+	public void atualizarComponentes() {
+		this.iniciarComponentes();
+	}
 
-		JPanel fooderPane = new JPanel();
-		contentPane.add(fooderPane, BorderLayout.SOUTH);
-
-		JLabel lblNewLabel = new JLabel("Logado como:");
-		fooderPane.add(lblNewLabel);
-
-		if (SessaoUsuario.getInstancia().iniciada()) {
-			JLabel usernameLabel = new JLabel(SessaoUsuario.getInstancia().getUsuarioLogado().getUsername().toUpperCase());
-			fooderPane.add(usernameLabel);			
-		}
-
-		setContentPane(contentPane);
+	public void setController(DashboardController controller) {
+		this.controller = controller;
 	}
 
 	@Override
@@ -171,14 +191,6 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 		}
 	}
 
-	public void atualizarComponents() {
-		this.initComponent();;
-	}
-	
-	public void setController(DashboardController controller) {
-		this.controller = controller;
-	}
-	
 	@Override
 	public void importarBackup() {
 		JFileChooser fileChooser = new JFileChooser();
@@ -194,12 +206,12 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 
 	@Override
 	public void abrirTelaCadastroUsuario() {
-		new CadastroUsuarioScreen(this).setVisible(true);
+		AppFactory.getCadastroUsuarioScreen().setVisible(true);
 	}
 
 	@Override
 	public void abrirTelaGerenciarUsuario() {
-		new GerenciarUsuariosScreen(this).setVisible(true);
+		AppFactory.getGerenciarUsuariosScreen().setVisible(true);
 	}
 
 	@Override
@@ -211,6 +223,11 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 	public void exibirMensagemErro(String menssagem) {
 		JOptionPane.showMessageDialog(this, menssagem, "Erro", JOptionPane.ERROR_MESSAGE);
 	}
-
+	
+	@Override
+	public void setVisible(boolean b) {
+		this.iniciarComponentes();
+		super.setVisible(b);
+	}
 
 }

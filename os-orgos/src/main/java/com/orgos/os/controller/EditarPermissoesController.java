@@ -5,47 +5,26 @@ import java.util.List;
 import com.orgos.os.model.Funcionalidade;
 import com.orgos.os.model.Permissao;
 import com.orgos.os.model.Usuario;
-import com.orgos.os.service.UsuarioService;
-import com.orgos.os.util.PermissaoUtil;
 import com.orgos.os.view.EditarPermissoesScreen;
 
 public class EditarPermissoesController {
-	private EditarPermissoesScreen view;
-	private UsuarioService usuarioService;
-	private Usuario usuario;
-	
-	public EditarPermissoesController(EditarPermissoesScreen view, Usuario usuario) {
-		super();
-		this.view = view;
-		this.usuario = usuario;
-		this.usuarioService = new UsuarioService();
+	private EditarPermissoesScreen screen;
+	private UsuarioController controller;
+
+	public EditarPermissoesController(EditarPermissoesScreen screen, UsuarioController controller) {
+		this.screen = screen;
+		this.controller = controller;
 	}
 
-	public void carregarFuncionalidades() {
-		Funcionalidade[] funcionalidades = Funcionalidade.values();
-		view.exibirFuncionalidades(funcionalidades);
-	}
-	
-	public boolean usuarioTemPermissao(Funcionalidade funcionalidade) {
-		return PermissaoUtil.temPermissao(usuario, funcionalidade);
-	}
-
-	public void atualizarPermissao(Funcionalidade funcionalidade, boolean permitir) {
-		int usuarioId = usuario.getId();
-		
+	public void atualizarPermissao(Usuario usuario, Funcionalidade funcionalidade, boolean permitir) {
 		if (permitir) {
-			usuarioService.adicionarPermissao(usuarioId, funcionalidade);
+			controller.adicionarPermissao(usuario.getId(), funcionalidade);
 		} else {
-			usuarioService.removerPermissao(usuarioId, funcionalidade);		
+			controller.removerPermissao(usuario.getId(), funcionalidade);		
 		}
 		
-		List<Permissao> permissoes = usuarioService.buscarPermissoes(usuarioId);
+		List<Permissao> permissoes = controller.buscarPermissoes(usuario.getId());
 		usuario.setPermissoes(permissoes);
-	}
-
-	public void carregarDadosUsuario() {
-		String username = usuario.getUsername();
-		view.exibirDadosUsuario(username);
 	}
 
 }

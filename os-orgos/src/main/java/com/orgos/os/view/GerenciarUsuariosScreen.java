@@ -1,10 +1,12 @@
 package com.orgos.os.view;
 
 import java.awt.GridLayout;
+import java.awt.desktop.AppForegroundEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
@@ -28,30 +30,29 @@ import com.orgos.os.model.Funcionalidade;
 import com.orgos.os.model.SessaoUsuario;
 import com.orgos.os.model.Usuario;
 import com.orgos.os.model.UsuarioTableModel;
+import com.orgos.os.util.AppFactory;
 
-public class GerenciarUsuariosScreen extends JDialogScreen {
+public class GerenciarUsuariosScreen extends JDialogScreen implements GerenciarUsuariosScreenInterface{
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
-	private GerenciarUsuariosController controller;
-	
 	private JTable listagemUsuariosTable;
 	private JComboBox<String> pesquisaComboBox;
 	private JTextField pesquisaField;
 	private UsuarioTableModel usuarioTableModel;
+	
+	private GerenciarUsuariosController controller;
 
 	/**
 	 * Create the dialog.
 	 */
-	public GerenciarUsuariosScreen(JFrame owner) {
+	public GerenciarUsuariosScreen(JFrame owner, GerenciarUsuariosController controller) {
 		super(owner, true);
-		this.controller = new GerenciarUsuariosController(this);
-		this.initComponent();
-		this.controller.carregarDadosPesquisa();
-		this.controller.carregarUsuarios();
+		this.controller = controller;
+		this.iniciarComponentes();
 	}
 
-	private void initComponent() {
+	private void iniciarComponentes() {
 		setTitle("Gerenciar Usuários");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setSize(800, 540);
@@ -65,14 +66,8 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		scrollPane.setBounds(10, 30, 603, 215);
 		contentPanel.add(scrollPane);
 
-		usuarioTableModel = new UsuarioTableModel();
+		usuarioTableModel = new UsuarioTableModel(Collections.emptyList());
 		listagemUsuariosTable = new JTable(usuarioTableModel);
-		listagemUsuariosTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				selecionarUsuario();
-			}
-		});
 		listagemUsuariosTable.getColumnModel().getColumn(0).setMaxWidth(120);
 		scrollPane.setViewportView(listagemUsuariosTable);
 
@@ -87,7 +82,7 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 			novoButton.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					novoUsuario();
+					// novoUsuario();
 				}
 			});
 			buttonPanel.add(novoButton);			
@@ -98,7 +93,12 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		alterarSenhaButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				alterarSenha();
+				int selectedRow = listagemUsuariosTable.getSelectedRow();
+				if (selectedRow < 0) {
+					exibirMensagem("Selecione um 'Usuário' para continuar!");					
+				} else {
+					
+				}
 			}
 		});
 		buttonPanel.add(alterarSenhaButton);
@@ -108,7 +108,7 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		excluirUsuarioButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				excluirUsuario();
+				// excluirUsuario();
 			}
 		});
 		buttonPanel.add(excluirUsuarioButton);
@@ -118,7 +118,13 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		editarPermissoesButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				editarPermissoes();
+				int selectedRow = listagemUsuariosTable.getSelectedRow();
+				if (selectedRow < 0) {
+					exibirMensagem("Selecione um 'Usuário' para continuar!");					
+				} else {
+					Usuario usuario = usuarioTableModel.getValue(selectedRow);
+					AppFactory.getEditarPermissoesScreen(usuario).setVisible(true);
+				}
 			}
 		});
 		buttonPanel.add(editarPermissoesButton);
@@ -161,79 +167,41 @@ public class GerenciarUsuariosScreen extends JDialogScreen {
 		SwingUtilities.invokeLater(() -> pesquisaField.requestFocus());
 	}
 
-	public void exibirDadosPesquisa(String[] items) {
-		pesquisaComboBox.setModel(new DefaultComboBoxModel<>(items));
-		pesquisaComboBox.setSelectedIndex(1);
+	public void setController(GerenciarUsuariosController controller) {
+		this.controller = controller;
+	}
+	
+	@Override
+	public void setVisible(boolean b) {
+		controller.carregarTela();
+		super.setVisible(b);
 	}
 
-	public void atualizarListaUsuarios(List<Usuario> usuarios) {
+	@Override
+	public void exibirMensagem(String menssagem) {
+		JOptionPane.showMessageDialog(this, menssagem);
+	}
+
+	@Override
+	public void exibieUsuarios(List<Usuario> usuarios) {
 		usuarioTableModel = new UsuarioTableModel(usuarios);
 		listagemUsuariosTable.setModel(usuarioTableModel);
 		listagemUsuariosTable.getColumnModel().getColumn(0).setMaxWidth(120);
 	}
 
-	public void exibirMenssagem(String menssagem) {
-		JOptionPane.showMessageDialog(this, menssagem);
-	}
-
-	public void selecionarUsuario() {
-		int usuarioIndex = listagemUsuariosTable.getSelectedRow();
-		if (usuarioIndex >= 0) {
-			controller.setUsuario(usuarioIndex);
-		}
-	}
-
-	public void novoUsuario() {
-		JFrame owner = (JFrame) this.getOwner();
-		new CadastroUsuarioScreen(owner).setVisible(true);
-		controller.carregarUsuarios();
-	}
-
-	public void alterarSenha() {
-		if (controller.usuarioSelecionado()) {
-			JFrame owner = (JFrame) getOwner();
-			Usuario usuario = controller.getUsuario();
-			new SenhaScreen(owner, usuario).setVisible(true);
-		} else {
-			exibirMenssagem("Selecione um 'Usuário' para continuar!");
-		}
-	}
-
-	public void excluirUsuario() {
-		if (controller.usuarioSelecionado()) {
-			Usuario usuario = controller.getUsuario();
-			int id = usuario.getId();
-			String username = usuario.getUsername();
-			
-			int resposta = JOptionPane.showConfirmDialog(
-					this, 
-					"Tem certeza que deseja excluir este usuário? (" + id + " - " + username + ") ",
-					"Confirmação de Exclusão", 
-					JOptionPane.YES_NO_OPTION, 
-					JOptionPane.WARNING_MESSAGE);
-
-			if (resposta == JOptionPane.YES_OPTION) {
-				controller.removerUsuario();
-			}
-
-		} else {
-			exibirMenssagem("Selecione um 'Usuário' para continuar!");
-		}
-	}
-
-	public void editarPermissoes() {
-		if (controller.usuarioSelecionado()) {
-			JFrame owner = (JFrame) getOwner();
-			Usuario usuario = controller.getUsuario();
-			new EditarPermissoesScreen(owner, usuario).setVisible(true);
-		} else {
-			exibirMenssagem("Selecione um 'Usuário' para continuar!");
-		}
+	@Override
+	public void exibirChavesPesquisa(String[] chaves) {
+		pesquisaComboBox.setModel(new DefaultComboBoxModel<>(chaves));
+		pesquisaComboBox.setSelectedIndex(1);
 	}
 
 	public void pesquisar() {
-		int index = pesquisaComboBox.getSelectedIndex();
-		String pesquisa = pesquisaField.getText();
-		controller.buscarUsuario(pesquisa, index);
+		int chave = pesquisaComboBox.getSelectedIndex();
+		String valor = pesquisaField.getText();
+		
+		controller.buscarUsuarios(chave, valor);
 	}
+	
+	
+	
 }
