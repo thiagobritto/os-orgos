@@ -1,61 +1,47 @@
 package com.orgos.os.controller;
 
-import java.util.Collections;
 import java.util.List;
 
 import com.orgos.os.model.Funcionalidade;
 import com.orgos.os.model.Permissao;
+import com.orgos.os.model.PesquisaUsuario;
+import com.orgos.os.model.PesquisaUsuarioId;
+import com.orgos.os.model.PesquisaUsuarioNome;
 import com.orgos.os.model.Usuario;
+import com.orgos.os.service.UsuarioService;
 import com.orgos.os.view.GerenciarUsuariosScreenInterface;
 
 public class GerenciarUsuariosController {
-	private final String[] CHAVES_PESQUISA = { "Código", "Nome" };
-
 	private GerenciarUsuariosScreenInterface screen;
-	private UsuarioController usuarioController;
+	private UsuarioService usuarioService;
 
-	public GerenciarUsuariosController(GerenciarUsuariosScreenInterface screen, UsuarioController usuarioController) {
+	public GerenciarUsuariosController(GerenciarUsuariosScreenInterface screen, UsuarioService usuarioService) {
 		super();
 		this.screen = screen;
-		this.usuarioController = usuarioController;
+		this.usuarioService = usuarioService;
 	}
 
 	public void carregarTela() {
-		screen.exibirChavesPesquisa(CHAVES_PESQUISA);
+		PesquisaUsuarioId pesquisaUsuarioId = new PesquisaUsuarioId(usuarioService);
+		PesquisaUsuarioNome pesquisaUsuarioNome = new PesquisaUsuarioNome(usuarioService);
+		
+		PesquisaUsuario[] pesquisasUsuario = { pesquisaUsuarioId, pesquisaUsuarioNome };
+		screen.setPesquisa(pesquisasUsuario);
 
-		List<Usuario> usuarios = usuarioController.listarTodos();
-		screen.exibieUsuarios(usuarios);
-	}
-
-	public void buscarUsuarios(int chave, String valorDigitado) {
-		String valor = valorDigitado.trim();
-		List<Usuario> usuarios = Collections.emptyList();
-
-		if (valor.isEmpty()) {
-			usuarios = usuarioController.listarTodos();
-		} else if (chave == 0) { // codigo
-			try {
-				int id = Integer.parseInt(valor);
-				usuarios = List.of(usuarioController.buscarUsuarioPorId(id));
-			} catch (NumberFormatException e) {
-				screen.exibirMensagem("Consulta invalida! \n" + CHAVES_PESQUISA[chave] + ": " + valorDigitado);
-				return;
-			}
-		} else if (chave == 1) { // nome
-			usuarios = usuarioController.buscarUsuariosPorNome(valor);
-		}
-
-		screen.exibieUsuarios(usuarios);
+		List<Usuario> usuarios = usuarioService.listarTodos();
+		screen.exibirUsuarios(usuarios);
 	}
 
 	public void atualizarPermissao(Usuario usuario, Funcionalidade funcionalidade, boolean permitir) {
-		if (permitir) {
-			usuarioController.adicionarPermissao(usuario.getId(), funcionalidade);
-		} else {
-			usuarioController.removerPermissao(usuario.getId(), funcionalidade);		
-		}
+		int id = usuario.getId();
 		
-		List<Permissao> permissoes = usuarioController.buscarPermissoes(usuario.getId());
+		if (permitir) {
+			usuarioService.adicionarPermissao(id, funcionalidade);
+		} else {
+			usuarioService.removerPermissao(id, funcionalidade);
+		}
+
+		List<Permissao> permissoes = usuarioService.buscarPermissoes(id);
 		usuario.setPermissoes(permissoes);
 	}
 

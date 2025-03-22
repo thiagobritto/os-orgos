@@ -6,8 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -30,6 +28,7 @@ import javax.swing.event.ListSelectionListener;
 
 import com.orgos.os.controller.GerenciarUsuariosController;
 import com.orgos.os.model.Funcionalidade;
+import com.orgos.os.model.PesquisaUsuario;
 import com.orgos.os.model.SessaoUsuario;
 import com.orgos.os.model.Usuario;
 import com.orgos.os.model.UsuarioTableModel;
@@ -39,13 +38,13 @@ public class GerenciarUsuariosScreen extends JDialogScreen implements GerenciarU
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
-	private JTable listagemUsuariosTable;
-	private JComboBox<String> pesquisaComboBox;
-	private JTextField pesquisaField;
-	private UsuarioTableModel usuarioTableModel;
-
-	private GerenciarUsuariosController controller;
 	private JPanel permissoesPanel;
+	private JTable listagemUsuariosTable;
+	private JTextField pesquisaField;
+	private JComboBox<PesquisaUsuario> pesquisaComboBox;
+
+	private UsuarioTableModel usuarioTableModel = new UsuarioTableModel();
+	private GerenciarUsuariosController controller;
 	private LinkedHashMap<Funcionalidade, JCheckBox> checkBoxHashMap;
 
 	/**
@@ -71,21 +70,19 @@ public class GerenciarUsuariosScreen extends JDialogScreen implements GerenciarU
 		scrollPane.setBounds(10, 30, 603, 215);
 		contentPanel.add(scrollPane);
 
-		usuarioTableModel = new UsuarioTableModel(Collections.emptyList());
 		listagemUsuariosTable = new JTable(usuarioTableModel);
 		listagemUsuariosTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				int selectedRow = listagemUsuariosTable.getSelectedRow();
 				if (selectedRow < 0) {
-					limparPrtmissoes();
+					limparPertmissoes();
 				} else {
 					Usuario usuario = usuarioTableModel.getUsuario(selectedRow);
 					exibirPrtmissoes(usuario);
 				}
 			}
 		});
-
 		listagemUsuariosTable.getColumnModel().getColumn(0).setMaxWidth(120);
 		scrollPane.setViewportView(listagemUsuariosTable);
 
@@ -203,8 +200,6 @@ public class GerenciarUsuariosScreen extends JDialogScreen implements GerenciarU
 		JLabel lblNewLabel_2 = new JLabel("Permissões");
 		lblNewLabel_2.setBounds(10, 325, 100, 14);
 		contentPanel.add(lblNewLabel_2);
-
-		SwingUtilities.invokeLater(() -> pesquisaField.requestFocus());
 	}
 
 	public void exibirPrtmissoes(Usuario usuario) {
@@ -219,7 +214,8 @@ public class GerenciarUsuariosScreen extends JDialogScreen implements GerenciarU
 	@Override
 	public void setVisible(boolean b) {
 		controller.carregarTela();
-		super.setVisible(b);
+		SwingUtilities.invokeLater(() -> pesquisaField.requestFocus());
+		super.setVisible(b);		
 	}
 
 	@Override
@@ -228,26 +224,24 @@ public class GerenciarUsuariosScreen extends JDialogScreen implements GerenciarU
 	}
 
 	@Override
-	public void exibieUsuarios(List<Usuario> usuarios) {
+	public void exibirUsuarios(List<Usuario> usuarios) {
 		usuarioTableModel = new UsuarioTableModel(usuarios);
 		listagemUsuariosTable.setModel(new UsuarioTableModel(usuarios));
 		listagemUsuariosTable.getColumnModel().getColumn(0).setMaxWidth(120);
 	}
 
-	private void limparPrtmissoes() {
+	private void limparPertmissoes() {
 		checkBoxHashMap.forEach((funcionalidade, jCheckBox) -> jCheckBox.setSelected(false));
 	}
 
 	@Override
-	public void exibirChavesPesquisa(String[] chaves) {
-		pesquisaComboBox.setModel(new DefaultComboBoxModel<>(chaves));
+	public void setPesquisa(PesquisaUsuario[] pesquisasUsuario) {
+		pesquisaComboBox.setModel(new DefaultComboBoxModel<>(pesquisasUsuario));
 		pesquisaComboBox.setSelectedIndex(1);
 	}
 
 	public void pesquisar() {
-		int chave = pesquisaComboBox.getSelectedIndex();
-		String valor = pesquisaField.getText();
-
-		controller.buscarUsuarios(chave, valor);
+		PesquisaUsuario pesquisa = (PesquisaUsuario) pesquisaComboBox.getSelectedItem();
+		exibirUsuarios(pesquisa.buscar(pesquisaField.getText()));
 	}
 }

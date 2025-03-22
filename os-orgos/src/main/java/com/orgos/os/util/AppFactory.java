@@ -4,7 +4,6 @@ import com.orgos.os.controller.CadastroUsuarioController;
 import com.orgos.os.controller.DashboardController;
 import com.orgos.os.controller.GerenciarUsuariosController;
 import com.orgos.os.controller.LoginController;
-import com.orgos.os.controller.UsuarioController;
 import com.orgos.os.dao.UsuarioDAO;
 import com.orgos.os.service.BackupService;
 import com.orgos.os.service.UsuarioService;
@@ -21,8 +20,6 @@ public class AppFactory {
 	private static UsuarioService usuarioService = new UsuarioService(usuarioDAO);
 	private static BackupService backupService = new BackupService();
 
-	private static UsuarioController usuarioController = new UsuarioController(usuarioService);
-
 	private static LoginScreen loginScreen = new LoginScreen(null);
 	private static LoginController loginController = new LoginController(loginScreen, usuarioService);
 
@@ -31,11 +28,11 @@ public class AppFactory {
 
 	private static CadastroUsuarioScreen cadastroUsuarioScreen = new CadastroUsuarioScreen(dashboardScreen, null);
 	private static CadastroUsuarioController cadastroUsuarioController = new CadastroUsuarioController(
-			cadastroUsuarioScreen, usuarioController);
+			cadastroUsuarioScreen, usuarioService);
 
 	private static GerenciarUsuariosScreen gerenciarUsuariosScreen = new GerenciarUsuariosScreen(dashboardScreen, null);
 	private static GerenciarUsuariosController gerenciarUsuariosController = new GerenciarUsuariosController(
-			gerenciarUsuariosScreen, usuarioController);
+			gerenciarUsuariosScreen, usuarioService);
 
 	// Métodos para obter instâncias
 	public static LoginScreen getLoginScreen() {

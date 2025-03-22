@@ -1,19 +1,20 @@
 package com.orgos.os.controller;
 
+import com.orgos.os.service.UsuarioService;
 import com.orgos.os.view.CadastroUsuarioScreen;
 
 public class CadastroUsuarioController {
 	private CadastroUsuarioScreen view;
-	private UsuarioController usuarioController;
+	private UsuarioService usuarioService;
 
-	public CadastroUsuarioController(CadastroUsuarioScreen view, UsuarioController usuarioController) {
+	public CadastroUsuarioController(CadastroUsuarioScreen view, UsuarioService usuarioService) {
 		super();
 		this.view = view;
-		this.usuarioController = usuarioController;
+		this.usuarioService = usuarioService;
 	}
 
 	public void cadastrarUsuario(String username, String password) {
-		boolean sucesso = usuarioController.cadastrarUsuario(username, password);
+		boolean sucesso = usuarioService.cadastrarUsuario(username, password);
 		if (sucesso) {
             view.mostrarMensagem("Usuário cadastrado com sucesso!");
         } else {
