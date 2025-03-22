@@ -2,10 +2,12 @@ package com.orgos.os.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.net.URL;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
@@ -43,8 +45,10 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
-		setIconImage(
-				Toolkit.getDefaultToolkit().getImage(LoginScreen.class.getResource("/images/logo_jframe_48x48.png")));
+
+		URL resource = DashboardScreen.class.getResource("/images/logo_jframe_48x48.png");
+		Image image = Toolkit.getDefaultToolkit().getImage(resource);
+		setIconImage(image);
 
 		// content
 		contentPane = new JPanel();
@@ -62,7 +66,7 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 
 		if (SessaoUsuario.getInstancia().iniciada()) {
 			String username = SessaoUsuario.getInstancia().getUsuarioLogado().getUsername();
-			
+
 			JLabel usernameLabel = new JLabel(username.toUpperCase());
 			fooderPane.add(usernameLabel);
 		}
@@ -110,7 +114,7 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 		menuBar.add(cadastroMenu);
 
 		JMenuItem cadastroClienteMenuItem = new JMenuItem("Cliente");
-		cadastroClienteMenuItem.addActionListener(new ActionListener() {	
+		cadastroClienteMenuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new CadastroClienteScreen(DashboardScreen.this).setVisible(true);
@@ -223,7 +227,7 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 	public void exibirMensagemErro(String menssagem) {
 		JOptionPane.showMessageDialog(this, menssagem, "Erro", JOptionPane.ERROR_MESSAGE);
 	}
-	
+
 	@Override
 	public void setVisible(boolean b) {
 		this.iniciarComponentes();

@@ -3,6 +3,8 @@ package com.orgos.os.controller;
 import java.util.Collections;
 import java.util.List;
 
+import com.orgos.os.model.Funcionalidade;
+import com.orgos.os.model.Permissao;
 import com.orgos.os.model.Usuario;
 import com.orgos.os.view.GerenciarUsuariosScreenInterface;
 
@@ -44,6 +46,17 @@ public class GerenciarUsuariosController {
 		}
 
 		screen.exibieUsuarios(usuarios);
+	}
+
+	public void atualizarPermissao(Usuario usuario, Funcionalidade funcionalidade, boolean permitir) {
+		if (permitir) {
+			usuarioController.adicionarPermissao(usuario.getId(), funcionalidade);
+		} else {
+			usuarioController.removerPermissao(usuario.getId(), funcionalidade);		
+		}
+		
+		List<Permissao> permissoes = usuarioController.buscarPermissoes(usuario.getId());
+		usuario.setPermissoes(permissoes);
 	}
 
 }

@@ -13,8 +13,9 @@ public abstract class JDialogScreen extends JDialog {
 
 	public JDialogScreen(JFrame owner, boolean modal) {
 		super(owner, modal);
-		getRootPane().registerKeyboardAction( e -> dispose(),
-				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
+		
+		KeyStroke keyEscape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		getRootPane().registerKeyboardAction(e -> dispose(), keyEscape, JComponent.WHEN_IN_FOCUSED_WINDOW);
 	}
 
 }

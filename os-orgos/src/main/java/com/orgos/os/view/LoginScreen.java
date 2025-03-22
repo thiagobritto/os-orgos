@@ -1,6 +1,7 @@
 package com.orgos.os.view;
 
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,46 +39,44 @@ public class LoginScreen extends JFrame implements LoginScreenInterface {
 
 	private void initComponent() {
 		setTitle("Login");
-		setSize(800, 500);
+		setSize(400, 320);
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setIconImage(
-				Toolkit.getDefaultToolkit().getImage(LoginScreen.class.getResource("/images/logo_jframe_48x48.png")));
 
-		getRootPane().registerKeyboardAction(e -> dispose(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
-				JComponent.WHEN_IN_FOCUSED_WINDOW);
+		String sourceImg = LoginScreen.class.getResource("/images/").getPath();
+		Image image = Toolkit.getDefaultToolkit().getImage(sourceImg + "logo_jframe_48x48.png");
+		setIconImage(image);
+
+		KeyStroke keyEscape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+		getRootPane().registerKeyboardAction(e -> dispose(), keyEscape, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(null);
 		setContentPane(contentPane);
 
-		JLabel lblNewLabel = new JLabel("LOGIN");
-		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		JLabel lblNewLabel = new JLabel("Login");
+		lblNewLabel.setHorizontalAlignment(SwingConstants.LEFT);
 		lblNewLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
-		lblNewLabel.setBounds(453, 55, 320, 30);
+		lblNewLabel.setBounds(20, 20, 320, 30);
 		contentPane.add(lblNewLabel);
 
-		JPanel panel = new JPanel();
-		panel.setBounds(0, 0, 440, 472);
-		contentPane.add(panel);
-
 		JLabel lblNewLabel_1 = new JLabel("Usuário");
-		lblNewLabel_1.setBounds(453, 110, 52, 16);
+		lblNewLabel_1.setBounds(20, 70, 52, 16);
 		contentPane.add(lblNewLabel_1);
 
 		usernameField = new JTextField();
-		usernameField.setBounds(453, 130, 320, 36);
+		usernameField.setBounds(20, 90, 344, 36);
 		contentPane.add(usernameField);
 		usernameField.setColumns(10);
 
 		JLabel lblNewLabel_2 = new JLabel("Senha");
-		lblNewLabel_2.setBounds(453, 170, 52, 16);
+		lblNewLabel_2.setBounds(20, 146, 52, 16);
 		contentPane.add(lblNewLabel_2);
 
 		passwordField = new JPasswordField();
-		passwordField.setBounds(453, 190, 320, 36);
+		passwordField.setBounds(20, 166, 344, 36);
 		contentPane.add(passwordField);
 
 		JButton loginButton = new JButton("Login");
@@ -86,7 +85,7 @@ public class LoginScreen extends JFrame implements LoginScreenInterface {
 				login();
 			}
 		});
-		loginButton.setBounds(453, 250, 90, 36);
+		loginButton.setBounds(20, 222, 344, 36);
 		contentPane.add(loginButton);
 
 	}

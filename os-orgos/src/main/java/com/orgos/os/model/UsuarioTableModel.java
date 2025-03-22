@@ -15,7 +15,7 @@ public class UsuarioTableModel extends AbstractTableModel {
 		this.usuarios = usuarios;
 	}
 	
-	public Usuario getValue(int rowIndex) {
+	public Usuario getUsuario(int rowIndex) {
 		return usuarios.get(rowIndex);
 	}
 
