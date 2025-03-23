@@ -1,28 +1,23 @@
 package com.orgos.os.controller;
 
-import com.orgos.os.dao.UsuarioDAO;
-import com.orgos.os.model.Usuario;
 import com.orgos.os.service.UsuarioService;
 import com.orgos.os.view.SenhaScreen;
 
 public class SenhaController {
-	private SenhaScreen view;
-	private Usuario usuario;
-	private UsuarioService usuarioServico;
+	private SenhaScreen screen;
+	private UsuarioService usuarioService;
 
-	public SenhaController(SenhaScreen view, Usuario usuario) {
+	public SenhaController(SenhaScreen screen, UsuarioService usuarioService) {
 		super();
-		this.view = view;
-		this.usuario = usuario;
-		this.usuarioServico = new UsuarioService(new UsuarioDAO());
+		this.screen = screen;
+		this.usuarioService = usuarioService;
 	}
 
-	public void alterarSenha(String password) {
-		int usuarioId = usuario.getId();
-		boolean resposta = usuarioServico.trocarSenha(usuarioId, password);
-		if (resposta) {
-			view.exibirMensagem("Senha alterada com sucesso!");
-			view.dispose();
+	public void alterarSenha(int usuarioId, String password) {
+		boolean sucesso = usuarioService.trocarSenha(usuarioId, password);
+		if (sucesso) {
+			screen.exibirMensagem("Senha alterada com sucesso!");
+			screen.dispose();
 		}
 	}
 	

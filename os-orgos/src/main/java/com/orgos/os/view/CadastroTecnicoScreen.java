@@ -20,7 +20,7 @@ import javax.swing.border.EmptyBorder;
 
 import com.orgos.os.util.FieldUtil;
 
-public class CadastroClienteScreen extends JDialogScreen {
+public class CadastroTecnicoScreen extends JDialogScreen {
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
@@ -30,13 +30,13 @@ public class CadastroClienteScreen extends JDialogScreen {
 	/**
 	 * Create the dialog.
 	 */
-	public CadastroClienteScreen(JFrame owner) {
+	public CadastroTecnicoScreen(JFrame owner) {
 		super(owner, true);
 		this.initComponent();
 	}
 
 	public void initComponent() {
-		setTitle("Cadastro de Clientes");
+		setTitle("Cadastro de Técnicos");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setSize(800, 540);
 		setLocationRelativeTo(null);
@@ -44,46 +44,46 @@ public class CadastroClienteScreen extends JDialogScreen {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPanel.setLayout(null);
 		setContentPane(contentPanel);
-
+		
 		JLabel nomeLabel = new JLabel("Nome *");
 		nomeLabel.setBounds(20, 70, 73, 16);
 		contentPanel.add(nomeLabel);
-
+		
 		JLabel emailLabel = new JLabel("Email");
 		emailLabel.setBounds(20, 143, 73, 16);
 		contentPanel.add(emailLabel);
-
-		JLabel enderecoLabel = new JLabel("Endereço *");
-		enderecoLabel.setBounds(20, 210, 73, 16);
-		contentPanel.add(enderecoLabel);
-
+		
+		JLabel especializacaoLabel = new JLabel("Especialização");
+		especializacaoLabel.setBounds(20, 210, 73, 16);
+		contentPanel.add(especializacaoLabel);
+		
 		JButton salvarButton = new JButton("Salvar");
 		salvarButton.setMnemonic(KeyEvent.VK_S);
 		salvarButton.setBounds(20, 332, 100, 36);
 		contentPanel.add(salvarButton);
-
-		JLabel tituloLabel = new JLabel("Cadastro de Clientes");
+		
+		JLabel tituloLabel = new JLabel("Cadastro de Técnicos");
 		tituloLabel.setFont(new Font("Dialog", Font.BOLD, 18));
 		tituloLabel.setBounds(20, 0, 350, 60);
 		contentPanel.add(tituloLabel);
-
+		
 		JLabel lembreteLabel = new JLabel("Campos obrigatórios (*)");
 		lembreteLabel.setFont(new Font("Dialog", Font.ITALIC, 12));
 		lembreteLabel.setBounds(10, 474, 513, 16);
 		contentPanel.add(lembreteLabel);
-
+		
 		JFormattedTextField cpfField = new JFormattedTextField();
 		cpfField.setBounds(430, 90, 233, 36);
 		cpfField.setColumns(18);
 		contentPanel.add(cpfField);
 		FieldUtil.applyMask(cpfField, "###.###.###-##");
-
+		
 		JFormattedTextField cnpjField = new JFormattedTextField();
 		cnpjField.setBounds(430, 90, 233, 36);
 		cnpjField.setColumns(18);
 		cnpjField.setVisible(false);
 		contentPanel.add(cnpjField);
-		FieldUtil.applyMask(cnpjField, "##.###.###/####-##");
+		FieldUtil.applyMask(cnpjField, "##.###.###/####-##");		
 
 		JRadioButton cpfRadioButton = new JRadioButton("CPF", true);
 		cpfRadioButton.setBounds(430, 67, 45, 23);
@@ -96,39 +96,39 @@ public class CadastroClienteScreen extends JDialogScreen {
 		ButtonGroup buttonGroup = new ButtonGroup();
 		buttonGroup.add(cpfRadioButton);
 		buttonGroup.add(cnpjRadioButton);
-
+		
 		// Adiciona ação para alternar entre CPF e CNPJ
-		ActionListener actionListenerCpfCnpj = e -> {
-			if (cpfRadioButton.isSelected()) {
-				String text = cnpjField.getText().replaceAll("\\D", ""); // Remove não numéricos
-				cnpjField.setText("");
-				cpfField.setText(text);
-				cnpjField.setVisible(false);
-				cpfField.setVisible(true);
-				cpfField.requestFocus();
-			} else {
-				String text = cpfField.getText().replaceAll("\\D", ""); // Remove não numéricos
-				cpfField.setText("");
-				cnpjField.setText(text);
-				cnpjField.setVisible(true);
-				cpfField.setVisible(false);
-				cnpjField.requestFocus();
-			}
-		};
+        ActionListener actionListener = e -> {
+             if (cpfRadioButton.isSelected()) {
+            	 String text = cnpjField.getText().replaceAll("\\D", ""); // Remove não numéricos
+            	 cnpjField.setText("");
+                 cpfField.setText(text);
+                 cnpjField.setVisible(false);
+                 cpfField.setVisible(true);
+                 cpfField.requestFocus();
+             } else {
+            	 String text = cpfField.getText().replaceAll("\\D", ""); // Remove não numéricos
+            	 cpfField.setText("");
+            	 cnpjField.setText(text);
+            	 cnpjField.setVisible(true);
+            	 cpfField.setVisible(false);
+            	 cnpjField.requestFocus();
+             }
+         };
 
-		cpfRadioButton.addActionListener(actionListenerCpfCnpj);
-		cnpjRadioButton.addActionListener(actionListenerCpfCnpj);
-
+        cpfRadioButton.addActionListener(actionListener);
+        cnpjRadioButton.addActionListener(actionListener);
+		
 		nomeField = new JTextField();
 		nomeField.setBounds(20, 90, 390, 36);
 		contentPanel.add(nomeField);
 		nomeField.setColumns(10);
-
+		
 		emailField = new JTextField();
 		emailField.setColumns(10);
 		emailField.setBounds(20, 163, 300, 36);
 		contentPanel.add(emailField);
-
+		
 		JLabel telefoneLabel = new JLabel("Telefone *");
 		telefoneLabel.setBounds(340, 143, 64, 16);
 		contentPanel.add(telefoneLabel);
@@ -178,21 +178,20 @@ public class CadastroClienteScreen extends JDialogScreen {
 
 		telefoneRadioButton.addActionListener(actionListenerFone);
 		celularRadioButton.addActionListener(actionListenerFone);
-
+		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(20, 230, 390, 73);
 		contentPanel.add(scrollPane);
-
-		JTextArea enderecoField = new JTextArea();
-		enderecoField.setLineWrap(true);
-		enderecoField.setRows(4);
-		scrollPane.setViewportView(enderecoField);
-
+		
+		JTextArea especializacaoField = new JTextArea();
+		especializacaoField.setLineWrap(true);
+		especializacaoField.setRows(4);
+		scrollPane.setViewportView(especializacaoField);
 	}
-
+	
 	@Override
 	public void setVisible(boolean b) {
 		SwingUtilities.invokeLater(() -> nomeField.requestFocus());
-		super.setVisible(b);
+		super.setVisible(b);		
 	}
 }

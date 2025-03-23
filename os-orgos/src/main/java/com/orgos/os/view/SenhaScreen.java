@@ -22,13 +22,14 @@ public class SenhaScreen extends JDialogScreen {
 	private JPasswordField passwordField;
 	private JPasswordField confirmPasswordField;
 	private SenhaController controller;
+	private Usuario usuario;
 
 	/**
 	 * Create the dialog.
 	 */
 	public SenhaScreen(JFrame owner, Usuario usuario) {
 		super(owner, true);
-		this.controller = new SenhaController(this, usuario);
+		this.usuario = usuario;
 		this.initComponent();
 	}
 
@@ -77,7 +78,8 @@ public class SenhaScreen extends JDialogScreen {
 					return;
 				}
 				
-				controller.alterarSenha(password);
+				int usuarioId = usuario.getId();
+				controller.alterarSenha(usuarioId, password);
 			}
 		});
 		alterarButton.setBounds(22, 145, 242, 30);
@@ -86,5 +88,13 @@ public class SenhaScreen extends JDialogScreen {
 
 	public void exibirMensagem(String mensagem) {
 		JOptionPane.showMessageDialog(this, mensagem);
+	}
+
+	public void setController(SenhaController controller) {
+		this.controller = controller;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 }

@@ -4,8 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -31,8 +34,14 @@ public class OrdemServicoDAO {
 		String sql = "INSERT INTO ordem_servico (numero_os, data_abertura, cliente_id, tecnico_id, descricao_problema, status) VALUES (?,?,?,?,?,?)";
 		try (Connection conn = DatabaseConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			
+			String numeroOS = gerarNumeroOS();
+            ordemServico.setNumeroOS(numeroOS);
+            Timestamp dataAbertura = new Timestamp(System.currentTimeMillis());
+            ordemServico.setDataAbertura(dataAbertura);
+			
 			pstmt.setString(1, ordemServico.getNumeroOS());
-			pstmt.setString(2, ordemServico.getDataAbertura().toString());
+			pstmt.setTimestamp(2, ordemServico.getDataAbertura());
 			pstmt.setInt(3, ordemServico.getCliente().getId());
 			pstmt.setInt(4, ordemServico.getTecnico().getId());
 			pstmt.setString(5, ordemServico.getDescricaoProblema());
@@ -57,14 +66,14 @@ public class OrdemServicoDAO {
 			while (rs.next()) {
 				int id = rs.getInt("id_ordem_servico");
 				String numeroOS = rs.getString("numero_os");
-				LocalDate date = LocalDate.parse(rs.getString("data_abertura"));
+				Timestamp dataAbertura = rs.getTimestamp("data_abertura");
 				Cliente cliente = clienteDAO.buscarPorId(rs.getInt("cliente_id"));
 				Tecnico tecnico = tecnicoDAO.buscarPorId(rs.getInt("tecnico_id"));
 				String descricao = rs.getString("descricao_problema");
 				StatusOS status = StatusOS.valueOf(rs.getString("status"));
 				List<ItemServico> itens = buscarItensServico(id);
 
-				ordemsServico.add(new OrdemServico(id, numeroOS, date, cliente, tecnico, descricao, status, itens));
+				ordemsServico.add(new OrdemServico(id, numeroOS, dataAbertura, cliente, tecnico, descricao, status, itens));
 			}
 
 		} catch (SQLException e) {
@@ -101,4 +110,27 @@ public class OrdemServicoDAO {
 		// Implementação para buscar uma OS por ID
 		return null;
 	}
+	
+	private String gerarNumeroOS() throws SQLException {
+		int number = obterProximoContador();
+		String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		String id = new DecimalFormat("000000").format(number);
+		return "OS-" + date + "-" + id;
+	}
+	
+	private int obterProximoContador() throws SQLException {
+       String sql = "SELECT COUNT(id_ordem_servico) + 1 AS numero_os FROM ordem_servico";
+		
+       try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				ResultSet rs = pstmt.executeQuery()) {
+			if (rs.next()) {
+				return rs.getInt("numero_os");
+			}
+		} catch (SQLException e) {
+			logger.error("Erro ao obter proximo contados: " + e.getMessage(), e);
+			throw e;
+		}
+	return 0;
+    }
 }

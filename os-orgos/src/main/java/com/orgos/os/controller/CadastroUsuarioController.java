@@ -4,21 +4,21 @@ import com.orgos.os.service.UsuarioService;
 import com.orgos.os.view.CadastroUsuarioScreen;
 
 public class CadastroUsuarioController {
-	private CadastroUsuarioScreen view;
+	private CadastroUsuarioScreen screen;
 	private UsuarioService usuarioService;
 
-	public CadastroUsuarioController(CadastroUsuarioScreen view, UsuarioService usuarioService) {
+	public CadastroUsuarioController(CadastroUsuarioScreen screen, UsuarioService usuarioService) {
 		super();
-		this.view = view;
+		this.screen = screen;
 		this.usuarioService = usuarioService;
 	}
 
 	public void cadastrarUsuario(String username, String password) {
 		boolean sucesso = usuarioService.cadastrarUsuario(username, password);
 		if (sucesso) {
-            view.mostrarMensagem("Usuário cadastrado com sucesso!");
+            screen.mostrarMensagem("Usuário cadastrado com sucesso!");
         } else {
-            view.mostrarMensagem("Erro ao cadastrar usuário. Verifique se o username já existe.");
+            screen.mostrarMensagem("Erro ao cadastrar usuário. Verifique se o username já existe.");
         }
 	}
 	

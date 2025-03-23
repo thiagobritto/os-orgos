@@ -1,20 +1,20 @@
 package com.orgos.os.model;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
 public class OrdemServico {
 	private int id;
 	private String numeroOS;
-	private LocalDate dataAbertura;
+	private Timestamp dataAbertura;
 	private Cliente cliente;
 	private Tecnico tecnico;
 	private String descricaoProblema;
 	private StatusOS status;
 	private List<ItemServico> itens;
 
-	public OrdemServico(int id, String numeroOS, LocalDate dataAbertura, Cliente cliente, Tecnico tecnico,
+	public OrdemServico(int id, String numeroOS, Timestamp dataAbertura, Cliente cliente, Tecnico tecnico,
 			String descricaoProblema, StatusOS status, List<ItemServico> itens) {
 		super();
 		this.id = id;
@@ -43,11 +43,11 @@ public class OrdemServico {
 		this.numeroOS = numeroOS;
 	}
 
-	public LocalDate getDataAbertura() {
+	public Timestamp getDataAbertura() {
 		return dataAbertura;
 	}
 
-	public void setDataAbertura(LocalDate dataAbertura) {
+	public void setDataAbertura(Timestamp dataAbertura) {
 		this.dataAbertura = dataAbertura;
 	}
 

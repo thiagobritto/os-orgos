@@ -38,12 +38,10 @@ public class UsuarioTableModel extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Usuario usuario = usuarios.get(rowIndex);
-		if (columnIndex == 0) {
+		if (columnIndex == 0)
 			return usuario.getId();
-		}
-		if (columnIndex == 1) {
+		if (columnIndex == 1)
 			return usuario.getUsername();
-		}
 		return null;
 	}
 	

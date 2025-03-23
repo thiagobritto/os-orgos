@@ -4,13 +4,16 @@ import com.orgos.os.controller.CadastroUsuarioController;
 import com.orgos.os.controller.DashboardController;
 import com.orgos.os.controller.GerenciarUsuariosController;
 import com.orgos.os.controller.LoginController;
+import com.orgos.os.controller.SenhaController;
 import com.orgos.os.dao.UsuarioDAO;
+import com.orgos.os.model.Usuario;
 import com.orgos.os.service.BackupService;
 import com.orgos.os.service.UsuarioService;
 import com.orgos.os.view.CadastroUsuarioScreen;
 import com.orgos.os.view.DashboardScreen;
 import com.orgos.os.view.GerenciarUsuariosScreen;
 import com.orgos.os.view.LoginScreen;
+import com.orgos.os.view.SenhaScreen;
 
 public class AppFactory {
 
@@ -34,6 +37,10 @@ public class AppFactory {
 	private static GerenciarUsuariosController gerenciarUsuariosController = new GerenciarUsuariosController(
 			gerenciarUsuariosScreen, usuarioService);
 
+	private static SenhaScreen senhaScreen = new SenhaScreen(dashboardScreen, null);
+	private static SenhaController senhaController = new SenhaController(senhaScreen, usuarioService);
+	
+	
 	// Métodos para obter instâncias
 	public static LoginScreen getLoginScreen() {
 		loginScreen.setController(loginController);
@@ -53,6 +60,12 @@ public class AppFactory {
 	public static GerenciarUsuariosScreen getGerenciarUsuariosScreen() {
 		gerenciarUsuariosScreen.setController(gerenciarUsuariosController);
 		return gerenciarUsuariosScreen;
+	}
+	
+	public static SenhaScreen getSenhaScreen(Usuario usuario) {
+		senhaScreen.setController(senhaController);
+		senhaScreen.setUsuario(usuario);		
+		return null;
 	}
 
 }
