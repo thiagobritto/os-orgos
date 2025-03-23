@@ -107,8 +107,12 @@ public class LoginScreen extends JFrame implements LoginScreenInterface {
 	}
 
 	@Override
-	public void exibirMensagemErro(String message) {
-		JOptionPane.showMessageDialog(this, message, "Erro", JOptionPane.ERROR_MESSAGE);
+	public void exibirMensagemErro(String mensagem) {
+		JOptionPane.showMessageDialog(
+				this, 
+				mensagem, 
+				"Erro", 
+				JOptionPane.ERROR_MESSAGE);
 	}
 
 }

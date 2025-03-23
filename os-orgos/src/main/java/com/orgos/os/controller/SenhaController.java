@@ -1,5 +1,6 @@
 package com.orgos.os.controller;
 
+import com.orgos.os.model.OperacaoResultado;
 import com.orgos.os.service.UsuarioService;
 import com.orgos.os.view.SenhaScreen;
 
@@ -14,9 +15,9 @@ public class SenhaController {
 	}
 
 	public void alterarSenha(int usuarioId, String password) {
-		boolean sucesso = usuarioService.trocarSenha(usuarioId, password);
-		if (sucesso) {
-			screen.exibirMensagem("Senha alterada com sucesso!");
+		OperacaoResultado resultado = usuarioService.trocarSenha(usuarioId, password);
+		if (resultado.isSucesso()) {
+			screen.exibirMensagem(resultado.getMensagem());
 			screen.dispose();
 		}
 	}

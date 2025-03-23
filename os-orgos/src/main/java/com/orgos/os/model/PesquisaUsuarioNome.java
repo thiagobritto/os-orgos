@@ -18,7 +18,7 @@ private UsuarioService usuarioService;
 		if (valor.isEmpty()) {
 			return usuarioService.listarTodos();
 		} else {
-			return usuarioService.buscarUsuariosPorNome(valor);			
+			return usuarioService.buscarTodosPorNome(valor);			
 		}
 	}
 	

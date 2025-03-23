@@ -1,5 +1,6 @@
 package com.orgos.os.controller;
 
+import com.orgos.os.model.OperacaoResultado;
 import com.orgos.os.service.UsuarioService;
 import com.orgos.os.view.CadastroUsuarioScreen;
 
@@ -14,11 +15,11 @@ public class CadastroUsuarioController {
 	}
 
 	public void cadastrarUsuario(String username, String password) {
-		boolean sucesso = usuarioService.cadastrarUsuario(username, password);
-		if (sucesso) {
-            screen.mostrarMensagem("Usuário cadastrado com sucesso!");
+		OperacaoResultado resultado = usuarioService.cadastrarUsuario(username, password);
+		if (resultado.isSucesso()) {
+            screen.mostrarMensagem(resultado.getMensagem());
         } else {
-            screen.mostrarMensagem("Erro ao cadastrar usuário. Verifique se o username já existe.");
+            screen.mostrarMensagem(resultado.getMensagem());
         }
 	}
 	

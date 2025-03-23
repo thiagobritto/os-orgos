@@ -1,5 +1,6 @@
 package com.orgos.os.view;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JComponent;
@@ -15,7 +16,11 @@ public abstract class JDialogScreen extends JDialog {
 		super(owner, modal);
 		
 		KeyStroke keyEscape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		getRootPane().registerKeyboardAction(e -> dispose(), keyEscape, JComponent.WHEN_IN_FOCUSED_WINDOW);
+		getRootPane().registerKeyboardAction(this::close, keyEscape, JComponent.WHEN_IN_FOCUSED_WINDOW);
+	}
+	
+	private void close(ActionEvent event) {
+		dispose();
 	}
 
 }

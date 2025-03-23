@@ -17,8 +17,8 @@ public class PesquisaUsuarioId implements PesquisaUsuario {
 	@Override
 	public List<Usuario> buscar(String valor) {
 		try {
-			int id = Integer.parseInt(valor);			
-			Usuario usuario = usuarioService.buscarUsuarioPorId(id);
+			int usuarioId = Integer.parseInt(valor);			
+			Usuario usuario = usuarioService.buscarPorId(usuarioId);
 			return List.of(usuario);
 		} catch (NumberFormatException e) {
 			return Collections.emptyList();

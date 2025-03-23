@@ -219,14 +219,23 @@ public class GerenciarUsuariosScreen extends JDialogScreen implements GerenciarU
 	}
 
 	@Override
-	public void exibirMensagem(String menssagem) {
-		JOptionPane.showMessageDialog(this, menssagem);
+	public void exibirMensagem(String mensagem) {
+		JOptionPane.showMessageDialog(this, mensagem);
+	}
+	
+	@Override
+	public void exibirMensagemErro(String mensagem) {
+		JOptionPane.showMessageDialog(
+				this, 
+				mensagem, 
+				"Erro", 
+				JOptionPane.ERROR_MESSAGE);
 	}
 
 	@Override
 	public void exibirUsuarios(List<Usuario> usuarios) {
 		usuarioTableModel = new UsuarioTableModel(usuarios);
-		listagemUsuariosTable.setModel(new UsuarioTableModel(usuarios));
+		listagemUsuariosTable.setModel(usuarioTableModel);
 		listagemUsuariosTable.getColumnModel().getColumn(0).setMaxWidth(120);
 	}
 
@@ -244,4 +253,6 @@ public class GerenciarUsuariosScreen extends JDialogScreen implements GerenciarU
 		PesquisaUsuario pesquisa = (PesquisaUsuario) pesquisaComboBox.getSelectedItem();
 		exibirUsuarios(pesquisa.buscar(pesquisaField.getText()));
 	}
+
+	
 }

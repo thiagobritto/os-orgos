@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.URL;
 
@@ -20,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.orgos.os.controller.DashboardController;
+import com.orgos.os.model.Cliente;
 import com.orgos.os.model.Funcionalidade;
 import com.orgos.os.model.SessaoUsuario;
 import com.orgos.os.util.AppFactory;
@@ -37,6 +36,7 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 	 */
 	public DashboardScreen(DashboardController controller) {
 		this.controller = controller;
+		iniciarComponentes();
 	}
 
 	private void iniciarComponentes() {
@@ -81,21 +81,13 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 
 		if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.EXPORTAR_BACKUP)) {
 			JMenuItem arquivoExportarBackupMenuItem = new JMenuItem("Exportar Backup");
-			arquivoExportarBackupMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					exportarBackup();
-				}
-			});
+			arquivoExportarBackupMenuItem.addActionListener(e -> exportarBackup());
 			arquivoMenu.add(arquivoExportarBackupMenuItem);
 		}
 
 		if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.IMPORTAR_BACKUP)) {
 			JMenuItem arquivoImportarBackupMenuItem = new JMenuItem("Importar Backup");
-			arquivoImportarBackupMenuItem.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					importarBackup();
-				}
-			});
+			arquivoImportarBackupMenuItem.addActionListener(e -> importarBackup());
 			arquivoMenu.add(arquivoImportarBackupMenuItem);
 		}
 
@@ -103,24 +95,22 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 		arquivoMenu.add(arquivoSobreMenuItem);
 
 		JMenuItem arquivoSairMenuItem = new JMenuItem("Sair");
-		arquivoSairMenuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				close();
-			}
-		});
+		arquivoSairMenuItem.addActionListener(e -> close());
 		arquivoMenu.add(arquivoSairMenuItem);
 
 		JMenu cadastroMenu = new JMenu("Cadastro");
 		menuBar.add(cadastroMenu);
 
-		JMenuItem cadastroClienteMenuItem = new JMenuItem("Cliente");
-		cadastroClienteMenuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new CadastroClienteScreen(DashboardScreen.this).setVisible(true);
-			}
-		});
-		cadastroMenu.add(cadastroClienteMenuItem);
+		JMenu cadastroClienteMenu = new JMenu("Cliente");
+		cadastroMenu.add(cadastroClienteMenu);
+		
+		JMenuItem cadastroClienteNovoMenuItem = new JMenuItem("Novo");
+		cadastroClienteNovoMenuItem.addActionListener(e -> abrirTelaCadastroCliente());
+		cadastroClienteMenu.add(cadastroClienteNovoMenuItem);
+		
+		JMenuItem cadastroClienteEditarMenuItem = new JMenuItem("Editar");
+		cadastroClienteEditarMenuItem.addActionListener(e -> abrirTelaEditarCliente());
+		cadastroClienteMenu.add(cadastroClienteEditarMenuItem);
 
 		JMenuItem cadastroServicoMenuItem = new JMenuItem("Serviço");
 		cadastroMenu.add(cadastroServicoMenuItem);
@@ -132,21 +122,13 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 
 			if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.CADASTRAR_USUARIO)) {
 				JMenuItem cadastroUsuarioNovoMenuItem = new JMenuItem("Novo");
-				cadastroUsuarioNovoMenuItem.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						abrirTelaCadastroUsuario();
-					}
-				});
+				cadastroUsuarioNovoMenuItem.addActionListener(e -> abrirTelaCadastroUsuario());
 				cadastroUsuarioMenu.add(cadastroUsuarioNovoMenuItem);
 			}
 
 			if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.GERENCIAR_USUARIO)) {
 				JMenuItem cadastroUsuarioGerenciarMenuItem = new JMenuItem("Gerenciar");
-				cadastroUsuarioGerenciarMenuItem.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						abrirTelaGerenciarUsuario();
-					}
-				});
+				cadastroUsuarioGerenciarMenuItem.addActionListener(e -> abrirTelaGerenciarUsuario());
 				cadastroUsuarioMenu.add(cadastroUsuarioGerenciarMenuItem);
 			}
 		}
@@ -168,22 +150,31 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 		setJMenuBar(menuBar);
 
 	}
-
-	public void atualizarComponentes() {
-		this.iniciarComponentes();
+	
+	private void abrirTelaEditarCliente() {
+		BuscaClienteScreen buscaClienteScreen = AppFactory.getBuscaClienteScreen();
+		buscaClienteScreen.setVisible(true);
+		
+		Cliente clienteSelecionado = buscaClienteScreen.getClienteSelecionado();
+		if (clienteSelecionado == null) 
+			return;
+		
+		AppFactory.getEditarClienteScreen(clienteSelecionado).setVisible(true);
 	}
 
-	public void setController(DashboardController controller) {
-		this.controller = controller;
+	private void abrirTelaCadastroCliente() {
+		AppFactory.getCadastroClienteScreen().setVisible(true);
+	}
+	
+	private void abrirTelaCadastroUsuario() {
+		AppFactory.getCadastroUsuarioScreen().setVisible(true);
 	}
 
-	@Override
-	public void close() {
-		System.exit(0);
+	private void abrirTelaGerenciarUsuario() {
+		AppFactory.getGerenciarUsuariosScreen().setVisible(true);
 	}
-
-	@Override
-	public void exportarBackup() {
+	
+	private void exportarBackup() {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setDialogTitle("Escolha o diretório para salvar o backup");
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -195,8 +186,7 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 		}
 	}
 
-	@Override
-	public void importarBackup() {
+	private void importarBackup() {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setDialogTitle("Selecione o arquivo de backup");
 		fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Arquivos SQLite (*.db)", "db"));
@@ -209,13 +199,8 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 	}
 
 	@Override
-	public void abrirTelaCadastroUsuario() {
-		AppFactory.getCadastroUsuarioScreen().setVisible(true);
-	}
-
-	@Override
-	public void abrirTelaGerenciarUsuario() {
-		AppFactory.getGerenciarUsuariosScreen().setVisible(true);
+	public void close() {
+		System.exit(0);
 	}
 
 	@Override
@@ -233,5 +218,15 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 		this.iniciarComponentes();
 		super.setVisible(b);
 	}
+	
+	public void atualizarComponentes() {
+		this.iniciarComponentes();
+	}
+
+	public void setController(DashboardController controller) {
+		this.controller = controller;
+	}
+
+	
 
 }

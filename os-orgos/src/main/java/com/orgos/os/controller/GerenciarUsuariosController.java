@@ -3,6 +3,7 @@ package com.orgos.os.controller;
 import java.util.List;
 
 import com.orgos.os.model.Funcionalidade;
+import com.orgos.os.model.OperacaoResultado;
 import com.orgos.os.model.Permissao;
 import com.orgos.os.model.PesquisaUsuario;
 import com.orgos.os.model.PesquisaUsuarioId;
@@ -24,7 +25,7 @@ public class GerenciarUsuariosController {
 	public void carregarTela() {
 		PesquisaUsuarioId pesquisaUsuarioId = new PesquisaUsuarioId(usuarioService);
 		PesquisaUsuarioNome pesquisaUsuarioNome = new PesquisaUsuarioNome(usuarioService);
-		
+
 		PesquisaUsuario[] pesquisasUsuario = { pesquisaUsuarioId, pesquisaUsuarioNome };
 		screen.setPesquisa(pesquisasUsuario);
 
@@ -34,11 +35,16 @@ public class GerenciarUsuariosController {
 
 	public void atualizarPermissao(Usuario usuario, Funcionalidade funcionalidade, boolean permitir) {
 		int id = usuario.getId();
-		
 		if (permitir) {
-			usuarioService.adicionarPermissao(id, funcionalidade);
+			OperacaoResultado resultado = usuarioService.adicionarPermissao(id, funcionalidade);
+			if (!resultado.isSucesso()) {
+				screen.exibirMensagemErro(resultado.getMensagem());
+			}
 		} else {
-			usuarioService.removerPermissao(id, funcionalidade);
+			OperacaoResultado resultado = usuarioService.removerPermissao(id, funcionalidade);
+			if (!resultado.isSucesso()) {
+				screen.exibirMensagemErro(resultado.getMensagem());
+			}
 		}
 
 		List<Permissao> permissoes = usuarioService.buscarPermissoes(id);
