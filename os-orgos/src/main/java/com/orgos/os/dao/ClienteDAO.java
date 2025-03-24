@@ -13,9 +13,70 @@ import org.apache.logging.log4j.Logger;
 import com.orgos.os.model.Cliente;
 import com.orgos.os.model.OperacaoResultado;
 
-public class ClienteDAO {
+public class ClienteDAO implements DAO<Cliente, Integer> {
 	private static final Logger logger = LogManager.getLogger(ClienteDAO.class);
 
+	@Override
+	public OperacaoResultado salvar(Cliente cliente) {
+		String sql = "INSERT INTO cliente (nome, cpf_cnpj, telefone, email, endereco) VALUES (?,?,?,?,?)";
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, cliente.getNome());
+			pstmt.setString(2, cliente.getCpfCnpj());
+			pstmt.setString(3, cliente.getTelefone());
+			pstmt.setString(4, cliente.getEmail());
+			pstmt.setString(5, cliente.getEndereco());
+
+			return pstmt.executeUpdate() > 0
+					? new OperacaoResultado(true, "Cliente inserido com sucesso.")
+					: new OperacaoResultado(false, "Nenhum cliente foi inserido.");
+			
+		} catch (SQLException e) {
+			logger.error("Erro ao inserir cliente: " + e.getMessage(), e);
+			return new OperacaoResultado(false, "Erro ao inserir cliente: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public OperacaoResultado atualizar(Cliente cliente) {
+		String sql = "UPDATE cliente SET nome=?, cpf_cnpj=?, telefone=?, email=?, endereco=? WHERE id_cliente = ?";
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, cliente.getNome());
+			pstmt.setString(2, cliente.getCpfCnpj());
+			pstmt.setString(3, cliente.getTelefone());
+			pstmt.setString(4, cliente.getEmail());
+			pstmt.setString(5, cliente.getEndereco());
+			pstmt.setInt(6, cliente.getId());
+
+			return pstmt.executeUpdate() > 0 
+					? new OperacaoResultado(true, "Cliente atualizado com sucesso.")
+					: new OperacaoResultado(false, "Nenhum cliente foi atualizado.");
+
+		} catch (SQLException e) {
+			logger.error("Erro ao atualizar cliente: " + e.getMessage(), e);
+			return new OperacaoResultado(false, "Erro ao atualizar cliente: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public OperacaoResultado remover(Integer id) {
+		String sql = "DELETE FROM cliente WHERE id_cliente = ?";
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setInt(1, id);
+
+			return pstmt.executeUpdate() > 0
+				? new OperacaoResultado(true, "Cliente removido com sucesso.")
+				: new OperacaoResultado(false, "Nenhum cliente foi removido.");
+	
+		} catch (SQLException e) {
+			logger.error("Erro ao excluir cliente: " + e.getMessage(), e);
+			return new OperacaoResultado(false, "Erro ao remover cliente: " + e.getMessage());
+		}
+	}
+	
+	@Override
 	public List<Cliente> listarTodos() {
 		String sql = "SELECT id_cliente, nome, cpf_cnpj, telefone, email, endereco  FROM cliente";
 		List<Cliente> clientes = new ArrayList<Cliente>();
@@ -41,7 +102,8 @@ public class ClienteDAO {
 		return clientes;
 	}
 
-	public Cliente buscarPorId(int id) {
+	@Override
+	public Cliente buscarPorId(Integer id) {
 		String sql = "SELECT nome, cpf_cnpj, telefone, email, endereco  FROM cliente WHERE id_cliente = ?";
 		try (Connection conn = DatabaseConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -91,60 +153,4 @@ public class ClienteDAO {
 		return clientes;
 	}
 
-	public OperacaoResultado salvar(Cliente cliente) {
-		String sql = "INSERT INTO cliente (nome, cpf_cnpj, telefone, email, endereco) VALUES (?,?,?,?,?)";
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setString(1, cliente.getNome());
-			pstmt.setString(2, cliente.getCpfCnpj());
-			pstmt.setString(3, cliente.getTelefone());
-			pstmt.setString(4, cliente.getEmail());
-			pstmt.setString(5, cliente.getEndereco());
-
-			return pstmt.executeUpdate() > 0
-					? new OperacaoResultado(true, "Cliente inserido com sucesso.")
-					: new OperacaoResultado(false, "Nenhum cliente foi inserido.");
-			
-		} catch (SQLException e) {
-			logger.error("Erro ao inserir cliente: " + e.getMessage(), e);
-			return new OperacaoResultado(false, "Erro ao inserir cliente: " + e.getMessage());
-		}
-	}
-
-	public OperacaoResultado atualizar(Cliente cliente) {
-		String sql = "UPDATE cliente SET nome=?, cpf_cnpj=?, telefone=?, email=?, endereco=? WHERE id_cliente = ?";
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setString(1, cliente.getNome());
-			pstmt.setString(2, cliente.getCpfCnpj());
-			pstmt.setString(3, cliente.getTelefone());
-			pstmt.setString(4, cliente.getEmail());
-			pstmt.setString(5, cliente.getEndereco());
-			pstmt.setInt(6, cliente.getId());
-
-			return pstmt.executeUpdate() > 0 
-					? new OperacaoResultado(true, "Cliente atualizado com sucesso.")
-					: new OperacaoResultado(false, "Nenhum cliente foi atualizado.");
-
-		} catch (SQLException e) {
-			logger.error("Erro ao atualizar cliente: " + e.getMessage(), e);
-			return new OperacaoResultado(false, "Erro ao atualizar cliente: " + e.getMessage());
-		}
-	}
-
-	public OperacaoResultado delete(Cliente cliente) {
-		String sql = "DELETE FROM cliente WHERE id_cliente = ?";
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setInt(1, cliente.getId());
-
-			return pstmt.executeUpdate() > 0
-				? new OperacaoResultado(true, "Cliente removido com sucesso.")
-				: new OperacaoResultado(false, "Nenhum cliente foi removido.");
-	
-		} catch (SQLException e) {
-			logger.error("Erro ao excluir cliente: " + e.getMessage(), e);
-			return new OperacaoResultado(false, "Erro ao remover cliente: " + e.getMessage());
-		}
-	}
 }

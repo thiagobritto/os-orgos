@@ -24,7 +24,7 @@ public class UsuarioService {
 	}
 
 	public Usuario buscarPorId(int usuarioId) {
-		return usuarioDAO.buscarUsuarioPorId(usuarioId);
+		return usuarioDAO.buscarPorId(usuarioId);
 	}
 
 	public List<Usuario> buscarTodosPorNome(String nome) {
@@ -44,13 +44,14 @@ public class UsuarioService {
 	}
 
 	public OperacaoResultado removerUsuario(int usuarioId) {
-		return usuarioDAO.removerUsuario(usuarioId);
+		return usuarioDAO.remover(usuarioId);
 	}
 
 	public OperacaoResultado adicionarPermissao(int usuarioId, Funcionalidade funcionalidade) {
 		return usuarioDAO.adicionarPermissao(usuarioId, funcionalidade);
 	}
 
+	@SuppressWarnings("deprecation")
 	public OperacaoResultado removerPermissao(int usuarioId, Funcionalidade funcionalidade) {
 		return usuarioDAO.removerPermissao(usuarioId, funcionalidade);
 	}

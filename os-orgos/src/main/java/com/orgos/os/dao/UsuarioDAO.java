@@ -16,9 +16,85 @@ import com.orgos.os.model.Permissao;
 import com.orgos.os.model.Usuario;
 import com.orgos.os.util.PasswordUtil;
 
-public class UsuarioDAO {
+public class UsuarioDAO implements DAO<Usuario, Integer>{
 	private static final Logger logger = LogManager.getLogger(UsuarioDAO.class);
 
+	@Deprecated
+	@Override
+	public OperacaoResultado salvar(Usuario usuario) {
+		return null;
+	}
+
+	@Deprecated
+	@Override
+	public OperacaoResultado atualizar(Usuario usuario) {
+		return null;
+	}
+
+	@Override
+	public OperacaoResultado remover(Integer id) {
+		String sql = "DELETE FROM usuarios WHERE id_usuario = ?";
+
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setInt(1, id);
+
+			return pstmt.executeUpdate() > 0
+					? new OperacaoResultado(true, "Usuário removido com sucesso.")
+					: new OperacaoResultado(false, "Nenhum usuário foi removido.");
+
+		} catch (SQLException e) {
+			logger.error("Erro ao remover o usuário: " + e.getMessage(), e);
+			return new OperacaoResultado(false, "Erro ao remover o usuário: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public Usuario buscarPorId(Integer id) {
+		String sql = "SELECT id_usuario, username FROM usuarios WHERE id_usuario = ?";
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+			pstmt.setInt(1, id);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					String username = rs.getString("username");
+					List<Permissao> permissoes = buscarPermissoes(id);
+
+					return new Usuario(id, username, permissoes);
+				}
+			}
+
+		} catch (SQLException e) {
+			logger.error("Erro ao buscar o usuário: " + e.getMessage(), e);
+		}
+		return null;
+	}
+	
+	@Override
+	public List<Usuario> listarTodos() {
+		String sql = "SELECT id_usuario, username FROM usuarios";
+		List<Usuario> usuarios = new ArrayList<>();
+
+		try (Connection conn = DatabaseConnection.getConnection();
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				ResultSet rs = pstmt.executeQuery()) {
+
+			while (rs.next()) {
+				int id = rs.getInt("id_usuario");
+				String username = rs.getString("username");
+				List<Permissao> permissoes = buscarPermissoes(id); // Busca as permissões do usuário
+
+				usuarios.add(new Usuario(id, username, permissoes));
+			}
+
+		} catch (SQLException e) {
+			logger.error("Erro ao listar usuários: " + e.getMessage(), e);
+		}
+		return usuarios;
+	}
+	
 	public Usuario autenticar(String username, String password) {
 		String sql = "SELECT id_usuario, password_hash FROM usuarios WHERE username = ?";
 
@@ -67,51 +143,6 @@ public class UsuarioDAO {
 		return permissoes;
 	}
 
-	public List<Usuario> listarTodos() {
-		String sql = "SELECT id_usuario, username FROM usuarios";
-		List<Usuario> usuarios = new ArrayList<>();
-
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(sql);
-				ResultSet rs = pstmt.executeQuery()) {
-
-			while (rs.next()) {
-				int id = rs.getInt("id_usuario");
-				String username = rs.getString("username");
-				List<Permissao> permissoes = buscarPermissoes(id); // Busca as permissões do usuário
-
-				usuarios.add(new Usuario(id, username, permissoes));
-			}
-
-		} catch (SQLException e) {
-			logger.error("Erro ao listar usuários: " + e.getMessage(), e);
-		}
-		return usuarios;
-	}
-
-	public Usuario buscarUsuarioPorId(int usuarioId) {
-		String sql = "SELECT id_usuario, username FROM usuarios WHERE id_usuario = ?";
-
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-			pstmt.setInt(1, usuarioId);
-			try (ResultSet rs = pstmt.executeQuery()) {
-				if (rs.next()) {
-					int id = rs.getInt("id_usuario");
-					String username = rs.getString("username");
-					List<Permissao> permissoes = buscarPermissoes(id);
-
-					return new Usuario(id, username, permissoes);
-				}
-			}
-
-		} catch (SQLException e) {
-			logger.error("Erro ao buscar o usuário (" + usuarioId + "):" + e.getMessage(), e);
-		}
-		return null;
-	}
-
 	public List<Usuario> buscarUsuariosPorNome(String nome) {
 		String sql = "SELECT id_usuario, username FROM usuarios WHERE username LIKE ?";
 		List<Usuario> usuarios = new ArrayList<>();
@@ -138,7 +169,6 @@ public class UsuarioDAO {
 
 	public OperacaoResultado cadastrarUsuario(String username, String password) {
 		String sql = "INSERT INTO usuarios (username, password_hash) VALUES (?, ?)";
-
 		try (Connection conn = DatabaseConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -195,24 +225,6 @@ public class UsuarioDAO {
 		}
 	}
 
-	public OperacaoResultado removerUsuario(int usuarioId) {
-		String sql = "DELETE FROM usuarios WHERE id_usuario = ?";
-
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-			pstmt.setInt(1, usuarioId);
-
-			return pstmt.executeUpdate() > 0
-					? new OperacaoResultado(true, "Usuário removido com sucesso.")
-					: new OperacaoResultado(false, "Nenhum usuário foi removido.");
-
-		} catch (SQLException e) {
-			logger.error("Erro ao remover o usuário (" + usuarioId + "):" + e.getMessage(), e);
-			return new OperacaoResultado(false, "Erro ao remover o usuário: " + e.getMessage());
-		}
-	}
-
 	public OperacaoResultado adicionarPermissao(int usuarioId, Funcionalidade funcionalidade) {
 		String sql = "INSERT INTO permissoes (usuario_id, funcionalidade) VALUES (?, ?)";
 
@@ -250,5 +262,7 @@ public class UsuarioDAO {
 			return new OperacaoResultado(false, "Erro ao remover permissão do usuário: " + e.getMessage());
 		}
 	}
+
+	
 
 }

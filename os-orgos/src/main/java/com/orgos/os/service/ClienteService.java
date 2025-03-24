@@ -35,7 +35,7 @@ public class ClienteService {
 	}
 
 	public OperacaoResultado remover(Cliente cliente) {
-		return clienteDAO.delete(cliente);
+		return clienteDAO.remover(cliente.getId());
 	}
 
 }
