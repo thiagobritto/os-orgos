@@ -18,14 +18,14 @@ public class CadastroClienteController {
 	public void seveCliente(Cliente cliente) {
 		if (cliente.getId() < 1) {
 			OperacaoResultado resultado = clienteService.salvar(cliente);
+			screen.exibirMensagem(resultado.getMensagem());
 			if (resultado.isSucesso()) {
-				screen.exibirMensagem(resultado.getMensagem());
 				screen.limparCampos();			
 			}
 		} else {
 			OperacaoResultado resultado = clienteService.atualizar(cliente);
+			screen.exibirMensagem(resultado.getMensagem());
 			if (resultado.isSucesso()) {
-				screen.exibirMensagem(resultado.getMensagem());
 				screen.limparCampos();			
 			}
 		}

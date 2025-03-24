@@ -18,7 +18,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
+import com.orgos.os.controller.CadastroTecnicoController;
 import com.orgos.os.util.FieldUtil;
+import com.orgos.os.util.ValidacaoUtil;
 
 public class CadastroTecnicoScreen extends JDialogScreen {
 
@@ -26,12 +28,26 @@ public class CadastroTecnicoScreen extends JDialogScreen {
 	private final JPanel contentPanel = new JPanel();
 	private JTextField nomeField;
 	private JTextField emailField;
+	
+	private CadastroTecnicoController controller;
+	private JButton salvarButton;
+	private JLabel tituloLabel;
+	private JFormattedTextField cpfField;
+	private JFormattedTextField cnpjField;
+	private JRadioButton cpfRadioButton;
+	private JRadioButton cnpjRadioButton;
+	private JFormattedTextField telefoneField;
+	private JFormattedTextField celularField;
+	private JRadioButton telefoneRadioButton;
+	private JRadioButton celularRadioButton;
+	private JTextArea especializacaoField;
 
 	/**
 	 * Create the dialog.
 	 */
-	public CadastroTecnicoScreen(JFrame owner) {
+	public CadastroTecnicoScreen(JFrame owner, CadastroTecnicoController controller) {
 		super(owner, true);
+		this.controller = controller;
 		this.initComponent();
 	}
 
@@ -54,15 +70,15 @@ public class CadastroTecnicoScreen extends JDialogScreen {
 		contentPanel.add(emailLabel);
 		
 		JLabel especializacaoLabel = new JLabel("Especialização");
-		especializacaoLabel.setBounds(20, 210, 73, 16);
+		especializacaoLabel.setBounds(20, 210, 113, 16);
 		contentPanel.add(especializacaoLabel);
 		
-		JButton salvarButton = new JButton("Salvar");
+		salvarButton = new JButton("Salvar");
 		salvarButton.setMnemonic(KeyEvent.VK_S);
 		salvarButton.setBounds(20, 332, 100, 36);
 		contentPanel.add(salvarButton);
 		
-		JLabel tituloLabel = new JLabel("Cadastro de Técnicos");
+		tituloLabel = new JLabel("Cadastro de Técnicos");
 		tituloLabel.setFont(new Font("Dialog", Font.BOLD, 18));
 		tituloLabel.setBounds(20, 0, 350, 60);
 		contentPanel.add(tituloLabel);
@@ -72,24 +88,24 @@ public class CadastroTecnicoScreen extends JDialogScreen {
 		lembreteLabel.setBounds(10, 474, 513, 16);
 		contentPanel.add(lembreteLabel);
 		
-		JFormattedTextField cpfField = new JFormattedTextField();
+		cpfField = new JFormattedTextField();
 		cpfField.setBounds(430, 90, 233, 36);
 		cpfField.setColumns(18);
 		contentPanel.add(cpfField);
 		FieldUtil.applyMask(cpfField, "###.###.###-##");
 		
-		JFormattedTextField cnpjField = new JFormattedTextField();
+		cnpjField = new JFormattedTextField();
 		cnpjField.setBounds(430, 90, 233, 36);
 		cnpjField.setColumns(18);
 		cnpjField.setVisible(false);
 		contentPanel.add(cnpjField);
 		FieldUtil.applyMask(cnpjField, "##.###.###/####-##");		
 
-		JRadioButton cpfRadioButton = new JRadioButton("CPF", true);
+		cpfRadioButton = new JRadioButton("CPF", true);
 		cpfRadioButton.setBounds(430, 67, 45, 23);
 		contentPanel.add(cpfRadioButton);
 
-		JRadioButton cnpjRadioButton = new JRadioButton("CNPJ");
+		cnpjRadioButton = new JRadioButton("CNPJ");
 		cnpjRadioButton.setBounds(478, 67, 64, 23);
 		contentPanel.add(cnpjRadioButton);
 
@@ -133,24 +149,24 @@ public class CadastroTecnicoScreen extends JDialogScreen {
 		telefoneLabel.setBounds(340, 143, 64, 16);
 		contentPanel.add(telefoneLabel);
 		
-		JFormattedTextField telefoneField = new JFormattedTextField();
+		telefoneField = new JFormattedTextField();
 		telefoneField.setBounds(340, 163, 202, 36);
 		telefoneField.setColumns(15);
 		contentPanel.add(telefoneField);
 		FieldUtil.applyMask(telefoneField, "(##) ####-####");
 
-		JFormattedTextField celularField = new JFormattedTextField();
+		celularField = new JFormattedTextField();
 		celularField.setBounds(340, 163, 153, 36);
 		celularField.setColumns(15);
 		celularField.setVisible(false);
 		contentPanel.add(celularField);
 		FieldUtil.applyMask(celularField, "(##) #####-####");
 
-		JRadioButton telefoneRadioButton = new JRadioButton("Fixo", true);
+		telefoneRadioButton = new JRadioButton("Fixo", true);
 		telefoneRadioButton.setBounds(402, 143, 52, 16);
 		contentPanel.add(telefoneRadioButton);
 
-		JRadioButton celularRadioButton = new JRadioButton("Celular");
+		celularRadioButton = new JRadioButton("Celular");
 		celularRadioButton.setBounds(456, 143, 67, 16);
 		contentPanel.add(celularRadioButton);
 
@@ -183,15 +199,37 @@ public class CadastroTecnicoScreen extends JDialogScreen {
 		scrollPane.setBounds(20, 230, 390, 73);
 		contentPanel.add(scrollPane);
 		
-		JTextArea especializacaoField = new JTextArea();
+		especializacaoField = new JTextArea();
 		especializacaoField.setLineWrap(true);
 		especializacaoField.setRows(4);
 		scrollPane.setViewportView(especializacaoField);
+	}
+	
+	private boolean validarCampos() {
+		if (ValidacaoUtil.isEmpty(nomeField))
+			return false;
+		
+		if (telefoneField.isVisible())
+			if (!ValidacaoUtil.telefone(telefoneField))
+				return false;	
+		
+		if (celularField.isVisible())
+			if (!ValidacaoUtil.celular(celularField))
+				return false;	
+		
+		if (ValidacaoUtil.isEmpty(especializacaoField))
+			return false;
+		
+		return true;
 	}
 	
 	@Override
 	public void setVisible(boolean b) {
 		SwingUtilities.invokeLater(() -> nomeField.requestFocus());
 		super.setVisible(b);		
+	}
+
+	public void setController(CadastroTecnicoController controller) {
+		this.controller = controller;
 	}
 }

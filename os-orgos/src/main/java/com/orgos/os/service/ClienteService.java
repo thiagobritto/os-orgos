@@ -18,7 +18,7 @@ public class ClienteService {
 		return clienteDAO.listarTodos();
 	}
 	
-	public List<Cliente> buscarTodosPorNome(String nome) {
+	public List<Cliente> buscarPorNome(String nome) {
 		return clienteDAO.buscarPorNome(nome);
 	}
 	
@@ -27,6 +27,7 @@ public class ClienteService {
 	}
 	
 	public OperacaoResultado salvar(Cliente cliente) {
+		
 		return clienteDAO.salvar(cliente);
 	}
 

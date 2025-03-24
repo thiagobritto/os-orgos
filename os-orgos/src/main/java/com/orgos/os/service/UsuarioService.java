@@ -51,7 +51,6 @@ public class UsuarioService {
 		return usuarioDAO.adicionarPermissao(usuarioId, funcionalidade);
 	}
 
-	@SuppressWarnings("deprecation")
 	public OperacaoResultado removerPermissao(int usuarioId, Funcionalidade funcionalidade) {
 		return usuarioDAO.removerPermissao(usuarioId, funcionalidade);
 	}

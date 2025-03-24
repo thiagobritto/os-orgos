@@ -27,6 +27,7 @@ import javax.swing.border.EmptyBorder;
 import com.orgos.os.controller.CadastroClienteController;
 import com.orgos.os.model.Cliente;
 import com.orgos.os.util.FieldUtil;
+import com.orgos.os.util.ValidacaoUtil;
 
 public class CadastroClienteScreen extends JDialogScreen {
 
@@ -235,6 +236,11 @@ public class CadastroClienteScreen extends JDialogScreen {
 	}
 
 	private void salvar() {
+		if (!validarCampos()) {
+			exibirMensagem("Campo obrigatório");
+			return;
+		}
+
 		int id = (clienteSelecionado == null || clienteSelecionado.getId() < 1) ? 0 : clienteSelecionado.getId();
 		String nome = nomeField.getText();
 		String cpfCnpj = cpfField.isVisible() ? cpfField.getText() : cnpjField.getText();
@@ -244,6 +250,24 @@ public class CadastroClienteScreen extends JDialogScreen {
 
 		Cliente cliente = new Cliente(id, nome, cpfCnpj, telefone, email, endereco);
 		controller.seveCliente(cliente);
+	}
+
+	private boolean validarCampos() {
+		if (ValidacaoUtil.isEmpty(nomeField))
+			return false;
+		
+		if (telefoneField.isVisible())
+			if (!ValidacaoUtil.telefone(telefoneField))
+				return false;	
+		
+		if (celularField.isVisible())
+			if (!ValidacaoUtil.celular(celularField))
+				return false;	
+		
+		if (ValidacaoUtil.isEmpty(enderecoField))
+			return false;
+		
+		return true;
 	}
 	
 	private void excluir() {

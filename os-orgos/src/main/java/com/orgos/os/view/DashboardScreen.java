@@ -115,6 +115,13 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 		JMenuItem cadastroServicoMenuItem = new JMenuItem("Serviço");
 		cadastroMenu.add(cadastroServicoMenuItem);
 
+		JMenu cadastroTecnicoMenu = new JMenu("Tecnico");
+		cadastroMenu.add(cadastroTecnicoMenu);
+		
+		JMenuItem cadastroTrcnicoNovoMenuItem = new JMenuItem("Novo");		
+		cadastroTrcnicoNovoMenuItem.addActionListener(e -> abrirTelaCadastroTecnico());
+		cadastroTecnicoMenu.add(cadastroTrcnicoNovoMenuItem);
+		
 		if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.CADASTRAR_USUARIO)
 				|| SessaoUsuario.getInstancia().temPermissao(Funcionalidade.GERENCIAR_USUARIO)) {
 			JMenu cadastroUsuarioMenu = new JMenu("Usuário");
@@ -151,6 +158,10 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 
 	}
 	
+	private void abrirTelaCadastroTecnico() {
+		AppFactory.getCadastroTecnicoScreen().setVisible(true);
+	}
+
 	private void abrirTelaEditarCliente() {
 		BuscaClienteScreen buscaClienteScreen = AppFactory.getBuscaClienteScreen();
 		buscaClienteScreen.setVisible(true);

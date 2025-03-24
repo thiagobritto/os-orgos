@@ -14,7 +14,7 @@ public class PesquisaClienteNome implements PesquisaCliente {
 
 	@Override
 	public List<Cliente> buscar(String valor) {
-		return clienteService.buscarTodosPorNome(valor);
+		return clienteService.buscarPorNome(valor);
 	}
 	
 	@Override
