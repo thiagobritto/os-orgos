@@ -71,7 +71,7 @@ public class ClienteDAO {
 
 		try (Connection conn = DatabaseConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			
+
 			pstmt.setString(1, "%" + nomeDigitado + "%");
 			try (ResultSet rs = pstmt.executeQuery()) {
 				while (rs.next()) {
@@ -101,12 +101,10 @@ public class ClienteDAO {
 			pstmt.setString(4, cliente.getEmail());
 			pstmt.setString(5, cliente.getEndereco());
 
-			int rowsAffected = pstmt.executeUpdate();
-			if (rowsAffected > 0) {
-				return new OperacaoResultado(true, "Cliente inserido com sucesso.");
-			} else {
-				return new OperacaoResultado(false, "Nenhum cliente foi inserido.");
-			}
+			return pstmt.executeUpdate() > 0
+					? new OperacaoResultado(true, "Cliente inserido com sucesso.")
+					: new OperacaoResultado(false, "Nenhum cliente foi inserido.");
+			
 		} catch (SQLException e) {
 			logger.error("Erro ao inserir cliente: " + e.getMessage(), e);
 			return new OperacaoResultado(false, "Erro ao inserir cliente: " + e.getMessage());
@@ -124,12 +122,10 @@ public class ClienteDAO {
 			pstmt.setString(5, cliente.getEndereco());
 			pstmt.setInt(6, cliente.getId());
 
-			int rowsAffected = pstmt.executeUpdate();
-			if (rowsAffected > 0) {
-				return new OperacaoResultado(true, "Cliente atualizado com sucesso.");
-			} else {
-				return new OperacaoResultado(false, "Nenhum cliente foi atualizado.");
-			}
+			return pstmt.executeUpdate() > 0 
+					? new OperacaoResultado(true, "Cliente atualizado com sucesso.")
+					: new OperacaoResultado(false, "Nenhum cliente foi atualizado.");
+
 		} catch (SQLException e) {
 			logger.error("Erro ao atualizar cliente: " + e.getMessage(), e);
 			return new OperacaoResultado(false, "Erro ao atualizar cliente: " + e.getMessage());
@@ -142,12 +138,10 @@ public class ClienteDAO {
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, cliente.getId());
 
-			int rowsAffected = pstmt.executeUpdate();
-			if (rowsAffected > 0) {
-				return new OperacaoResultado(true, "Cliente removido com sucesso.");
-			} else {
-				return new OperacaoResultado(false, "Nenhum cliente foi removido.");
-			}
+			return pstmt.executeUpdate() > 0
+				? new OperacaoResultado(true, "Cliente removido com sucesso.")
+				: new OperacaoResultado(false, "Nenhum cliente foi removido.");
+	
 		} catch (SQLException e) {
 			logger.error("Erro ao excluir cliente: " + e.getMessage(), e);
 			return new OperacaoResultado(false, "Erro ao remover cliente: " + e.getMessage());

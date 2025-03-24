@@ -146,12 +146,9 @@ public class UsuarioDAO {
 			pstmt.setString(1, username);
 			pstmt.setString(2, hashedPassword);
 
-			int rowsAffected = pstmt.executeUpdate();
-			if (rowsAffected > 0) {
-				return new OperacaoResultado(true, "Usuário inserido com sucesso.");
-			} else {
-				return new OperacaoResultado(false, "Nenhum usuário foi inserido.");
-			}
+			return pstmt.executeUpdate() > 0
+					? new OperacaoResultado(true, "Usuário inserido com sucesso.")
+					: new OperacaoResultado(false, "Nenhum usuário foi inserido.");
 
 		} catch (SQLException e) {
 			logger.error("Erro ao cadastrar o usuário (" + username + "):" + e.getMessage(), e);
@@ -169,12 +166,9 @@ public class UsuarioDAO {
 			pstmt.setString(1, hashedPassword);
 			pstmt.setInt(2, usuarioId);
 
-			int rowsAffected = pstmt.executeUpdate();
-			if (rowsAffected > 0) {
-				return new OperacaoResultado(true, "Senha alterada com sucesso.");
-			} else {
-				return new OperacaoResultado(false, "Não houve alteração na senha.");
-			}
+			return pstmt.executeUpdate() > 0
+					? new OperacaoResultado(true, "Senha alterada com sucesso.")
+					: new OperacaoResultado(false, "Não houve alteração na senha.");
 
 		} catch (SQLException e) {
 			logger.error("Erro ao trocar senha do usuário (" + usuarioId + "):" + e.getMessage(), e);
@@ -190,11 +184,9 @@ public class UsuarioDAO {
 
 			pstmt.setString(1, username);
 			try (ResultSet rs = pstmt.executeQuery()) {
-				if (rs.next()) {
-					return new OperacaoResultado(true, "Esse usuário já existe.");
-				} else {
-					return new OperacaoResultado(false, "Não existe usuário com esse nome.");
-				}
+				return rs.next()
+						? new OperacaoResultado(true, "Esse usuário já existe.")
+						: new OperacaoResultado(false, "Não existe usuário com esse nome.");
 			}
 
 		} catch (SQLException e) {
@@ -211,12 +203,9 @@ public class UsuarioDAO {
 
 			pstmt.setInt(1, usuarioId);
 
-			int rowsAffected = pstmt.executeUpdate();
-			if (rowsAffected > 0) {
-				return new OperacaoResultado(true, "Usuário removido com sucesso.");
-			} else {
-				return new OperacaoResultado(false, "Nenhum usuário foi removido.");
-			}
+			return pstmt.executeUpdate() > 0
+					? new OperacaoResultado(true, "Usuário removido com sucesso.")
+					: new OperacaoResultado(false, "Nenhum usuário foi removido.");
 
 		} catch (SQLException e) {
 			logger.error("Erro ao remover o usuário (" + usuarioId + "):" + e.getMessage(), e);
@@ -233,12 +222,9 @@ public class UsuarioDAO {
 			pstmt.setInt(1, usuarioId);
 			pstmt.setString(2, funcionalidade.toString());
 
-			int rowsAffected = pstmt.executeUpdate();
-			if (rowsAffected > 0) {
-				return new OperacaoResultado(true, "Permissão adicionada com sucesso.");
-			} else {
-				return new OperacaoResultado(false, "Nenhum permissão foi adicionada.");
-			}
+			return pstmt.executeUpdate() > 0 
+				? new OperacaoResultado(true, "Permissão adicionada com sucesso.")
+				: new OperacaoResultado(false, "Nenhum permissão foi adicionada.");
 
 		} catch (SQLException e) {
 			logger.error("Erro ao adicionar permissão ao usuário (" + usuarioId + "):" + e.getMessage(), e);
@@ -255,13 +241,10 @@ public class UsuarioDAO {
 			pstmt.setInt(1, usuarioId);
 			pstmt.setString(2, funcionalidade.toString());
 
-			int rowsAffected = pstmt.executeUpdate();
-			if (rowsAffected > 0) {
-				return new OperacaoResultado(true, "Permissão removida com sucesso.");
-			} else {
-				return new OperacaoResultado(false, "Nenhum permissão foi removida.");
-			}
-
+			return pstmt.executeUpdate() > 0
+					? new OperacaoResultado(true, "Permissão removida com sucesso.")
+					: new OperacaoResultado(false, "Nenhum permissão foi removida.");
+			
 		} catch (SQLException e) {
 			logger.error("Erro ao remover permissão do usuário (" + usuarioId + "):" + e.getMessage(), e);
 			return new OperacaoResultado(false, "Erro ao remover permissão do usuário: " + e.getMessage());
