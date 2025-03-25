@@ -5,7 +5,7 @@ import com.orgos.os.model.Tecnico;
 import com.orgos.os.service.TecnicoService;
 import com.orgos.os.view.CadastroTecnicoScreen;
 
-public class CadastroTecnicoController {
+public class CadastroTecnicoController implements Controller {
 
 	private CadastroTecnicoScreen screen;
 	private TecnicoService tecnicoService;
@@ -14,6 +14,16 @@ public class CadastroTecnicoController {
 		super();
 		this.screen = screen;
 		this.tecnicoService = tecnicoService;
+		iniciarController();
+	}
+	
+	private void iniciarController() {
+		screen.setController(this);
+	}
+
+	@Override
+	public void inicializar() {
+		
 	}
 
 	public void salvarTecnico(Tecnico tecnico) {
@@ -39,5 +49,7 @@ public class CadastroTecnicoController {
 			screen.reset();
 		}
 	}
+
+	
 
 }

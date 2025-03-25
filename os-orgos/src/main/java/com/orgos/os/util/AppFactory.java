@@ -39,88 +39,119 @@ public class AppFactory {
 	private static ClienteService clienteService = new ClienteService(clienteDAO);
 	private static TecnicoService tecnicoService = new TecnicoService(tecnicoDAO);
 
-	private static LoginScreen loginScreen = new LoginScreen(null);
-	private static LoginController loginController = new LoginController(loginScreen, usuarioService);
+	private static LoginScreen loginScreen;
+	private static LoginController loginController;
 
-	private static DashboardScreen dashboardScreen = new DashboardScreen(null);
-	private static DashboardController dashboardController = new DashboardController(dashboardScreen, backupService);
+	private static DashboardScreen dashboardScreen;
+	private static DashboardController dashboardController;
 
-	private static CadastroUsuarioScreen cadastroUsuarioScreen = new CadastroUsuarioScreen(dashboardScreen, null);
-	private static CadastroUsuarioController cadastroUsuarioController = new CadastroUsuarioController(
-			cadastroUsuarioScreen, usuarioService);
+	private static CadastroUsuarioScreen cadastroUsuarioScreen;
+	private static CadastroUsuarioController cadastroUsuarioController;
 
-	private static GerenciarUsuariosScreen gerenciarUsuariosScreen = new GerenciarUsuariosScreen(dashboardScreen, null);
-	private static GerenciarUsuariosController gerenciarUsuariosController = new GerenciarUsuariosController(
-			gerenciarUsuariosScreen, usuarioService);
+	private static GerenciarUsuariosScreen gerenciarUsuariosScreen;
+	private static GerenciarUsuariosController gerenciarUsuariosController;
 
-	private static SenhaScreen senhaScreen = new SenhaScreen(dashboardScreen, null);
-	private static SenhaController senhaController = new SenhaController(senhaScreen, usuarioService);
-	
-	private static CadastroClienteScreen cadastroClienteScreen = new CadastroClienteScreen(dashboardScreen, null);
-	private static CadastroClienteController cadastroClienteController = new CadastroClienteController(cadastroClienteScreen, clienteService);
-	
-	private static BuscaClienteScreen buscaClienteScreen = new BuscaClienteScreen(dashboardScreen, null);
-	private static BuscaClienteController buscaClienteController = new BuscaClienteController(buscaClienteScreen, clienteService);
-	
-	private static CadastroTecnicoScreen cadastroTecnicoScreen = new CadastroTecnicoScreen(dashboardScreen, null);
-	private static CadastroTecnicoController cadastroTecnicoController = new CadastroTecnicoController(cadastroTecnicoScreen, tecnicoService);
-	
-	private static BuscaTecnicoScreen buscaTecnicoScreen = new BuscaTecnicoScreen(dashboardScreen, null);
-	private static BuscaTecnicoController buscaTecnicoController = new BuscaTecnicoController(buscaTecnicoScreen, tecnicoService);
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	private static SenhaScreen senhaScreen;
+	private static SenhaController senhaController;
+
+	private static CadastroClienteScreen cadastroClienteScreen;
+	private static CadastroClienteController cadastroClienteController;
+
+	private static BuscaClienteScreen buscaClienteScreen;
+	private static BuscaClienteController buscaClienteController;
+
+	private static CadastroTecnicoScreen cadastroTecnicoScreen;
+	private static CadastroTecnicoController cadastroTecnicoController;
+
+	private static BuscaTecnicoScreen buscaTecnicoScreen;
+	private static BuscaTecnicoController buscaTecnicoController;
+
 	// Métodos para obter instâncias
 	public static LoginScreen getLoginScreen() {
-		loginScreen.setController(loginController);
+		if (loginScreen == null)
+			loginScreen = new LoginScreen(null);
+		if (loginController == null)
+			loginController = new LoginController(loginScreen, usuarioService);
+
+		loginController.inicializar();
 		return loginScreen;
 	}
 
 	public static DashboardScreen getDashboardScreen() {
-		dashboardScreen.setController(dashboardController);
+		if (dashboardScreen == null)
+			dashboardScreen = new DashboardScreen(null);
+		if (dashboardController == null)
+			dashboardController = new DashboardController(dashboardScreen, backupService);
+
+		dashboardController.inicializar();
 		return dashboardScreen;
 	}
 
 	public static CadastroUsuarioScreen getCadastroUsuarioScreen() {
-		cadastroUsuarioScreen.setController(cadastroUsuarioController);
+		if (cadastroUsuarioScreen == null)
+			cadastroUsuarioScreen = new CadastroUsuarioScreen(dashboardScreen, null);
+		if (cadastroUsuarioController == null)
+			cadastroUsuarioController = new CadastroUsuarioController(cadastroUsuarioScreen, usuarioService);
+
+		cadastroUsuarioController.inicializar();
 		return cadastroUsuarioScreen;
 	}
 
 	public static GerenciarUsuariosScreen getGerenciarUsuariosScreen() {
-		gerenciarUsuariosScreen.setController(gerenciarUsuariosController);
+		if (gerenciarUsuariosScreen == null)
+			gerenciarUsuariosScreen = new GerenciarUsuariosScreen(dashboardScreen, null);
+		if (gerenciarUsuariosController == null)
+			gerenciarUsuariosController = new GerenciarUsuariosController(gerenciarUsuariosScreen, usuarioService);
+
+		gerenciarUsuariosController.inicializar();
 		return gerenciarUsuariosScreen;
 	}
-	
+
 	public static SenhaScreen getSenhaScreen(Usuario usuario) {
-		senhaScreen.setController(senhaController);
-		senhaScreen.setUsuario(usuario);		
-		return null;
+		senhaScreen = new SenhaScreen(dashboardScreen, usuario);
+		senhaController = new SenhaController(senhaScreen, usuarioService);
+
+		senhaController.inicializar();
+		return senhaScreen;
 	}
-	
+
 	public static CadastroClienteScreen getCadastroClienteScreen() {
-		cadastroClienteScreen.setController(cadastroClienteController);
+		if (cadastroClienteScreen == null)
+			cadastroClienteScreen = new CadastroClienteScreen(dashboardScreen, null);
+		if (cadastroClienteController == null)
+			cadastroClienteController = new CadastroClienteController(cadastroClienteScreen, clienteService);
+
+		cadastroClienteController.inicializar();
 		return cadastroClienteScreen;
 	}
-	
+
 	public static BuscaClienteScreen getBuscaClienteScreen() {
-		buscaClienteScreen.setController(buscaClienteController);
+		if (buscaClienteScreen == null)
+			buscaClienteScreen = new BuscaClienteScreen(dashboardScreen, null);
+		if (buscaClienteController == null)
+			buscaClienteController = new BuscaClienteController(buscaClienteScreen, clienteService);
+
+		buscaClienteController.inicializar();
 		return buscaClienteScreen;
 	}
-	
+
 	public static CadastroTecnicoScreen getCadastroTecnicoScreen() {
-		cadastroTecnicoScreen.setController(cadastroTecnicoController);
+		if (cadastroTecnicoScreen == null)
+			cadastroTecnicoScreen = new CadastroTecnicoScreen(dashboardScreen, null);
+		if (cadastroTecnicoController == null)
+			cadastroTecnicoController = new CadastroTecnicoController(cadastroTecnicoScreen, tecnicoService);
+
+		cadastroTecnicoController.inicializar();
 		return cadastroTecnicoScreen;
 	}
-	
+
 	public static BuscaTecnicoScreen getBuscaTecnicoScreen() {
-		buscaTecnicoScreen.setController(buscaTecnicoController);
+		if (buscaTecnicoScreen == null)
+			buscaTecnicoScreen = new BuscaTecnicoScreen(dashboardScreen, null);
+		if (buscaTecnicoController == null)
+			buscaTecnicoController = new BuscaTecnicoController(buscaTecnicoScreen, tecnicoService);
+
+		buscaTecnicoController.inicializar();
 		return buscaTecnicoScreen;
 	}
 

@@ -35,7 +35,6 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 	 */
 	public DashboardScreen(DashboardController controller) {
 		this.controller = controller;
-		iniciarComponentes();
 	}
 
 	private void iniciarComponentes() {
@@ -114,23 +113,10 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 			cadastroTecnicoMenuItem.addActionListener(e -> abrirTelaTecnico());
 			cadastroMenu.add(cadastroTecnicoMenuItem);
 			
-			if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.CADASTRAR_USUARIO)
-					|| SessaoUsuario.getInstancia().temPermissao(Funcionalidade.GERENCIAR_USUARIO)) {
-				JMenu cadastroUsuarioMenu = new JMenu("Usuário");
-				cadastroMenu.add(cadastroUsuarioMenu);
-
-				if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.CADASTRAR_USUARIO)) {
-					JMenuItem cadastroUsuarioNovoMenuItem = new JMenuItem("Novo");
-					cadastroUsuarioNovoMenuItem.addActionListener(e -> abrirTelaCadastroUsuario());
-					cadastroUsuarioMenu.add(cadastroUsuarioNovoMenuItem);
-				}
-
-				if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.GERENCIAR_USUARIO)) {
-					JMenuItem cadastroUsuarioGerenciarMenuItem = new JMenuItem("Gerenciar");
-					cadastroUsuarioGerenciarMenuItem.addActionListener(e -> abrirTelaGerenciarUsuario());
-					cadastroUsuarioMenu.add(cadastroUsuarioGerenciarMenuItem);
-				}
-			}
+			JMenuItem cadastroUsuarioMenuItem = new JMenuItem("Usuário");
+			cadastroUsuarioMenuItem.addActionListener(e -> abrirTelaUsuario());
+			cadastroMenu.add(cadastroUsuarioMenuItem);
+			
 		}
 
 		if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.VISUALIZAR_RELATORIOS)) {
@@ -159,12 +145,8 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 	private void abrirTelaCliente() {
 		AppFactory.getCadastroClienteScreen().setVisible(true);
 	}
-	
-	private void abrirTelaCadastroUsuario() {
-		AppFactory.getCadastroUsuarioScreen().setVisible(true);
-	}
 
-	private void abrirTelaGerenciarUsuario() {
+	private void abrirTelaUsuario() {
 		AppFactory.getGerenciarUsuariosScreen().setVisible(true);
 	}
 	
@@ -209,7 +191,7 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 
 	@Override
 	public void setVisible(boolean b) {
-		this.iniciarComponentes();
+		iniciarComponentes();
 		super.setVisible(b);
 	}
 

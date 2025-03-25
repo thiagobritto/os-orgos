@@ -4,16 +4,26 @@ import com.orgos.os.model.SessaoUsuario;
 import com.orgos.os.model.Usuario;
 import com.orgos.os.service.UsuarioService;
 import com.orgos.os.util.AppFactory;
-import com.orgos.os.view.LoginScreenInterface;
+import com.orgos.os.view.LoginScreen;
 
-public class LoginController {
-	private LoginScreenInterface screen;
+public class LoginController implements Controller{
+	private LoginScreen screen;
 	private UsuarioService usuarioService;
 
-	public LoginController(LoginScreenInterface screen, UsuarioService usuarioService) {
+	public LoginController(LoginScreen screen, UsuarioService usuarioService) {
 		super();
 		this.screen = screen;
 		this.usuarioService = usuarioService;
+		iniciarController();
+	}
+	
+	private void iniciarController() {
+		screen.setController(this);
+	}
+
+	@Override
+	public void inicializar() {
+		
 	}
 
 	public void autenticar(String username, String password) {
@@ -26,5 +36,7 @@ public class LoginController {
 			screen.exibirMensagemErro("Usuário ou senha invalidos!");
 		}
 	}
+
+	
 
 }

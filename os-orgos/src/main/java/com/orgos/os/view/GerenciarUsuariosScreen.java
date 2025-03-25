@@ -21,7 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -37,10 +36,10 @@ import com.orgos.os.util.PermissaoUtil;
 public class GerenciarUsuariosScreen extends JDialogScreen implements GerenciarUsuariosScreenInterface {
 
 	private static final long serialVersionUID = 1L;
-	private final JPanel contentPanel = new JPanel();
+	private JPanel contentPanel;
 	private JPanel permissoesPanel;
-	private JTable listagemUsuariosTable;
 	private JTextField pesquisaField;
+	private JTable listagemUsuariosTable;
 	private JComboBox<PesquisaUsuario> pesquisaComboBox;
 
 	private UsuarioTableModel usuarioTableModel = new UsuarioTableModel();
@@ -53,15 +52,17 @@ public class GerenciarUsuariosScreen extends JDialogScreen implements GerenciarU
 	public GerenciarUsuariosScreen(JFrame owner, GerenciarUsuariosController controller) {
 		super(owner, true);
 		this.controller = controller;
-		this.iniciarComponentes();
-	}
-
-	private void iniciarComponentes() {
+		
 		setTitle("Gerenciar Usuários");
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setSize(800, 540);
-		setLocationRelativeTo(null);
+		setLocationRelativeTo(owner);
+		
+		iniciarComponentes();
+	}
 
+	private void iniciarComponentes() {
+		contentPanel = new JPanel();
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPanel.setLayout(null);
 		setContentPane(contentPanel);
@@ -70,7 +71,7 @@ public class GerenciarUsuariosScreen extends JDialogScreen implements GerenciarU
 		scrollPane.setBounds(10, 30, 603, 215);
 		contentPanel.add(scrollPane);
 
-		listagemUsuariosTable = new JTable(usuarioTableModel);
+		listagemUsuariosTable  = new JTable(usuarioTableModel);
 		listagemUsuariosTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
@@ -94,13 +95,8 @@ public class GerenciarUsuariosScreen extends JDialogScreen implements GerenciarU
 		if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.CADASTRAR_USUARIO)) {
 			JButton novoButton = new JButton("Novo");
 			novoButton.setMnemonic(KeyEvent.VK_N);
-			novoButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// novoUsuario();
-				}
-			});
-			buttonPanel.add(novoButton);
+			novoButton.addActionListener(e -> {});
+			buttonPanel.add(novoButton);			
 		}
 
 		JButton alterarSenhaButton = new JButton("Trocar senha");
@@ -174,6 +170,7 @@ public class GerenciarUsuariosScreen extends JDialogScreen implements GerenciarU
 		checkBoxHashMap = new LinkedHashMap<Funcionalidade, JCheckBox>();
 		for (Funcionalidade funcionalidade : Funcionalidade.values()) {
 			JCheckBox jCheckBox = new JCheckBox(funcionalidade.getDescricao());
+			jCheckBox.setEnabled(false);
 			jCheckBox.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -203,19 +200,16 @@ public class GerenciarUsuariosScreen extends JDialogScreen implements GerenciarU
 	}
 
 	public void exibirPrtmissoes(Usuario usuario) {
-		checkBoxHashMap.forEach((funcionalidade, jCheckBox) -> 
-			jCheckBox.setSelected(PermissaoUtil.temPermissao(usuario, funcionalidade)));
+		checkBoxHashMap.forEach((funcionalidade, jCheckBox) -> {
+			jCheckBox.setSelected(PermissaoUtil.temPermissao(usuario, funcionalidade));
+			if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.GERENCIAR_PERMISSOES)) {
+				jCheckBox.setEnabled(true);					
+			}
+		});
 	}
 
 	public void setController(GerenciarUsuariosController controller) {
 		this.controller = controller;
-	}
-
-	@Override
-	public void setVisible(boolean b) {
-		controller.carregarTela();
-		SwingUtilities.invokeLater(() -> pesquisaField.requestFocus());
-		super.setVisible(b);		
 	}
 
 	@Override
@@ -234,6 +228,7 @@ public class GerenciarUsuariosScreen extends JDialogScreen implements GerenciarU
 
 	@Override
 	public void exibirUsuarios(List<Usuario> usuarios) {
+		listagemUsuariosTable.clearSelection();
 		usuarioTableModel = new UsuarioTableModel(usuarios);
 		listagemUsuariosTable.setModel(usuarioTableModel);
 		listagemUsuariosTable.getColumnModel().getColumn(0).setMaxWidth(120);
@@ -253,6 +248,5 @@ public class GerenciarUsuariosScreen extends JDialogScreen implements GerenciarU
 		PesquisaUsuario pesquisa = (PesquisaUsuario) pesquisaComboBox.getSelectedItem();
 		exibirUsuarios(pesquisa.buscar(pesquisaField.getText()));
 	}
-
-	
+		
 }

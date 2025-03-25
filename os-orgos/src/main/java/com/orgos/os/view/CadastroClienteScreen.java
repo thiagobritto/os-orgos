@@ -187,6 +187,7 @@ public class CadastroClienteScreen extends CadastroScreen{
 
 	@Override
 	public void onReset() {
+		clienteSelecionado = null;
 		nomeField.setEnabled(false);
 		cpfField.setEnabled(false);
 		cnpjField.setEnabled(false);
@@ -194,15 +195,16 @@ public class CadastroClienteScreen extends CadastroScreen{
 		telefoneField.setEnabled(false);
 		celularField.setEnabled(false);
 		enderecoField.setEnabled(false);
+		showCpf(true);
+		showTelefone(true);
+		limparCampos();		
 	}
 
 	@Override
 	public void onNew() {
-		clienteSelecionado = null;
-		showCpf(true);
-		showTelefone(true);
+		reset();
+		
 		nomeField.requestFocus();
-		limparCampos();
 		start();
 	}
 
@@ -232,15 +234,13 @@ public class CadastroClienteScreen extends CadastroScreen{
 
 	@Override
 	public void onEdit() {
-		BuscaClienteScreen buscaClienteScreen = AppFactory.getBuscaClienteScreen();
-		buscaClienteScreen.setVisible(true);
-		
-		clienteSelecionado = buscaClienteScreen.getClienteSelecionado();
-		if (clienteSelecionado == null) 
-			return;
-		
-		preencherCampos();
-		start();
+		if (clienteSelecionado == null) {
+			exibirMensagem("Selecione um cliente");
+		} else {
+			nomeField.requestFocus();
+			preencherCampos();
+			start();			
+		}
 	}
 
 	private void preencherCampos() {
@@ -275,40 +275,48 @@ public class CadastroClienteScreen extends CadastroScreen{
 
 	@Override
 	public void onRemove() {
+		if (clienteSelecionado == null) {
+			exibirMensagem("Selecione um cliente");
+		} else {
+			int confirm = JOptionPane.showConfirmDialog(
+					this, 
+					"Deseja realmente revover esse registro?\nNome: " + clienteSelecionado.getNome(), 
+					"Confirmar exclusão", 
+					JOptionPane.YES_NO_OPTION, 
+					JOptionPane.QUESTION_MESSAGE);
+			
+			if (confirm == JOptionPane.YES_OPTION)
+				controller.removerCliente(clienteSelecionado);
+		}
+	}
+	
+	@Override
+	public void onSearch() {
 		BuscaClienteScreen buscaClienteScreen = AppFactory.getBuscaClienteScreen();
 		buscaClienteScreen.setVisible(true);
 		
 		Cliente cliente = buscaClienteScreen.getClienteSelecionado();
-		if (cliente == null) 
-			return;
-		
-		int confirm = JOptionPane.showConfirmDialog(
-				this, 
-				"Deseja realmente revover esse registro?\nNome: " + cliente.getNome(), 
-				"Confirmar exclusão", 
-				JOptionPane.YES_NO_OPTION, 
-				JOptionPane.QUESTION_MESSAGE);
-		
-		if (confirm == JOptionPane.YES_OPTION)
-			controller.removerCliente(cliente);
+		if (cliente != null) {
+			clienteSelecionado = cliente;
+			preencherCampos();			
+		}
 	}
 
 	@Override
 	public void onSave() {
 		if(!isValidFields()) {
 			exibirMensagem("campo invalido!");
-			return;
+		} else {
+			int id = (clienteSelecionado == null || clienteSelecionado.getId() < 1) ? 0 : clienteSelecionado.getId();
+			String nome = nomeField.getText();
+			String cpfCnpj = cpfField.isVisible() ? cpfField.getText() : cnpjField.getText();
+			String email = emailField.getText();
+			String telefone = telefoneField.isVisible() ? telefoneField.getText() : celularField.getText();
+			String endereco = enderecoField.getText();
+			
+			clienteSelecionado = new Cliente(id, nome, cpfCnpj, telefone, email, endereco);
+			controller.salvarCliente(clienteSelecionado);			
 		}
-		
-		int id = (clienteSelecionado == null || clienteSelecionado.getId() < 1) ? 0 : clienteSelecionado.getId();
-		String nome = nomeField.getText();
-		String cpfCnpj = cpfField.isVisible() ? cpfField.getText() : cnpjField.getText();
-		String email = emailField.getText();
-		String telefone = telefoneField.isVisible() ? telefoneField.getText() : celularField.getText();
-		String endereco = enderecoField.getText();
-
-		Cliente cliente = new Cliente(id, nome, cpfCnpj, telefone, email, endereco);
-		controller.salvarCliente(cliente);
 	}
 	
 	private boolean isValidFields() {
@@ -344,4 +352,5 @@ public class CadastroClienteScreen extends CadastroScreen{
 	public void setController(CadastroClienteController controller) {
 		this.controller = controller;
 	}
+
 }

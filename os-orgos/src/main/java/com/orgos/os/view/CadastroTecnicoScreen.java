@@ -187,6 +187,7 @@ public class CadastroTecnicoScreen extends CadastroScreen{
 
 	@Override
 	public void onReset() {
+		tecnicoSelecionado = null;
 		nomeField.setEnabled(false);
 		cpfField.setEnabled(false);
 		cnpjField.setEnabled(false);
@@ -194,15 +195,16 @@ public class CadastroTecnicoScreen extends CadastroScreen{
 		telefoneField.setEnabled(false);
 		celularField.setEnabled(false);
 		especializacaoField.setEnabled(false);
+		showCpf(true);
+		showTelefone(true);
+		limparCampos();
 	}
 
 	@Override
 	public void onNew() {
-		tecnicoSelecionado = null;
-		showCpf(true);
-		showTelefone(true);
+		reset();
+		
 		nomeField.requestFocus();
-		limparCampos();
 		start();
 	}
 
@@ -232,15 +234,13 @@ public class CadastroTecnicoScreen extends CadastroScreen{
 
 	@Override
 	public void onEdit() {
-		BuscaTecnicoScreen buscaTecnicoScreen = AppFactory.getBuscaTecnicoScreen();
-		buscaTecnicoScreen.setVisible(true);
-		
-		tecnicoSelecionado = buscaTecnicoScreen.getTecnicoSelecionado();
-		if (tecnicoSelecionado == null) 
-			return;
-		
-		preencherCampos();
-		start();
+		if (tecnicoSelecionado == null) {
+			exibirMensagem("Selecione um técnico");
+		} else {
+			nomeField.requestFocus();
+			preencherCampos();
+			start();			
+		}
 	}
 
 	private void preencherCampos() {
@@ -275,40 +275,48 @@ public class CadastroTecnicoScreen extends CadastroScreen{
 
 	@Override
 	public void onRemove() {
+		if (tecnicoSelecionado == null) {
+			exibirMensagem("Selecione um técnico");
+		} else {
+			int confirm = JOptionPane.showConfirmDialog(
+					this, 
+					"Deseja realmente revover esse registro?\nNome: " + tecnicoSelecionado.getNome(), 
+					"Confirmar exclusão", 
+					JOptionPane.YES_NO_OPTION, 
+					JOptionPane.QUESTION_MESSAGE);
+			
+			if (confirm == JOptionPane.YES_OPTION)
+				controller.removerTecnico(tecnicoSelecionado);
+		}
+	}
+
+	@Override
+	public void onSearch() {
 		BuscaTecnicoScreen buscaTecnicoScreen = AppFactory.getBuscaTecnicoScreen();
 		buscaTecnicoScreen.setVisible(true);
 		
 		Tecnico tecnico = buscaTecnicoScreen.getTecnicoSelecionado();
-		if (tecnico == null) 
-			return;
-		
-		int confirm = JOptionPane.showConfirmDialog(
-				this, 
-				"Deseja realmente revover esse registro?\nNome: " + tecnico.getNome(), 
-				"Confirmar exclusão", 
-				JOptionPane.YES_NO_OPTION, 
-				JOptionPane.QUESTION_MESSAGE);
-		
-		if (confirm == JOptionPane.YES_OPTION)
-			controller.removerTecnico(tecnico);
+		if (tecnico != null) {
+			tecnicoSelecionado = tecnico;
+			preencherCampos();			
+		}
 	}
-
+	
 	@Override
 	public void onSave() {
 		if(!isValidFields()) {
 			exibirMensagem("campo invalido!");
-			return;
-		}
-		
-		int id = (tecnicoSelecionado == null || tecnicoSelecionado.getId() < 1) ? 0 : tecnicoSelecionado.getId();
-		String nome = nomeField.getText();
-		String cpfCnpj = cpfField.isVisible() ? cpfField.getText() : cnpjField.getText();
-		String email = emailField.getText();
-		String telefone = telefoneField.isVisible() ? telefoneField.getText() : celularField.getText();
-		String especializacao = especializacaoField.getText();
+		} else {
+			int id = (tecnicoSelecionado == null || tecnicoSelecionado.getId() < 1) ? 0 : tecnicoSelecionado.getId();
+			String nome = nomeField.getText();
+			String cpfCnpj = cpfField.isVisible() ? cpfField.getText() : cnpjField.getText();
+			String email = emailField.getText();
+			String telefone = telefoneField.isVisible() ? telefoneField.getText() : celularField.getText();
+			String especializacao = especializacaoField.getText();
 
-		Tecnico tecnico = new Tecnico(id, nome, cpfCnpj, telefone, email, especializacao);
-		controller.salvarTecnico(tecnico);
+			Tecnico tecnico = new Tecnico(id, nome, cpfCnpj, telefone, email, especializacao);
+			controller.salvarTecnico(tecnico);
+		}
 	}
 	
 	private boolean isValidFields() {

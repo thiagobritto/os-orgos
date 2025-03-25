@@ -17,6 +17,7 @@ public abstract class CadastroScreen extends JDialogScreen {
 	protected JButton excluirButton;
 	protected JButton salvarButton;
 	protected JButton cancelarButton;
+	protected JButton localizarButton;
 	
 	public CadastroScreen(JFrame owner) {
 		super(owner, true);
@@ -52,7 +53,13 @@ public abstract class CadastroScreen extends JDialogScreen {
 			excluirButton.addActionListener(e -> onRemove());
 			excluirButton.setBounds(210, 10, 80, 36);
 			excluirButton.setMnemonic(KeyEvent.VK_E);
-			bottomPanel.add(excluirButton);			
+			bottomPanel.add(excluirButton);		
+			
+			localizarButton = new JButton("Localizar");
+			localizarButton.addActionListener(e -> onSearch());
+			localizarButton.setMnemonic(KeyEvent.VK_L);
+			localizarButton.setBounds(310, 10, 80, 36);
+			bottomPanel.add(localizarButton);
 			
 			salvarButton = new JButton("Salvar");
 			salvarButton.addActionListener(e -> onSave());
@@ -66,7 +73,6 @@ public abstract class CadastroScreen extends JDialogScreen {
 			cancelarButton.setMnemonic(KeyEvent.VK_C);
 			bottomPanel.add(cancelarButton);	
 		}
-		
 	}
 	
 	public abstract void onStart();
@@ -74,6 +80,7 @@ public abstract class CadastroScreen extends JDialogScreen {
 	public abstract void onNew();
 	public abstract void onEdit();
 	public abstract void onRemove();
+	public abstract void onSearch();
 	public abstract void onSave();
 	public abstract void onCancel();
 	
@@ -84,6 +91,7 @@ public abstract class CadastroScreen extends JDialogScreen {
 		novoButton.setEnabled(false);
 		alterarButton.setEnabled(false);
 		excluirButton.setEnabled(false);
+		localizarButton.setEnabled(false);
 		onStart();
 	}
 	
@@ -94,6 +102,7 @@ public abstract class CadastroScreen extends JDialogScreen {
 		novoButton.setEnabled(true);
 		alterarButton.setEnabled(true);
 		excluirButton.setEnabled(true);
+		localizarButton.setEnabled(true);
 		onReset();
 	}
 }

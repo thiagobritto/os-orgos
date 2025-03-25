@@ -5,7 +5,7 @@ import com.orgos.os.model.OperacaoResultado;
 import com.orgos.os.service.ClienteService;
 import com.orgos.os.view.CadastroClienteScreen;
 
-public class CadastroClienteController {
+public class CadastroClienteController implements Controller {
 
 	private CadastroClienteScreen screen;
 	private ClienteService clienteService;
@@ -13,6 +13,16 @@ public class CadastroClienteController {
 	public CadastroClienteController(CadastroClienteScreen screen, ClienteService clienteService) {
 		this.screen = screen;
 		this.clienteService = clienteService;
+		iniciaController();
+	}
+	
+	private void iniciaController() {
+		screen.setController(this);
+	}
+
+	@Override
+	public void inicializar() {
+		
 	}
 
 	public void salvarCliente(Cliente cliente) {
@@ -38,6 +48,8 @@ public class CadastroClienteController {
 			screen.reset();					
 		}
 	}
+
+	
 	
 	
 

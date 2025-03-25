@@ -5,16 +5,26 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.orgos.os.service.BackupService;
-import com.orgos.os.view.DashboardScreenInterface;
+import com.orgos.os.view.DashboardScreen;
 
-public class DashboardController {
-	private DashboardScreenInterface screen;
+public class DashboardController implements Controller{
+	private DashboardScreen screen;
 	private BackupService backupService;
 
-	public DashboardController(DashboardScreenInterface screen, BackupService backupService) {
+	public DashboardController(DashboardScreen screen, BackupService backupService) {
 		super();
 		this.screen = screen;
 		this.backupService = backupService;
+		iniciarController();
+	}
+	
+	private void iniciarController() {
+		screen.setController(this);
+	}
+
+	@Override
+	public void inicializar() {
+		
 	}
 
 	// Método para exportar o backup
@@ -42,5 +52,7 @@ public class DashboardController {
 			screen.exibirMensagemErro("Erro ao importar backup.");			
 		}		
 	}
+
+	
 
 }

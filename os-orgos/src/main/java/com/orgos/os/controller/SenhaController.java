@@ -4,7 +4,7 @@ import com.orgos.os.model.OperacaoResultado;
 import com.orgos.os.service.UsuarioService;
 import com.orgos.os.view.SenhaScreen;
 
-public class SenhaController {
+public class SenhaController implements Controller{
 	private SenhaScreen screen;
 	private UsuarioService usuarioService;
 
@@ -12,6 +12,16 @@ public class SenhaController {
 		super();
 		this.screen = screen;
 		this.usuarioService = usuarioService;
+		iniciarController();
+	}
+	
+	private void iniciarController() {
+		screen.setController(this);
+	}
+
+	@Override
+	public void inicializar() {
+		
 	}
 
 	public void alterarSenha(int usuarioId, String password) {
@@ -21,6 +31,8 @@ public class SenhaController {
 			screen.dispose();
 		}
 	}
+
+	
 	
 	
 }

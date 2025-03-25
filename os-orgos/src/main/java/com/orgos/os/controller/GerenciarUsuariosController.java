@@ -10,22 +10,40 @@ import com.orgos.os.model.PesquisaUsuarioId;
 import com.orgos.os.model.PesquisaUsuarioNome;
 import com.orgos.os.model.Usuario;
 import com.orgos.os.service.UsuarioService;
-import com.orgos.os.view.GerenciarUsuariosScreenInterface;
+import com.orgos.os.view.GerenciarUsuariosScreen;
 
-public class GerenciarUsuariosController {
-	private GerenciarUsuariosScreenInterface screen;
+public class GerenciarUsuariosController implements Controller {
+	private GerenciarUsuariosScreen screen;
 	private UsuarioService usuarioService;
 
-	public GerenciarUsuariosController(GerenciarUsuariosScreenInterface screen, UsuarioService usuarioService) {
+	private PesquisaUsuarioId pesquisaUsuarioId;
+	private PesquisaUsuarioNome pesquisaUsuarioNome;
+
+	public GerenciarUsuariosController(GerenciarUsuariosScreen screen, UsuarioService usuarioService) {
 		super();
 		this.screen = screen;
 		this.usuarioService = usuarioService;
+		iniciarController();
 	}
 
-	public void carregarTela() {
-		PesquisaUsuarioId pesquisaUsuarioId = new PesquisaUsuarioId(usuarioService);
-		PesquisaUsuarioNome pesquisaUsuarioNome = new PesquisaUsuarioNome(usuarioService);
+	/*
+	 * Inicia o controller
+	 */
+	private void iniciarController() {
+		screen.setController(this);
+		pesquisaUsuarioId = new PesquisaUsuarioId(usuarioService);
+		pesquisaUsuarioNome = new PesquisaUsuarioNome(usuarioService);
+	}
 
+	/**
+	 * É chamado sempre que a tela e carregada
+	 */
+	@Override
+	public void inicializar() {
+		carregarDados();
+	}
+
+	public void carregarDados() {
 		PesquisaUsuario[] pesquisasUsuario = { pesquisaUsuarioId, pesquisaUsuarioNome };
 		screen.setPesquisa(pesquisasUsuario);
 

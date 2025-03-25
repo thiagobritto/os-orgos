@@ -4,14 +4,27 @@ import com.orgos.os.model.OperacaoResultado;
 import com.orgos.os.service.UsuarioService;
 import com.orgos.os.view.CadastroUsuarioScreen;
 
-public class CadastroUsuarioController {
+public class CadastroUsuarioController  implements Controller {
 	private CadastroUsuarioScreen screen;
 	private UsuarioService usuarioService;
 
 	public CadastroUsuarioController(CadastroUsuarioScreen screen, UsuarioService usuarioService) {
 		super();
 		this.screen = screen;
-		this.usuarioService = usuarioService;
+		this.usuarioService = usuarioService;		
+		iniciarController();
+	}
+	
+	public void iniciarController(){
+		screen.setController(this);		
+	}
+	
+	/**
+	 * É chamado sempre que a tela e carregada
+	 */
+	@Override
+	public void inicializar() {
+		
 	}
 
 	public void cadastrarUsuario(String username, String password) {
@@ -22,5 +35,7 @@ public class CadastroUsuarioController {
             screen.mostrarMensagem(resultado.getMensagem());
         }
 	}
+
+	
 	
 }

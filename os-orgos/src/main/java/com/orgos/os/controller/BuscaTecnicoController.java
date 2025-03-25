@@ -9,7 +9,7 @@ import com.orgos.os.model.Tecnico;
 import com.orgos.os.service.TecnicoService;
 import com.orgos.os.view.BuscaTecnicoScreen;
 
-public class BuscaTecnicoController {
+public class BuscaTecnicoController implements Controller {
 
 	private BuscaTecnicoScreen screen;
 	private TecnicoService tecnicoService;
@@ -18,6 +18,16 @@ public class BuscaTecnicoController {
 		super();
 		this.screen = screen;
 		this.tecnicoService = tecnicoService;
+		iniciarController();
+	}
+
+	private void iniciarController() {
+		screen.setController(this);
+	}
+	
+	@Override
+	public void inicializar() {
+		
 	}
 
 	public void carregarTela() {
@@ -30,4 +40,6 @@ public class BuscaTecnicoController {
 		List<Tecnico> tecnicos = tecnicoService.listarTodos();
 		screen.exibirTecnicos(tecnicos);
 	}
+
+	
 }

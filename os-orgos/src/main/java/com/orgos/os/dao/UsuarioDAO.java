@@ -227,7 +227,6 @@ public class UsuarioDAO implements DAO<Usuario, Integer>{
 
 	public OperacaoResultado adicionarPermissao(int usuarioId, Funcionalidade funcionalidade) {
 		String sql = "INSERT INTO permissoes (usuario_id, funcionalidade) VALUES (?, ?)";
-
 		try (Connection conn = DatabaseConnection.getConnection();
 				PreparedStatement pstmt = conn.prepareStatement(sql)) {
 

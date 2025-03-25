@@ -9,7 +9,7 @@ import com.orgos.os.model.PesquisaClienteNome;
 import com.orgos.os.service.ClienteService;
 import com.orgos.os.view.BuscaClienteScreen;
 
-public class BuscaClienteController {
+public class BuscaClienteController implements Controller{
 
 	private BuscaClienteScreen screen;
 	private ClienteService clienteService;
@@ -17,6 +17,16 @@ public class BuscaClienteController {
 	public BuscaClienteController(BuscaClienteScreen screen, ClienteService clienteService) {
 		this.screen = screen;
 		this.clienteService = clienteService;
+		iniciarController();
+	}
+	
+	private void iniciarController() {
+		screen.setController(this);
+	}
+
+	@Override
+	public void inicializar() {
+		
 	}
 	
 	public void carregarTela() {
@@ -29,5 +39,7 @@ public class BuscaClienteController {
 		List<Cliente> listarTodos = clienteService.listarTodos();
 		screen.exibirClientes(listarTodos);
 	}
+
+	
 
 }
