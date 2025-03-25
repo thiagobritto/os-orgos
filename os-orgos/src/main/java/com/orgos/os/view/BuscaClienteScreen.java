@@ -1,7 +1,6 @@
 package com.orgos.os.view;
 
 import java.awt.Font;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -10,7 +9,6 @@ import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
 import com.orgos.os.controller.BuscaClienteController;
@@ -45,13 +42,10 @@ public class BuscaClienteScreen extends JDialogScreen {
 		super(owner, true);
 		this.controller = controller;
 
-		setTitle("Busca de Clientes");
+		setTitle("Seleção de cliente");
 		setSize(800, 540);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(owner);
-
-		KeyStroke keyEscape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
-		getRootPane().registerKeyboardAction(this::cancelar, keyEscape, JComponent.WHEN_IN_FOCUSED_WINDOW);
 
 		this.iniciarComponentes();
 	}
@@ -92,7 +86,7 @@ public class BuscaClienteScreen extends JDialogScreen {
 					if (selectedRow >= 0) {
 						clienteSelecionado = clienteTableModel.getCliente(selectedRow);
 						dispose();
-					}
+					} 
 				}
 			}
 		});
@@ -108,11 +102,6 @@ public class BuscaClienteScreen extends JDialogScreen {
 		tipLabel_1.setBounds(20, 470, 373, 14);
 		contentPanel.add(tipLabel_1);
 
-	}
-
-	private void cancelar(ActionEvent event) {
-		clienteSelecionado = null;
-		dispose();
 	}
 
 	private void pesquisar() {
@@ -140,6 +129,7 @@ public class BuscaClienteScreen extends JDialogScreen {
 
 	@Override
 	public void setVisible(boolean b) {
+		clienteSelecionado = null;
 		controller.carregarTela();
 		super.setVisible(b);
 	}

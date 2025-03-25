@@ -15,27 +15,27 @@ public class CadastroClienteController {
 		this.clienteService = clienteService;
 	}
 
-	public void seveCliente(Cliente cliente) {
+	public void salvarCliente(Cliente cliente) {
 		if (cliente.getId() < 1) {
 			OperacaoResultado resultado = clienteService.salvar(cliente);
 			screen.exibirMensagem(resultado.getMensagem());
 			if (resultado.isSucesso()) {
-				screen.limparCampos();			
+				screen.reset();			
 			}
 		} else {
 			OperacaoResultado resultado = clienteService.atualizar(cliente);
 			screen.exibirMensagem(resultado.getMensagem());
 			if (resultado.isSucesso()) {
-				screen.limparCampos();			
+				screen.reset();			
 			}
 		}
 	}
 
-	public void deleteCliente(Cliente cliente) {
+	public void removerCliente(Cliente cliente) {
 		OperacaoResultado resultado = clienteService.remover(cliente);
+		screen.exibirMensagem(resultado.getMensagem());
 		if (resultado.isSucesso()) {
-			screen.exibirMensagem(resultado.getMensagem());
-			screen.limparCampos();					
+			screen.reset();					
 		}
 	}
 	

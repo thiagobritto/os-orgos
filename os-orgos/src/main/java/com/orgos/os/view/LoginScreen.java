@@ -35,14 +35,15 @@ public class LoginScreen extends JFrame implements LoginScreenInterface {
 	public LoginScreen(LoginController controller) {
 		this.controller = controller;
 		this.initComponent();
-	}
-
-	private void initComponent() {
+		
 		setTitle("Login");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(400, 320);
 		setLocationRelativeTo(null);
 		setResizable(false);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+
+	private void initComponent() {
 
 		String sourceImg = LoginScreen.class.getResource("/images/").getPath();
 		Image image = Toolkit.getDefaultToolkit().getImage(sourceImg + "logo_jframe_48x48.png");

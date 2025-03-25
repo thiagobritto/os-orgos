@@ -12,7 +12,6 @@ import com.orgos.os.controller.SenhaController;
 import com.orgos.os.dao.ClienteDAO;
 import com.orgos.os.dao.TecnicoDAO;
 import com.orgos.os.dao.UsuarioDAO;
-import com.orgos.os.model.Cliente;
 import com.orgos.os.model.Usuario;
 import com.orgos.os.service.BackupService;
 import com.orgos.os.service.ClienteService;
@@ -64,7 +63,7 @@ public class AppFactory {
 	private static BuscaClienteController buscaClienteController = new BuscaClienteController(buscaClienteScreen, clienteService);
 	
 	private static CadastroTecnicoScreen cadastroTecnicoScreen = new CadastroTecnicoScreen(dashboardScreen, null);
-	private static CadastroTecnicoController cadastroTecnicoController = new CadastroTecnicoController(cadastroTecnicoScreen);
+	private static CadastroTecnicoController cadastroTecnicoController = new CadastroTecnicoController(cadastroTecnicoScreen, tecnicoService);
 	
 	private static BuscaTecnicoScreen buscaTecnicoScreen = new BuscaTecnicoScreen(dashboardScreen, null);
 	private static BuscaTecnicoController buscaTecnicoController = new BuscaTecnicoController(buscaTecnicoScreen, tecnicoService);
@@ -107,12 +106,6 @@ public class AppFactory {
 	
 	public static CadastroClienteScreen getCadastroClienteScreen() {
 		cadastroClienteScreen.setController(cadastroClienteController);
-		return cadastroClienteScreen;
-	}
-	
-	public static CadastroClienteScreen getEditarClienteScreen(Cliente cliente) {
-		cadastroClienteScreen.setController(cadastroClienteController);
-		cadastroClienteScreen.setCliente(cliente);
 		return cadastroClienteScreen;
 	}
 	

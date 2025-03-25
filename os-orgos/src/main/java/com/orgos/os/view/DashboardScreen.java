@@ -18,7 +18,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.orgos.os.controller.DashboardController;
-import com.orgos.os.model.Cliente;
 import com.orgos.os.model.Funcionalidade;
 import com.orgos.os.model.SessaoUsuario;
 import com.orgos.os.util.AppFactory;
@@ -78,102 +77,86 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 
 		JMenu arquivoMenu = new JMenu("Arquivo");
 		menuBar.add(arquivoMenu);
+		{
+			if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.EXPORTAR_BACKUP)) {
+				JMenuItem arquivoExportarBackupMenuItem = new JMenuItem("Exportar Backup");
+				arquivoExportarBackupMenuItem.addActionListener(e -> exportarBackup());
+				arquivoMenu.add(arquivoExportarBackupMenuItem);
+			}
 
-		if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.EXPORTAR_BACKUP)) {
-			JMenuItem arquivoExportarBackupMenuItem = new JMenuItem("Exportar Backup");
-			arquivoExportarBackupMenuItem.addActionListener(e -> exportarBackup());
-			arquivoMenu.add(arquivoExportarBackupMenuItem);
+			if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.IMPORTAR_BACKUP)) {
+				JMenuItem arquivoImportarBackupMenuItem = new JMenuItem("Importar Backup");
+				arquivoImportarBackupMenuItem.addActionListener(e -> importarBackup());
+				arquivoMenu.add(arquivoImportarBackupMenuItem);
+			}
+
+			JMenuItem arquivoSobreMenuItem = new JMenuItem("Sobre");
+			arquivoMenu.add(arquivoSobreMenuItem);
+
+			JMenuItem arquivoSairMenuItem = new JMenuItem("Sair");
+			arquivoSairMenuItem.addActionListener(e -> close());
+			arquivoMenu.add(arquivoSairMenuItem);
 		}
 
-		if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.IMPORTAR_BACKUP)) {
-			JMenuItem arquivoImportarBackupMenuItem = new JMenuItem("Importar Backup");
-			arquivoImportarBackupMenuItem.addActionListener(e -> importarBackup());
-			arquivoMenu.add(arquivoImportarBackupMenuItem);
-		}
-
-		JMenuItem arquivoSobreMenuItem = new JMenuItem("Sobre");
-		arquivoMenu.add(arquivoSobreMenuItem);
-
-		JMenuItem arquivoSairMenuItem = new JMenuItem("Sair");
-		arquivoSairMenuItem.addActionListener(e -> close());
-		arquivoMenu.add(arquivoSairMenuItem);
+		
 
 		JMenu cadastroMenu = new JMenu("Cadastro");
 		menuBar.add(cadastroMenu);
+		{
+			JMenuItem cadastroClienteMenuItem = new JMenuItem("Cliente");
+			cadastroClienteMenuItem.addActionListener(e -> abrirTelaCliente());
+			cadastroMenu.add(cadastroClienteMenuItem);
 
-		JMenu cadastroClienteMenu = new JMenu("Cliente");
-		cadastroMenu.add(cadastroClienteMenu);
-		
-		JMenuItem cadastroClienteNovoMenuItem = new JMenuItem("Novo");
-		cadastroClienteNovoMenuItem.addActionListener(e -> abrirTelaCadastroCliente());
-		cadastroClienteMenu.add(cadastroClienteNovoMenuItem);
-		
-		JMenuItem cadastroClienteEditarMenuItem = new JMenuItem("Editar");
-		cadastroClienteEditarMenuItem.addActionListener(e -> abrirTelaEditarCliente());
-		cadastroClienteMenu.add(cadastroClienteEditarMenuItem);
+			JMenuItem cadastroServicoMenuItem = new JMenuItem("Serviço");
+			cadastroMenu.add(cadastroServicoMenuItem);
 
-		JMenuItem cadastroServicoMenuItem = new JMenuItem("Serviço");
-		cadastroMenu.add(cadastroServicoMenuItem);
+			JMenuItem cadastroTecnicoMenuItem = new JMenuItem("Tecnico");
+			cadastroTecnicoMenuItem.addActionListener(e -> abrirTelaTecnico());
+			cadastroMenu.add(cadastroTecnicoMenuItem);
+			
+			if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.CADASTRAR_USUARIO)
+					|| SessaoUsuario.getInstancia().temPermissao(Funcionalidade.GERENCIAR_USUARIO)) {
+				JMenu cadastroUsuarioMenu = new JMenu("Usuário");
+				cadastroMenu.add(cadastroUsuarioMenu);
 
-		JMenu cadastroTecnicoMenu = new JMenu("Tecnico");
-		cadastroMenu.add(cadastroTecnicoMenu);
-		
-		JMenuItem cadastroTrcnicoNovoMenuItem = new JMenuItem("Novo");		
-		cadastroTrcnicoNovoMenuItem.addActionListener(e -> abrirTelaCadastroTecnico());
-		cadastroTecnicoMenu.add(cadastroTrcnicoNovoMenuItem);
-		
-		if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.CADASTRAR_USUARIO)
-				|| SessaoUsuario.getInstancia().temPermissao(Funcionalidade.GERENCIAR_USUARIO)) {
-			JMenu cadastroUsuarioMenu = new JMenu("Usuário");
-			cadastroMenu.add(cadastroUsuarioMenu);
+				if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.CADASTRAR_USUARIO)) {
+					JMenuItem cadastroUsuarioNovoMenuItem = new JMenuItem("Novo");
+					cadastroUsuarioNovoMenuItem.addActionListener(e -> abrirTelaCadastroUsuario());
+					cadastroUsuarioMenu.add(cadastroUsuarioNovoMenuItem);
+				}
 
-			if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.CADASTRAR_USUARIO)) {
-				JMenuItem cadastroUsuarioNovoMenuItem = new JMenuItem("Novo");
-				cadastroUsuarioNovoMenuItem.addActionListener(e -> abrirTelaCadastroUsuario());
-				cadastroUsuarioMenu.add(cadastroUsuarioNovoMenuItem);
-			}
-
-			if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.GERENCIAR_USUARIO)) {
-				JMenuItem cadastroUsuarioGerenciarMenuItem = new JMenuItem("Gerenciar");
-				cadastroUsuarioGerenciarMenuItem.addActionListener(e -> abrirTelaGerenciarUsuario());
-				cadastroUsuarioMenu.add(cadastroUsuarioGerenciarMenuItem);
+				if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.GERENCIAR_USUARIO)) {
+					JMenuItem cadastroUsuarioGerenciarMenuItem = new JMenuItem("Gerenciar");
+					cadastroUsuarioGerenciarMenuItem.addActionListener(e -> abrirTelaGerenciarUsuario());
+					cadastroUsuarioMenu.add(cadastroUsuarioGerenciarMenuItem);
+				}
 			}
 		}
 
 		if (SessaoUsuario.getInstancia().temPermissao(Funcionalidade.VISUALIZAR_RELATORIOS)) {
 			JMenu relatorioMenu = new JMenu("Relatório");
 			menuBar.add(relatorioMenu);
+			{
+				JMenuItem relatorioClienteMenuItem = new JMenuItem("Cliente");
+				relatorioMenu.add(relatorioClienteMenuItem);
 
-			JMenuItem relatorioClienteMenuItem = new JMenuItem("Cliente");
-			relatorioMenu.add(relatorioClienteMenuItem);
+				JMenuItem relatorioServicoMenuItem = new JMenuItem("Serviço");
+				relatorioMenu.add(relatorioServicoMenuItem);
 
-			JMenuItem relatorioServicoMenuItem = new JMenuItem("Serviço");
-			relatorioMenu.add(relatorioServicoMenuItem);
+				JMenuItem relatorioUsuarioMenuItem = new JMenuItem("Usuário");
+				relatorioMenu.add(relatorioUsuarioMenuItem);
+			}
 
-			JMenuItem relatorioUsuarioMenuItem = new JMenuItem("Usuário");
-			relatorioMenu.add(relatorioUsuarioMenuItem);
+			
 		}
-
 		setJMenuBar(menuBar);
-
 	}
-	
-	private void abrirTelaCadastroTecnico() {
+
+	private void abrirTelaTecnico() {
 		AppFactory.getCadastroTecnicoScreen().setVisible(true);
 	}
 
-	private void abrirTelaEditarCliente() {
-		BuscaClienteScreen buscaClienteScreen = AppFactory.getBuscaClienteScreen();
-		buscaClienteScreen.setVisible(true);
-		
-		Cliente clienteSelecionado = buscaClienteScreen.getClienteSelecionado();
-		if (clienteSelecionado == null) 
-			return;
-		
-		AppFactory.getEditarClienteScreen(clienteSelecionado).setVisible(true);
-	}
-
-	private void abrirTelaCadastroCliente() {
+	private void abrirTelaCliente() {
 		AppFactory.getCadastroClienteScreen().setVisible(true);
 	}
 	
@@ -228,10 +211,6 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 	public void setVisible(boolean b) {
 		this.iniciarComponentes();
 		super.setVisible(b);
-	}
-	
-	public void atualizarComponentes() {
-		this.iniciarComponentes();
 	}
 
 	public void setController(DashboardController controller) {
