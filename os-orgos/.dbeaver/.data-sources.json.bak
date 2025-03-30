@@ -1,0 +1,49 @@
+{
+	"folders": {},
+	"connections": {
+		"sqlite_jdbc-195ab535709-1e9e7bbc9ca93777": {
+			"provider": "sqlite",
+			"driver": "sqlite_jdbc",
+			"name": "os-orgos.db",
+			"save-password": true,
+			"configuration": {
+				"database": "C:\\Users\\Thiago\\git\\repository2\\os-orgos\\BANCO\\os-orgos.db",
+				"url": "jdbc:sqlite:C:\\Users\\Thiago\\git\\repository2\\os-orgos\\BANCO\\os-orgos.db",
+				"configurationType": "MANUAL",
+				"type": "dev",
+				"closeIdleConnection": true,
+				"auth-model": "native"
+			}
+		},
+		"sqlite_jdbc-195d9be35ce-4432ddc91d65077d": {
+			"provider": "sqlite",
+			"driver": "sqlite_jdbc",
+			"name": "os-orgos.db 2",
+			"save-password": true,
+			"configuration": {
+				"database": "C:\\Users\\Thiago\\git\\repository2\\os-orgos\\BANCO\\os-orgos.db",
+				"url": "jdbc:sqlite:C:\\Users\\Thiago\\git\\repository2\\os-orgos\\BANCO\\os-orgos.db",
+				"configurationType": "MANUAL",
+				"type": "dev",
+				"closeIdleConnection": true,
+				"auth-model": "native"
+			}
+		}
+	},
+	"connection-types": {
+		"dev": {
+			"name": "Desenvolvimento",
+			"color": "255,255,255",
+			"description": "Banco de dados de desenvolvimento",
+			"auto-commit": true,
+			"confirm-execute": false,
+			"confirm-data-change": false,
+			"smart-commit": false,
+			"smart-commit-recover": true,
+			"auto-close-transactions": true,
+			"close-transactions-period": 1800,
+			"auto-close-connections": true,
+			"close-connections-period": 14400
+		}
+	}
+}

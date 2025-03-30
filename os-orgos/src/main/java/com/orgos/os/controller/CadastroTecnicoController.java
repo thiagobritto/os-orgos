@@ -23,7 +23,7 @@ public class CadastroTecnicoController implements Controller {
 
 	@Override
 	public void inicializar() {
-		
+		screen.reset();
 	}
 
 	public void salvarTecnico(Tecnico tecnico) {

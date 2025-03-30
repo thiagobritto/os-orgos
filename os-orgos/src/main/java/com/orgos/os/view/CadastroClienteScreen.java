@@ -170,8 +170,6 @@ public class CadastroClienteScreen extends CadastroScreen{
 
 		telefoneRadioButton.addActionListener(actionListenerFone);
 		celularRadioButton.addActionListener(actionListenerFone);
-		
-		reset();
 	}
 
 	@Override
@@ -202,8 +200,6 @@ public class CadastroClienteScreen extends CadastroScreen{
 
 	@Override
 	public void onNew() {
-		reset();
-		
 		nomeField.requestFocus();
 		start();
 	}
@@ -337,12 +333,6 @@ public class CadastroClienteScreen extends CadastroScreen{
 	@Override
 	public void onCancel() {
 		dispose();
-	}
-	
-	@Override
-	public void setVisible(boolean b) {
-		super.setVisible(b);
-		reset();
 	}
 
 	public void exibirMensagem(String mensagem) {

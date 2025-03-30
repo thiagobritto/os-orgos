@@ -22,7 +22,7 @@ public class CadastroClienteController implements Controller {
 
 	@Override
 	public void inicializar() {
-		
+		screen.reset();
 	}
 
 	public void salvarCliente(Cliente cliente) {

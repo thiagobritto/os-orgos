@@ -21,7 +21,7 @@ import javax.swing.border.EmptyBorder;
 
 import com.orgos.os.controller.LoginController;
 
-public class LoginScreen extends JFrame implements LoginScreenInterface {
+public class LoginScreen extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -95,19 +95,16 @@ public class LoginScreen extends JFrame implements LoginScreenInterface {
 		this.controller = loginController;
 	}
 
-	@Override
 	public void login() {
 		String username = usernameField.getText();
 		String password = new String(passwordField.getPassword());
 		controller.autenticar(username, password);
 	}
 
-	@Override
 	public void close() {
 		dispose();
 	}
 
-	@Override
 	public void exibirMensagemErro(String mensagem) {
 		JOptionPane.showMessageDialog(
 				this, 

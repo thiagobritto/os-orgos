@@ -22,7 +22,7 @@ import com.orgos.os.model.Funcionalidade;
 import com.orgos.os.model.SessaoUsuario;
 import com.orgos.os.util.AppFactory;
 
-public class DashboardScreen extends JFrame implements DashboardScreenInterface {
+public class DashboardScreen extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JMenuBar menuBar;
@@ -35,20 +35,21 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 	 */
 	public DashboardScreen(DashboardController controller) {
 		this.controller = controller;
-	}
-
-	private void iniciarComponentes() {
+		
 		setTitle("Dashboaed");
 		setSize(1280, 720);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
-
+		
 		URL resource = DashboardScreen.class.getResource("/images/logo_jframe_48x48.png");
 		Image image = Toolkit.getDefaultToolkit().getImage(resource);
 		setIconImage(image);
+		
+		iniciarComponentes();
+	}
 
-		// content
+	private void iniciarComponentes() {
 		contentPane = new JPanel();
 		contentPane.setLayout(new BorderLayout(0, 0));
 
@@ -107,6 +108,7 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 			cadastroMenu.add(cadastroClienteMenuItem);
 
 			JMenuItem cadastroServicoMenuItem = new JMenuItem("Serviço");
+			cadastroServicoMenuItem.addActionListener(e -> abrirTelaOrdemServico());
 			cadastroMenu.add(cadastroServicoMenuItem);
 
 			JMenuItem cadastroTecnicoMenuItem = new JMenuItem("Tecnico");
@@ -136,6 +138,13 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 			
 		}
 		setJMenuBar(menuBar);
+	}
+
+	private void abrirTelaOrdemServico() {
+		
+		CadastroOrdemServicoScreen cadastroOrdemServicoScreen = new CadastroOrdemServicoScreen();
+		cadastroOrdemServicoScreen.setVisible(true);
+		desktopPane.add(cadastroOrdemServicoScreen);
 	}
 
 	private void abrirTelaTecnico() {
@@ -174,25 +183,16 @@ public class DashboardScreen extends JFrame implements DashboardScreenInterface 
 		}
 	}
 
-	@Override
 	public void close() {
 		System.exit(0);
 	}
 
-	@Override
 	public void exibirMensagem(String menssagem) {
 		JOptionPane.showMessageDialog(this, menssagem);
 	}
 
-	@Override
 	public void exibirMensagemErro(String menssagem) {
 		JOptionPane.showMessageDialog(this, menssagem, "Erro", JOptionPane.ERROR_MESSAGE);
-	}
-
-	@Override
-	public void setVisible(boolean b) {
-		iniciarComponentes();
-		super.setVisible(b);
 	}
 
 	public void setController(DashboardController controller) {

@@ -2,6 +2,8 @@ package com.orgos.os.model;
 
 public enum Funcionalidade {
 	CADASTRAR_USUARIO("Cadastrar Usuários"),
+	TROCAR_SENHA("Trocar Senha"),
+	REMOVER_USUARIO("Excluir Usuário"),
 	GERENCIAR_PERMISSOES("Gerenciar Permissões"),
 	CONFIGURAR_SISTEMA("Configurar Sistema"),
 	EXPORTAR_BACKUP("Exportar Backup"),
