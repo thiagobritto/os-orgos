@@ -38,9 +38,11 @@ public class AppFactory {
 	private static UsuarioService usuarioService = new UsuarioService(usuarioDAO);
 	private static ClienteService clienteService = new ClienteService(clienteDAO);
 	private static TecnicoService tecnicoService = new TecnicoService(tecnicoDAO);
-
-	private static LoginScreen loginScreen;
-	private static LoginController loginController;
+	
+	public static LoginScreen getLoginScreen() {
+		LoginController loginController = new LoginController(new LoginScreen(), usuarioService);
+		return loginController.getScreen();
+	}
 
 	private static DashboardScreen dashboardScreen;
 	private static DashboardController dashboardController;
@@ -67,15 +69,7 @@ public class AppFactory {
 	private static BuscaTecnicoController buscaTecnicoController;
 
 	// Métodos para obter instâncias
-	public static LoginScreen getLoginScreen() {
-		if (loginScreen == null)
-			loginScreen = new LoginScreen(null);
-		if (loginController == null)
-			loginController = new LoginController(loginScreen, usuarioService);
-
-		loginController.inicializar();
-		return loginScreen;
-	}
+	
 
 	public static DashboardScreen getDashboardScreen() {
 		if (dashboardScreen == null)

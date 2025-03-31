@@ -1,12 +1,17 @@
 package com.orgos.os.view;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -16,101 +21,109 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-
-import com.orgos.os.controller.LoginController;
 
 public class LoginScreen extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
-	private JTextField usernameField;
-	private JPasswordField passwordField;
-	private LoginController controller;
-
-	/**
-	 * Create the frame.
-	 */
-	public LoginScreen(LoginController controller) {
-		this.controller = controller;
-		this.initComponent();
-		
+	private JTextField txtUsuario;
+	private JPasswordField txtSenha;
+	private JButton btnLogin;
+	private JButton btnCancelar;
+	
+	public LoginScreen() {
 		setTitle("Login");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(400, 320);
+		setSize(300, 200);
 		setLocationRelativeTo(null);
 		setResizable(false);
-	}
-
-	private void initComponent() {
-
+		
 		String sourceImg = LoginScreen.class.getResource("/images/").getPath();
 		Image image = Toolkit.getDefaultToolkit().getImage(sourceImg + "logo_jframe_48x48.png");
 		setIconImage(image);
-
+		
 		KeyStroke keyEscape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
 		getRootPane().registerKeyboardAction(e -> dispose(), keyEscape, JComponent.WHEN_IN_FOCUSED_WINDOW);
-
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(null);
-		setContentPane(contentPane);
-
-		JLabel lblNewLabel = new JLabel("Login");
-		lblNewLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		lblNewLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
-		lblNewLabel.setBounds(20, 20, 320, 30);
-		contentPane.add(lblNewLabel);
-
-		JLabel lblNewLabel_1 = new JLabel("Usuário");
-		lblNewLabel_1.setBounds(20, 70, 52, 16);
-		contentPane.add(lblNewLabel_1);
-
-		usernameField = new JTextField();
-		usernameField.setBounds(20, 90, 344, 36);
-		contentPane.add(usernameField);
-		usernameField.setColumns(10);
-
-		JLabel lblNewLabel_2 = new JLabel("Senha");
-		lblNewLabel_2.setBounds(20, 146, 52, 16);
-		contentPane.add(lblNewLabel_2);
-
-		passwordField = new JPasswordField();
-		passwordField.setBounds(20, 166, 344, 36);
-		contentPane.add(passwordField);
-
-		JButton loginButton = new JButton("Login");
-		loginButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				login();
-			}
-		});
-		loginButton.setBounds(20, 222, 344, 36);
-		contentPane.add(loginButton);
-
+		
+		iniciarComponentes();
 	}
 
-	public void setController(LoginController loginController) {
-		this.controller = loginController;
-	}
+	private void iniciarComponentes() {
+		JPanel panel = new JPanel(new BorderLayout(10, 10));
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+		setContentPane(panel);
+		{
+			JPanel headerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			panel.add(headerPanel, BorderLayout.NORTH);
+			{
+				JLabel title = new JLabel("Acesso ao Sistema");
+				title.setFont(new Font("Arial", Font.BOLD, 16));
+				headerPanel.add(title);
+			} // emd headerPanel
+			
+			JPanel sectionPanel = new JPanel(new GridBagLayout());
+			GridBagConstraints gbc = new GridBagConstraints();
+			panel.add(sectionPanel, BorderLayout.CENTER);
+			{
+				gbc.fill = GridBagConstraints.HORIZONTAL;
+				gbc.insets = new Insets(5, 5, 5, 5);
 
-	public void login() {
-		String username = usernameField.getText();
-		String password = new String(passwordField.getPassword());
-		controller.autenticar(username, password);
-	}
+				gbc.gridx = 0;
+				gbc.gridy = 0;				
+				JLabel lblUsuario = new JLabel("Usuário:");
+				sectionPanel.add(lblUsuario, gbc);
 
-	public void close() {
-		dispose();
+				gbc.gridx = 1;
+				gbc.weightx = 1.0;
+				txtUsuario = new JTextField(15);
+				sectionPanel.add(txtUsuario, gbc);
+
+				gbc.gridx = 0;
+				gbc.gridy = 1;
+				gbc.weightx = 0;
+				JLabel lblSenha = new JLabel("Senha:");
+				sectionPanel.add(lblSenha, gbc);
+				
+				gbc.gridx = 1;
+				gbc.weightx = 1.0;
+				txtSenha = new JPasswordField(15);				
+				sectionPanel.add(txtSenha, gbc);
+				
+			} // end sectionPanel
+			
+			JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+			panel.add(footerPanel, BorderLayout.SOUTH);
+			{
+				btnLogin = new JButton("Login");
+				footerPanel.add(btnLogin);
+				
+				btnCancelar = new JButton("Cancelar");
+				footerPanel.add(btnCancelar);
+			}	// end footerPanel
+			
+		} // end panel
+	}
+		
+
+	public String getUsuario() {
+		return txtUsuario.getText();
+	}
+	
+	public String getSenha() {
+		return new String(txtSenha.getPassword());
+	}
+	
+	public void addCancelarListener(ActionListener listener) {
+		btnCancelar.addActionListener(listener);
+	}
+	
+	public void addLoginListener(ActionListener listener) {
+		btnLogin.addActionListener(listener);
 	}
 
 	public void exibirMensagemErro(String mensagem) {
-		JOptionPane.showMessageDialog(
-				this, 
-				mensagem, 
-				"Erro", 
-				JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(this, mensagem);
 	}
-
+	
+	
+	
 }

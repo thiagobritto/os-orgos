@@ -1,7 +1,6 @@
 package com.orgos.os.controller;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.awt.event.ActionEvent;
 
 import com.orgos.os.model.SessaoUsuario;
 import com.orgos.os.model.Usuario;
@@ -9,41 +8,55 @@ import com.orgos.os.service.UsuarioService;
 import com.orgos.os.util.AppFactory;
 import com.orgos.os.view.LoginScreen;
 
-public class LoginController implements Controller{
-	private static final Logger logger = LogManager.getLogger(LoginController.class);
+public class LoginController {
+	//private static final Logger logger = LogManager.getLogger(LoginController2.class);
 	private LoginScreen screen;
 	private UsuarioService usuarioService;
-	private int countLogin = 1;
-	
+
 	public LoginController(LoginScreen screen, UsuarioService usuarioService) {
-		super();
+		setScreen(screen);
+		setUsuarioService(usuarioService);
+		iniciarControlle();
+	}
+
+	public LoginScreen getScreen() {
+		return screen;
+	}
+
+	public void setScreen(LoginScreen screen) {
 		this.screen = screen;
+	}
+
+	public UsuarioService getUsuarioService() {
+		return usuarioService;
+	}
+
+	public void setUsuarioService(UsuarioService usuarioService) {
 		this.usuarioService = usuarioService;
-		iniciarController();
-	}
-	
-	private void iniciarController() {
-		screen.setController(this);
 	}
 
-	@Override
-	public void inicializar() {
-		
+	// Methods
+	private void iniciarControlle() {
+		screen.addLoginListener(this::login);
+		screen.addCancelarListener(this::cancelar);
 	}
 
-	public void autenticar(String username, String password) {
-		Usuario usuario = usuarioService.autenticar(username, password);
-		if (usuario != null) {
-			SessaoUsuario.getInstancia().setUsuarioLogado(usuario);
-			AppFactory.getDashboardScreen().setVisible(true);
-			screen.close();
-			logger.info("Usuário '{}' fez login na tentativa '{}'.", username, countLogin);
-		} else {
+	private void login(ActionEvent actionevent1) {
+		String usuario = screen.getUsuario();
+		String senha = screen.getSenha();
+
+		Usuario usuarioAuth = usuarioService.autenticar(usuario, senha);
+		if (usuarioAuth == null) {
 			screen.exibirMensagemErro("Usuário ou senha invalidos!");
-			logger.error("Usuário '{}' tentou logar '{}' vezes.", username, countLogin++);
+		} else {
+			SessaoUsuario.getInstancia().setUsuarioLogado(usuarioAuth);
+			AppFactory.getDashboardScreen().setVisible(true);
+			screen.dispose();
 		}
 	}
 
-	
+	private void cancelar(ActionEvent actionevent1) {
+		screen.dispose();
+	}
 
 }

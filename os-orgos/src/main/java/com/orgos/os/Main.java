@@ -20,7 +20,6 @@ public class Main {
 		try {
 			FlatLightLaf.setup();
 			AppFactory.getLoginScreen().setVisible(true);
-			logger.info("Aplicçao iniciada!");
 		} catch (Exception e) {
 			logger.error("Erro ao iniciar aplicação: " + e.getMessage(), e);
 		}
