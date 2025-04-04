@@ -1,6 +1,10 @@
 package com.orgos.os.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import javax.swing.table.AbstractTableModel;
 
 public class Cliente {
 	private int id;
@@ -90,6 +94,67 @@ public class Cliente {
 	@Override
 	public String toString() {
 		return nome;
+	}
+
+	public static class TableModelCliente extends AbstractTableModel {
+		private static final long serialVersionUID = 1L;
+		private static final String[] COLUMNS = { "Código", "Nome", "CPF/CNPJ", "Telefone" };
+		private List<Cliente> clientes;
+
+		public TableModelCliente() {
+			this.clientes = new ArrayList<>();
+		}
+
+		public TableModelCliente(List<Cliente> clientes) {
+			this.clientes = clientes;
+		}
+
+		public List<Cliente> getClientes() {
+			return clientes;
+		}
+
+		public void setClientes(List<Cliente> clientes) {
+			this.clientes = clientes;
+		}
+		
+		public void add(Cliente cliente) {
+			clientes.add(cliente);
+			fireTableRowsInserted(clientes.size() - 1, clientes.size() - 1);
+		}
+		
+		public void remove(int rowIndex) {
+			clientes.remove(rowIndex);
+			fireTableRowsDeleted(rowIndex, rowIndex);
+		}
+
+		@Override
+		public int getRowCount() {
+			return clientes.size();
+		}
+
+		@Override
+		public int getColumnCount() {
+			return COLUMNS.length;
+		}
+
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			Cliente cliente = clientes.get(rowIndex);
+			return switch (columnIndex) {
+				case 0 -> cliente.getId();
+				case 1 -> cliente.getNome();
+				case 2 -> cliente.getCpfCnpj();
+				case 3 -> cliente.getTelefone();
+				default -> null;
+			};
+
+		}
+
+		@Override
+		public String getColumnName(int column) {
+			return COLUMNS[column];
+		}
+
 	}
 
 }

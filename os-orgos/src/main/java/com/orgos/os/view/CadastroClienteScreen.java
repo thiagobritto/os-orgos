@@ -1,346 +1,464 @@
 package com.orgos.os.view;
 
+import java.awt.BorderLayout;
+import java.awt.ComponentOrientation;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.text.ParseException;
+import java.util.List;
+import java.util.Objects;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.MaskFormatter;
 
-import com.orgos.os.controller.CadastroClienteController;
 import com.orgos.os.model.Cliente;
-import com.orgos.os.util.AppFactory;
-import com.orgos.os.util.FieldUtil;
-import com.orgos.os.util.ValidacaoUtil;
+import com.orgos.os.model.Cliente.TableModelCliente;
+import com.orgos.os.util.Validador;
 
-public class CadastroClienteScreen extends CadastroScreen{
-
+public class CadastroClienteScreen extends JDialog {
 	private static final long serialVersionUID = 1L;
-	private JTextField nomeField;
-	private JTextField emailField;
-	private JFormattedTextField cpfField;
-	private JFormattedTextField telefoneField;
-	private JTextArea enderecoField;
-	private JFormattedTextField cnpjField;
-	private JFormattedTextField celularField;
-	private JRadioButton cpfRadioButton;
-	private JRadioButton cnpjRadioButton;
-	private JRadioButton telefoneRadioButton;
-	private JRadioButton celularRadioButton;
-	
+	private MaskFormatter maskCPF, maskCNPJ, maskFixo, maskCelular;
+	private JFormattedTextField txtCpfcnpj, txtTelefone;
+	private JRadioButton rbCPF, rbCNPJ, rbFixo, rbCelular;
+	private JTextField txtNome, txtEmail, txtEndereco;
+	private JButton btnNovo, btnAlterar, btnExcluir, btnSalvar, btnCancelar;
+
+	private TableModelCliente tableModelCliente = new Cliente.TableModelCliente();
+	private JTable tabelaCliente;
 	private Cliente clienteSelecionado;
-	private CadastroClienteController controller;
 
-	public CadastroClienteScreen(JFrame owner, CadastroClienteController controller) {
-		super(owner);
-		this.controller = controller;
-		
-		setTitle("Cadastro de Clientes");
+	public CadastroClienteScreen(JFrame owner) {
+		super(owner, true);
+		setSize(600, 500);
+		setTitle("Sistema de Ordem de Serviço - Cadastro de Clientes");
+		setResizable(false);
 		setLocationRelativeTo(owner);
-		
-		JLabel tituloLabel = new JLabel("Cadastro de Clientes");
-		tituloLabel.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		tituloLabel.setLocation(20, 0);
-		tituloLabel.setSize(262, 60);
-		contentPanel.add(tituloLabel);
-		
-		JLabel nomeLabel = new JLabel("Nome *");
-		nomeLabel.setBounds(20, 80, 69, 14);
-		contentPanel.add(nomeLabel);
-		
-		nomeField = new JTextField();
-		nomeField.setBounds(20, 100, 360, 36);
-		contentPanel.add(nomeField);
-		nomeField.setColumns(10);
-		
-		cpfField = new JFormattedTextField();
-		cpfField.setBounds(400, 100, 200, 36);
-		contentPanel.add(cpfField);
-		FieldUtil.applyMask(cpfField, "###.###.###-##");
-		
-		cnpjField = new JFormattedTextField();
-		cnpjField.setBounds(400, 100, 200, 36);
-		cnpjField.setVisible(false);
-		contentPanel.add(cnpjField);
-		FieldUtil.applyMask(cnpjField, "##.###.###/####-##");
-		
-		JLabel emailLabel = new JLabel("Email");
-		emailLabel.setBounds(20, 150, 80, 14);
-		contentPanel.add(emailLabel);
-		
-		emailField = new JTextField();
-		emailField.setColumns(10);
-		emailField.setBounds(20, 170, 330, 36);
-		contentPanel.add(emailField);
-		
-		JLabel telefoneLabel = new JLabel("Telefone *");
-		telefoneLabel.setBounds(370, 150, 64, 14);
-		contentPanel.add(telefoneLabel);
-		
-		telefoneField = new JFormattedTextField();
-		telefoneField.setBounds(370, 170, 200, 36);
-		contentPanel.add(telefoneField);
-		FieldUtil.applyMask(telefoneField, "(##) ####-####");
-		
-		celularField = new JFormattedTextField();
-		celularField.setBounds(370, 170, 200, 36);
-		celularField.setVisible(false);
-		contentPanel.add(celularField);
-		FieldUtil.applyMask(celularField, "(##) #####-####");
-		
-		JLabel enderecoLabel = new JLabel("Endereço *");
-		enderecoLabel.setBounds(20, 220, 80, 14);
-		contentPanel.add(enderecoLabel);
-		
-		JScrollPane enderecoScrollPane = new JScrollPane();
-		enderecoScrollPane.setBounds(20, 240, 380, 80);
-		contentPanel.add(enderecoScrollPane);
-		
-		enderecoField = new JTextArea();
-		enderecoScrollPane.setViewportView(enderecoField);
-		
-		cpfRadioButton = new JRadioButton("CPF", true);
-		cpfRadioButton.setBounds(400, 76, 45, 23);
-		contentPanel.add(cpfRadioButton);
-		
-		cnpjRadioButton = new JRadioButton("CNPJ");
-		cnpjRadioButton.setBounds(446, 76, 69, 23);
-		contentPanel.add(cnpjRadioButton);
-		
-		ButtonGroup cpfCnpjButtonGroup = new ButtonGroup();
-		cpfCnpjButtonGroup.add(cpfRadioButton);
-		cpfCnpjButtonGroup.add(cnpjRadioButton);
-		
-		ActionListener actionListenerCpfCnpj = e -> {
-			if (cpfRadioButton.isSelected()) {
-				String text = cnpjField.getText().replaceAll("\\D", ""); // Remove não numéricos
-				cnpjField.setText("");
-				cpfField.setText(text);
-				cnpjField.setVisible(false);
-				cpfField.setVisible(true);
-				cpfField.requestFocus();
-			} else {
-				String text = cpfField.getText().replaceAll("\\D", ""); // Remove não numéricos
-				cpfField.setText("");
-				cnpjField.setText(text);
-				cnpjField.setVisible(true);
-				cpfField.setVisible(false);
-				cnpjField.requestFocus();
-			}
-		};
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-		cpfRadioButton.addActionListener(actionListenerCpfCnpj);
-		cnpjRadioButton.addActionListener(actionListenerCpfCnpj);
-		
-		telefoneRadioButton = new JRadioButton("Fixo", true);
-		telefoneRadioButton.setBounds(437, 146, 56, 23);
-		contentPanel.add(telefoneRadioButton);
-		
-		celularRadioButton = new JRadioButton("Celular");
-		celularRadioButton.setBounds(495, 146, 75, 23);
-		contentPanel.add(celularRadioButton);
-		
-		ButtonGroup telefoneButtonGroup = new ButtonGroup();
-		telefoneButtonGroup.add(telefoneRadioButton);
-		telefoneButtonGroup.add(celularRadioButton);
-		
-		ActionListener actionListenerFone = e -> {
-			if (telefoneRadioButton.isSelected()) {
-				String text = celularField.getText().replaceAll("\\D", ""); // Remove não numéricos
-				celularField.setText("");
-				telefoneField.setText(text);
-				telefoneField.setVisible(true);
-				celularField.setVisible(false);
-				telefoneField.requestFocus();
-			} else {
-				String text = telefoneField.getText().replaceAll("\\D", ""); // Remove não numéricos
-				telefoneField.setText("");
-				celularField.setText(text);
-				telefoneField.setVisible(false);
-				celularField.setVisible(true);
-				celularField.requestFocus();
-			}
-		};
-
-		telefoneRadioButton.addActionListener(actionListenerFone);
-		celularRadioButton.addActionListener(actionListenerFone);
+		iniciarComponente();
 	}
 
-	@Override
-	public void onStart() {
-		nomeField.setEnabled(true);
-		cpfField.setEnabled(true);
-		cnpjField.setEnabled(true);
-		emailField.setEnabled(true);
-		telefoneField.setEnabled(true);
-		celularField.setEnabled(true);
-		enderecoField.setEnabled(true);
+	private void iniciarComponente() {
+		JPanel panel = new JPanel(new BorderLayout(5, 5));
+		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		setContentPane(panel);
+		{
+			JLabel title = new JLabel("Cadastro de Clientes");
+			title.setFont(new Font("Arial", Font.BOLD, 16));
+			panel.add(title, BorderLayout.NORTH);
+
+			JPanel section = new JPanel();
+			section.setLayout(new BoxLayout(section, BoxLayout.Y_AXIS));
+			panel.add(section, BorderLayout.CENTER);
+			{
+				JPanel section_1 = new JPanel(new GridBagLayout());
+				section.add(section_1);
+				{
+					GridBagConstraints gbc = new GridBagConstraints();
+					gbc.fill = GridBagConstraints.HORIZONTAL;
+					gbc.insets = new Insets(5, 5, 0, 5);
+
+					// linha 1, coluna 1
+					gbc.gridy = 0;
+					gbc.gridx = 0;
+					section_1.add(new JLabel("Nome: *"), gbc);
+
+					// coluna 2
+					gbc.gridx = 1;
+					gbc.weightx = 1.0; // add peso em x
+					txtNome = new JTextField();
+					txtNome.setEnabled(false);
+					section_1.add(txtNome, gbc);
+
+					// coluna 3
+					gbc.gridx = 2;
+					gbc.weightx = 0; // remover em x
+					JPanel rbCpfCnpjPanel = new JPanel();
+					rbCpfCnpjPanel.setBorder(BorderFactory.createEmptyBorder(-5, -5, -5, -5));
+					section_1.add(rbCpfCnpjPanel, gbc);
+					{
+						try {
+							maskCPF = new MaskFormatter("###.###.###-##");
+							maskCNPJ = new MaskFormatter("##.###.###/####-##");
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+
+						txtCpfcnpj = new JFormattedTextField(maskCPF);
+						txtCpfcnpj.setEnabled(false);
+
+						rbCPF = new JRadioButton("CPF", true);
+						rbCPF.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+						rbCPF.setEnabled(false);
+
+						rbCNPJ = new JRadioButton("CNPJ");
+						rbCNPJ.setEnabled(false);
+						rbCNPJ.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+
+						ButtonGroup btngCpfCnpj = new ButtonGroup();
+						btngCpfCnpj.add(rbCPF);
+						btngCpfCnpj.add(rbCNPJ);
+
+						rbCpfCnpjPanel.add(rbCPF);
+						rbCpfCnpjPanel.add(rbCNPJ);
+
+						rbCPF.addItemListener(new ItemListener() {
+							@Override
+							public void itemStateChanged(ItemEvent e) {
+								if (e.getStateChange() == ItemEvent.SELECTED) {
+									String text = txtCpfcnpj.getText().replaceAll("\\D", "");
+									txtCpfcnpj.setValue(null);
+									txtCpfcnpj.setFormatterFactory(new DefaultFormatterFactory(maskCPF));
+									txtCpfcnpj.setText(text);
+								}
+							}
+						});
+
+						rbCNPJ.addItemListener(new ItemListener() {
+							@Override
+							public void itemStateChanged(ItemEvent e) {
+								if (e.getStateChange() == ItemEvent.SELECTED) {
+									String text = txtCpfcnpj.getText().replaceAll("\\D", "");
+									txtCpfcnpj.setValue(null);
+									txtCpfcnpj.setFormatterFactory(new DefaultFormatterFactory(maskCNPJ));
+									txtCpfcnpj.setText(text);
+								}
+							}
+						});
+					}
+
+					// coluna 4
+					gbc.gridx = 3;
+					gbc.weightx = 1.0; // add peso em x
+					section_1.add(txtCpfcnpj, gbc);
+
+					// linha 2, coluna 1
+					gbc.gridy = 1;
+					gbc.gridx = 0;
+					gbc.weightx = 0; // remove peso em x
+					section_1.add(new JLabel("Email:"), gbc);
+
+					// coluna 2
+					gbc.gridx = 1;
+					gbc.weightx = 1.0; // add peso em x
+					txtEmail = new JTextField();
+					txtEmail.setEnabled(false);
+					section_1.add(txtEmail, gbc);
+
+					// coluna 3
+					gbc.gridx = 2;
+					gbc.weightx = 0; // remove peso em x
+					JPanel rbTelefonePanel = new JPanel();
+					rbTelefonePanel.setBorder(BorderFactory.createEmptyBorder(-5, -5, -5, -5));
+					section_1.add(rbTelefonePanel, gbc);
+					{
+						try {
+							maskFixo = new MaskFormatter("(##) ####-####");
+							maskCelular = new MaskFormatter("(##) #####-####");
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+
+						txtTelefone = new JFormattedTextField(maskFixo);
+						txtTelefone.setEnabled(false);
+
+						rbFixo = new JRadioButton("Fixo", true);
+						rbFixo.setEnabled(false);
+						rbFixo.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+
+						rbCelular = new JRadioButton("Celular");
+						rbCelular.setEnabled(false);
+						rbCelular.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+
+						ButtonGroup btngTelefone = new ButtonGroup();
+						btngTelefone.add(rbFixo);
+						btngTelefone.add(rbCelular);
+
+						rbTelefonePanel.add(rbFixo);
+						rbTelefonePanel.add(rbCelular);
+
+						rbFixo.addItemListener(new ItemListener() {
+							@Override
+							public void itemStateChanged(ItemEvent e) {
+								if (e.getStateChange() == ItemEvent.SELECTED) {
+									String text = txtTelefone.getText().replaceAll("\\D", "");
+									txtTelefone.setValue(null);
+									txtTelefone.setFormatterFactory(new DefaultFormatterFactory(maskFixo));
+									txtTelefone.setText(text);
+								}
+							}
+						});
+
+						rbCelular.addItemListener(new ItemListener() {
+							@Override
+							public void itemStateChanged(ItemEvent e) {
+								if (e.getStateChange() == ItemEvent.SELECTED) {
+									String text = txtTelefone.getText().replaceAll("\\D", "");
+									txtTelefone.setValue(null);
+									txtTelefone.setFormatterFactory(new DefaultFormatterFactory(maskCelular));
+									txtTelefone.setText(text);
+								}
+							}
+						});
+					}
+
+					// coluna 4
+					gbc.gridx = 3;
+					gbc.weightx = 1.0; // add peso em x
+					section_1.add(txtTelefone, gbc);
+
+					// linha 3, coluna 1
+					gbc.gridy = 2;
+					gbc.gridx = 0;
+					gbc.weightx = 0; // remove peso em x
+					section_1.add(new JLabel("Endereço:"), gbc);
+
+					// coluna 2
+					gbc.gridx = 1;
+					gbc.weightx = 1.0; // add peso em x
+					gbc.gridwidth = 3;
+					txtEndereco = new JTextField();
+					txtEndereco.setEnabled(false);
+					section_1.add(txtEndereco, gbc);
+
+					// linha 4, coluna 1
+					gbc.gridy = 3;
+					gbc.gridx = 0;
+					gbc.gridwidth = 4;
+					JPanel buttonPanel = new JPanel(new GridLayout(1, 3, 10, 10));
+					buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+					section_1.add(buttonPanel, gbc);
+					{
+						btnNovo = new JButton("Novo");
+						buttonPanel.add(btnNovo);
+
+						btnAlterar = new JButton("Alterar");
+						buttonPanel.add(btnAlterar);
+
+						btnExcluir = new JButton("Excluir");
+						buttonPanel.add(btnExcluir);
+
+						btnSalvar = new JButton("Salvar");
+						btnSalvar.setEnabled(false);
+						buttonPanel.add(btnSalvar);
+
+						btnCancelar = new JButton("Cancelar");
+						btnCancelar.setEnabled(false);
+						btnCancelar.addActionListener(e -> resetarTela());
+						buttonPanel.add(btnCancelar);
+					}
+				}
+
+				JPanel section_2 = new JPanel(new BorderLayout(0, 0));
+				section_2.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+				section.add(section_2);
+				{
+					JPanel header = new JPanel(new FlowLayout(FlowLayout.LEFT));
+					header.setBorder(BorderFactory.createEmptyBorder(0, -5, 0, -5));
+					section_2.add(header, BorderLayout.NORTH);
+					{
+						JComboBox<Object> tipo = new JComboBox<>(new Object[] { "Nome", "Codigo" });
+						header.add(tipo);
+
+						JTextField txtPesquise = new JTextField(15);
+						header.add(txtPesquise);
+					}
+
+					tabelaCliente = new JTable(tableModelCliente);
+					tabelaCliente.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					tabelaCliente.getSelectionModel().addListSelectionListener(e -> {
+						int selectedRow = tabelaCliente.getSelectedRow();
+						if (selectedRow >= 0) {
+							setClienteSelecionado(tableModelCliente.getClientes().get(selectedRow));
+							exibirClienteSelecionado();
+						}
+					});
+
+					JScrollPane scrollPane = new JScrollPane(tabelaCliente);
+					section_2.add(scrollPane, BorderLayout.CENTER);
+
+				}
+			} // end section
+		} // end panel
+
 	}
 
-	@Override
-	public void onReset() {
-		clienteSelecionado = null;
-		nomeField.setEnabled(false);
-		cpfField.setEnabled(false);
-		cnpjField.setEnabled(false);
-		emailField.setEnabled(false);
-		telefoneField.setEnabled(false);
-		celularField.setEnabled(false);
-		enderecoField.setEnabled(false);
-		showCpf(true);
-		showTelefone(true);
-		limparCampos();		
+	// Actions
+	public void addNovoListener(ActionListener listener) {
+		btnNovo.addActionListener(listener);
 	}
 
-	@Override
-	public void onNew() {
-		nomeField.requestFocus();
-		start();
+	public void addAlterarListener(ActionListener listener) {
+		btnAlterar.addActionListener(listener);
 	}
 
-	private void showCpf(boolean flag) {
-		cpfRadioButton.setSelected(flag);
-		cpfField.setVisible(flag);
-		cnpjRadioButton.setSelected(!flag);
-		cnpjField.setVisible(!flag);
-	}
-	
-	private void showTelefone(boolean flag) {
-		telefoneRadioButton.setSelected(flag);
-		telefoneField.setVisible(flag);
-		celularRadioButton.setSelected(!flag);
-		celularField.setVisible(!flag);
+	public void addExcluirListener(ActionListener listener) {
+		btnExcluir.addActionListener(listener);
 	}
 
-	private void limparCampos() {
-		nomeField.setText("");
-		cpfField.setText("");
-		cnpjField.setText("");
-		emailField.setText("");
-		telefoneField.setText("");
-		celularField.setText("");
-		enderecoField.setText("");
+	public void addSalvarListener(ActionListener listener) {
+		btnSalvar.addActionListener(listener);
 	}
 
-	@Override
-	public void onEdit() {
-		if (clienteSelecionado == null) {
-			exibirMensagem("Selecione um cliente");
-		} else {
-			nomeField.requestFocus();
-			preencherCampos();
-			start();			
-		}
-	}
-
-	private void preencherCampos() {
-		nomeField.setText(clienteSelecionado.getNome());
-		emailField.setText(clienteSelecionado.getEmail());
-		enderecoField.setText(clienteSelecionado.getEndereco());
-		preencherCPF();
-		preencherTelefone();
-	}
-
-	private void preencherTelefone() {
-		String telefone = clienteSelecionado.getTelefone();
-		if (telefone.length() > 14) {
-			showTelefone(false);
-			celularField.setText(telefone);
-		} else {
-			showTelefone(true);
-			telefoneField.setText(telefone);
-		}
-	}
-
-	private void preencherCPF() {
-		String cpfCnpj = clienteSelecionado.getCpfCnpj();
-		if (cpfCnpj.length() > 14) {
-			showCpf(false);
-			cnpjField.setText(cpfCnpj);
-		} else {
-			showCpf(true);
-			cpfField.setText(cpfCnpj);
-		}
-	}
-
-	@Override
-	public void onRemove() {
-		if (clienteSelecionado == null) {
-			exibirMensagem("Selecione um cliente");
-		} else {
-			int confirm = JOptionPane.showConfirmDialog(
-					this, 
-					"Deseja realmente revover esse registro?\nNome: " + clienteSelecionado.getNome(), 
-					"Confirmar exclusão", 
-					JOptionPane.YES_NO_OPTION, 
-					JOptionPane.QUESTION_MESSAGE);
-			
-			if (confirm == JOptionPane.YES_OPTION)
-				controller.removerCliente(clienteSelecionado);
-		}
-	}
-	
-	@Override
-	public void onSearch() {
-		BuscaClienteScreen buscaClienteScreen = AppFactory.getBuscaClienteScreen();
-		buscaClienteScreen.setVisible(true);
-		
-		Cliente cliente = buscaClienteScreen.getClienteSelecionado();
-		if (cliente != null) {
-			clienteSelecionado = cliente;
-			preencherCampos();			
-		}
-	}
-
-	@Override
-	public void onSave() {
-		if(!isValidFields()) {
-			exibirMensagem("campo invalido!");
-		} else {
-			int id = (clienteSelecionado == null || clienteSelecionado.getId() < 1) ? 0 : clienteSelecionado.getId();
-			String nome = nomeField.getText();
-			String cpfCnpj = cpfField.isVisible() ? cpfField.getText() : cnpjField.getText();
-			String email = emailField.getText();
-			String telefone = telefoneField.isVisible() ? telefoneField.getText() : celularField.getText();
-			String endereco = enderecoField.getText();
-			
-			clienteSelecionado = new Cliente(id, nome, cpfCnpj, telefone, email, endereco);
-			controller.salvarCliente(clienteSelecionado);			
-		}
-	}
-	
-	private boolean isValidFields() {
-		if (ValidacaoUtil.isEmpty(nomeField))
-			return false;	
-		if (telefoneField.isVisible())
-			if (!ValidacaoUtil.telefone(telefoneField))
-				return false;	
-		if (celularField.isVisible())
-			if (!ValidacaoUtil.celular(celularField))
-				return false;	
-		if (ValidacaoUtil.isEmpty(enderecoField))
-			return false;
-		
-		return true;
-	}
-
-	@Override
-	public void onCancel() {
-		dispose();
+	// Show
+	public void exibirClientes(List<Cliente> listarTodos) {
+		tableModelCliente = new Cliente.TableModelCliente(listarTodos);
+		tabelaCliente.setModel(tableModelCliente);
 	}
 
 	public void exibirMensagem(String mensagem) {
 		JOptionPane.showMessageDialog(this, mensagem);
 	}
+	
+	public void exibirMensagemAviso(String mensagem) {
+		JOptionPane.showMessageDialog(this, mensagem, "Aviso", 
+				JOptionPane.WARNING_MESSAGE);		
+	}
+	
+	public void exibirMensagemErro(String mensagem) {
+		JOptionPane.showMessageDialog(this, mensagem, "Erro", 
+				JOptionPane.ERROR_MESSAGE);		
+	}
 
-	public void setController(CadastroClienteController controller) {
-		this.controller = controller;
+	public boolean exibirMensagemConfirmacao(String mensagem) {
+		return JOptionPane.showConfirmDialog(this, mensagem, "Confimar Exclusão", 
+				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
+
+	}
+
+	private void exibirClienteSelecionado() {
+		if (Objects.nonNull(clienteSelecionado)) {
+			txtNome.setText(clienteSelecionado.getNome());
+			
+			String cpfCnpj = clienteSelecionado.getCpfCnpj();
+			if (Objects.isNull(cpfCnpj) || cpfCnpj.replaceAll("\\D", "").length() < 14) {
+				rbCPF.setSelected(true);
+			} else {
+				rbCNPJ.setSelected(true);
+			}
+			
+			txtCpfcnpj.setText(clienteSelecionado.getCpfCnpj());
+			txtEmail.setText(clienteSelecionado.getEmail());
+			
+			String telefone = clienteSelecionado.getTelefone();
+			if (Objects.isNull(telefone) || telefone.replaceAll("\\D", "").length() < 11) {
+				rbFixo.setSelected(true);
+			} else {
+				rbCelular.setSelected(true);
+			}
+			
+			txtTelefone.setText(clienteSelecionado.getTelefone());
+			txtEndereco.setText(clienteSelecionado.getEndereco());
+		}
+	}
+
+	// Modify
+	public Cliente getClienteSelecionado() {
+		return clienteSelecionado;
+	}
+
+	public void setClienteSelecionado(Cliente clienteSelecionado) {
+		this.clienteSelecionado = clienteSelecionado;
+	}
+	
+	public String getNome() {
+		return txtNome.getText();
+	}
+	
+	public String getCpfcnpj() {
+		return txtCpfcnpj.getText();
+	}
+	
+	public String getEmail() {
+		return txtEmail.getText();
+	}
+	
+	public String getTelefone() {
+		return txtTelefone.getText();
+	}
+	
+	public String getEndereco() {
+		return txtEndereco.getText();
+	}
+
+	public void liberarParaInserir() {
+		limparCampos();
+		bloquearTela(false);
+		txtNome.requestFocus();
+	}
+
+	public void liberarParaAlterar() {
+		bloquearTela(false);
+		txtNome.requestFocus();
+	}
+	
+	public void resetarTela() {
+		limparCampos();
+		bloquearTela(true);
+		tabelaCliente.clearSelection();
+		setClienteSelecionado(null);
+	}
+
+	private void limparCampos() {
+		txtNome.setText("");
+		rbCPF.setSelected(true);
+		txtCpfcnpj.setText("");
+		txtEmail.setText("");
+		rbFixo.setSelected(true);
+		txtTelefone.setText("");
+		txtEndereco.setText("");
+	}
+
+	private void bloquearTela(boolean b) {
+		txtNome.setEnabled(!b);
+		rbCPF.setEnabled(!b);
+		rbCNPJ.setEnabled(!b);
+		txtCpfcnpj.setEnabled(!b);
+		txtEmail.setEnabled(!b);
+		rbFixo.setEnabled(!b);
+		rbCelular.setEnabled(!b);
+		txtTelefone.setEnabled(!b);
+		txtEndereco.setEnabled(!b);
+
+		btnNovo.setEnabled(b);
+		btnAlterar.setEnabled(b);
+		btnExcluir.setEnabled(b);
+		tabelaCliente.setEnabled(b);
+		
+		btnSalvar.setEnabled(!b);
+		btnCancelar.setEnabled(!b);
+	}
+	
+	public boolean validarDados() {
+		if (Validador.isEmpty(txtNome.getText())) {
+			exibirMensagemAviso("O nome do Cliente não pode ser vazio.");
+			txtNome.requestFocus();
+			return false;
+		}
+		return true;
 	}
 
 }

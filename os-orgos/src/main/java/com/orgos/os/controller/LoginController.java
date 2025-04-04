@@ -8,35 +8,18 @@ import com.orgos.os.service.UsuarioService;
 import com.orgos.os.util.AppFactory;
 import com.orgos.os.view.LoginScreen;
 
-public class LoginController {
-	//private static final Logger logger = LogManager.getLogger(LoginController2.class);
+public class LoginController implements Controller {
+
 	private LoginScreen screen;
 	private UsuarioService usuarioService;
 
 	public LoginController(LoginScreen screen, UsuarioService usuarioService) {
-		setScreen(screen);
-		setUsuarioService(usuarioService);
-		iniciarControlle();
-	}
-
-	public LoginScreen getScreen() {
-		return screen;
-	}
-
-	public void setScreen(LoginScreen screen) {
 		this.screen = screen;
-	}
-
-	public UsuarioService getUsuarioService() {
-		return usuarioService;
-	}
-
-	public void setUsuarioService(UsuarioService usuarioService) {
 		this.usuarioService = usuarioService;
 	}
 
-	// Methods
-	private void iniciarControlle() {
+	@Override
+	public void inicializar() {
 		screen.addLoginListener(this::login);
 		screen.addCancelarListener(this::cancelar);
 	}

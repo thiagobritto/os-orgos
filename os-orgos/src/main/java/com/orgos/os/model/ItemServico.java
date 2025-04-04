@@ -1,25 +1,20 @@
 package com.orgos.os.model;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.table.AbstractTableModel;
 
 public class ItemServico {
-	private int id;
+
 	private String descricao;
-	private double custo;
+	private double quantidade;
+	private double valor;
 
-	public ItemServico(int id, String descricao, double custo) {
-		super();
-		this.id = id;
-		this.descricao = descricao;
-		this.custo = custo;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
+	public ItemServico(String descricao, double quantidade, double valor) {
+		setDescricao(descricao);
+		setQuantidade(quantidade);
+		setValor(valor);
 	}
 
 	public String getDescricao() {
@@ -30,35 +25,80 @@ public class ItemServico {
 		this.descricao = descricao;
 	}
 
-	public double getCusto() {
-		return custo;
+	public double getQuantidade() {
+		return quantidade;
 	}
 
-	public void setCusto(double custo) {
-		this.custo = custo;
+	public void setQuantidade(double quantidade) {
+		this.quantidade = quantidade;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(custo, descricao, id);
+	public double getValor() {
+		return valor;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		ItemServico other = (ItemServico) obj;
-		return Double.doubleToLongBits(custo) == Double.doubleToLongBits(other.custo)
-				&& Objects.equals(descricao, other.descricao) && id == other.id;
+	public void setValor(double valor) {
+		this.valor = valor;
 	}
 
-	@Override
-	public String toString() {
-		return "ItemServico [id=" + id + ", descricao=" + descricao + ", custo=" + custo + "]";
-	}
+	public static class TableModelItemServico extends AbstractTableModel {
 
+		private static final long serialVersionUID = 1L;
+		private static final String[] COLUMNS = { "Descrição", "Quantidade", "Valor Unitario", "Valor Total" };
+		private List<ItemServico> itensServico;
+
+		public TableModelItemServico() {
+			setItensServico(new ArrayList<>());
+		}
+
+		public TableModelItemServico(List<ItemServico> itensServico) {
+			setItensServico(itensServico);
+		}
+
+		public List<ItemServico> getItensServico() {
+			return itensServico;
+		}
+
+		public void setItensServico(List<ItemServico> itensServico) {
+			this.itensServico = itensServico;
+		}
+
+		public void add(ItemServico itemServico) {
+			itensServico.add(itemServico);
+			fireTableRowsInserted(itensServico.size() - 1, itensServico.size() - 1);
+		}
+
+		public void remove(int rowIndex) {
+			itensServico.remove(rowIndex);
+			fireTableRowsDeleted(rowIndex, rowIndex);
+		}
+
+		// Methods
+		@Override
+		public int getRowCount() {
+			return itensServico.size();
+		}
+
+		@Override
+		public int getColumnCount() {
+			return COLUMNS.length;
+		}
+
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			ItemServico itemServico = itensServico.get(rowIndex);
+			return switch (columnIndex) {
+			case 0 -> itemServico.getDescricao();
+			case 1 -> itemServico.getQuantidade();
+			case 2 -> String.format("R$ %.2f", itemServico.getValor());
+			case 3 -> String.format("R$ %.2f", itemServico.getValor() * itemServico.getQuantidade());
+			default -> null;
+			};
+		}
+
+		@Override
+		public String getColumnName(int column) {
+			return COLUMNS[column];
+		}
+	}
 }

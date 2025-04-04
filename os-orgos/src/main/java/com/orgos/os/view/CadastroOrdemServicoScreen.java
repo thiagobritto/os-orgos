@@ -6,32 +6,46 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.table.DefaultTableModel;
+
+import com.orgos.os.model.Cliente;
+import com.orgos.os.model.ItemServico;
+import com.orgos.os.model.ItemServico.TableModelItemServico;
+import com.orgos.os.model.OrdemServico;
+import com.orgos.os.util.FilterField;
 
 public class CadastroOrdemServicoScreen extends JInternalFrame {
 
 	private static final long serialVersionUID = 1L;
-	
+	private JTextField txtValorServico;
+	private JTextField txtValorPecas;
+	private JTextField txtValorTotal;
+	private JTable tableItemServico;
+	private TableModelItemServico tableModelItemServico;
+	private JComboBox<Cliente> cbClientes;
+	private DefaultComboBoxModel<Cliente> listModelCliente;
+
 	public CadastroOrdemServicoScreen() {
 		super("OS", false, true, true, true);
-		setBounds(190, 0, 900, 660);
-		
+		setSize(800, 540);
+
 		iniciarComponent();
 	}
-
 
 	private void iniciarComponent() {
 		JPanel panel = new JPanel(new BorderLayout(5, 5));
@@ -70,9 +84,7 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 					JLabel title = new JLabel("Tipo:");
 					columnPanel_3.add(title);
 
-					String[] tipos = { "Ordem de Serviço", "Orçamento" };
-
-					JComboBox<String> cbTipoOS = new JComboBox<>(tipos);
+					JComboBox<OrdemServico.Type> cbTipoOS = new JComboBox<>(OrdemServico.Type.values());
 					columnPanel_3.add(cbTipoOS);
 				}
 				JPanel columnPanel_4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -81,9 +93,7 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 					JLabel title = new JLabel("Status:");
 					columnPanel_4.add(title);
 
-					String[] status = { "Aberto", "Em andamento", "Aguardando peças", "Concluído", "Cancelado" };
-
-					JComboBox<String> cbStatusOS = new JComboBox<>(status);
+					JComboBox<OrdemServico.Status> cbStatusOS = new JComboBox<>(OrdemServico.Status.values());
 					columnPanel_4.add(cbStatusOS);
 				}
 			} // END headerPanel
@@ -104,9 +114,7 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 						JLabel lblCliente = new JLabel("Cliente:");
 						header.add(lblCliente);
 
-						String[] clientes = { "Antônio", "Jorge", "Vitor", "Manoel da Mercedes" };
-
-						JComboBox<String> cbClientes = new JComboBox<>(clientes);
+						cbClientes = new JComboBox<Cliente>();
 						header.add(cbClientes);
 
 						JButton btnBuscarCliente = new JButton("...");
@@ -135,50 +143,49 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 						{
 							gbc.fill = GridBagConstraints.HORIZONTAL;
 							gbc.insets = new Insets(0, 0, 5, 5);
-							
+
 							gbc.gridy = 0;
 							gbc.gridx = 0;
 							JLabel lblEquipamento = new JLabel("Equipamento:");
 							formLeft.add(lblEquipamento, gbc);
-							
+
 							gbc.gridy = 0;
 							gbc.gridx = 1;
 							gbc.weightx = 1.0;
 							JTextField txtEquipamento = new JTextField();
 							formLeft.add(txtEquipamento, gbc);
-							
+
 							gbc.gridy = 1;
 							gbc.gridx = 0;
 							gbc.weightx = 0;
 							JLabel lblMarcaModelo = new JLabel("Marca/Modelo:");
 							formLeft.add(lblMarcaModelo, gbc);
-							
+
 							gbc.gridy = 1;
 							gbc.gridx = 1;
 							gbc.weightx = 1.0;
 							JTextField txtMarcaModelo = new JTextField();
 							formLeft.add(txtMarcaModelo, gbc);
-							
+
 							gbc.gridy = 2;
 							gbc.gridx = 0;
 							gbc.weightx = 0;
 							JLabel lblServico = new JLabel("Serviço:");
 							formLeft.add(lblServico, gbc);
-							
+
 							gbc.gridy = 2;
 							gbc.gridx = 1;
 							gbc.weightx = 1.0;
 							JTextField txtServico = new JTextField();
 							formLeft.add(txtServico, gbc);
-							
+
 							gbc.gridy = 3;
 							gbc.gridx = 0;
 							gbc.gridwidth = 2;
 							gbc.weightx = 1.0;
 							JLabel lblDecricaoServico = new JLabel("Descrição de Serviço:");
 							formLeft.add(lblDecricaoServico, gbc);
-							
-							
+
 							gbc.gridy = 4;
 							gbc.gridx = 0;
 							gbc.gridwidth = 2;
@@ -190,7 +197,7 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 							txtDecricaoServico.setRows(3);
 							JScrollPane scrollPane = new JScrollPane(txtDecricaoServico);
 							formLeft.add(scrollPane, gbc);
-							
+
 						}
 
 						JPanel formReight = new JPanel(new GridBagLayout());
@@ -199,52 +206,56 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 						{
 							gbc2.fill = GridBagConstraints.HORIZONTAL;
 							gbc2.insets = new Insets(0, 5, 5, 0);
-							
+
 							gbc2.gridy = 0;
 							gbc2.gridx = 0;
 							JLabel lblValorServico = new JLabel("Valor do Serviço (R$):");
 							formReight.add(lblValorServico, gbc2);
-							
+
 							gbc2.gridy = 0;
 							gbc2.gridx = 1;
 							gbc2.weightx = 1.0;
-							JTextField txtValorServico = new JTextField();
+							txtValorServico = new JTextField();
+							txtValorServico.setText("0,00");
+							FilterField.decimal(txtValorServico);
+							txtValorServico.getDocument().addDocumentListener(new ValorDocumentListener());
 							formReight.add(txtValorServico, gbc2);
-							
+
 							gbc2.gridy = 1;
 							gbc2.gridx = 0;
 							gbc2.weightx = 0;
-							JLabel lblValorPecas = new JLabel("Valor dos Peças (R$):");
+							JLabel lblValorPecas = new JLabel("Valor das Peças (R$):");
 							formReight.add(lblValorPecas, gbc2);
-							
+
 							gbc2.gridy = 1;
 							gbc2.gridx = 1;
 							gbc2.weightx = 1.0;
-							JTextField txtValorPecas = new JTextField();
+							txtValorPecas = new JTextField();
+							txtValorPecas.setText("0,00");
 							txtValorPecas.setEditable(false);
 							formReight.add(txtValorPecas, gbc2);
-							
+
 							gbc2.gridy = 2;
 							gbc2.gridx = 0;
 							gbc2.weightx = 0;
 							JLabel lblValorTotal = new JLabel("Valor Total (R$):");
 							formReight.add(lblValorTotal, gbc2);
-							
+
 							gbc2.gridy = 2;
 							gbc2.gridx = 1;
 							gbc2.weightx = 1.0;
-							JTextField txtValorTotal = new JTextField();
+							txtValorTotal = new JTextField();
+							txtValorTotal.setText("0,00");
 							txtValorTotal.setEditable(false);
 							formReight.add(txtValorTotal, gbc2);
-							
+
 							gbc2.gridy = 3;
 							gbc2.gridx = 0;
 							gbc2.gridwidth = 2;
 							gbc2.weightx = 1.0;
 							JLabel lblDecricaoServico = new JLabel("Solução Aplicada:");
 							formReight.add(lblDecricaoServico, gbc2);
-							
-							
+
 							gbc2.gridy = 4;
 							gbc2.gridx = 0;
 							gbc2.gridwidth = 2;
@@ -271,10 +282,9 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 						header.add(lblPecas);
 					}
 
-					String[] columns = { "Descrição", "Quantidade", "Valor Unitario", "Valor Total" };
-					JTable table = new JTable(new DefaultTableModel(columns, 5));
-
-					JScrollPane scrollPane = new JScrollPane(table);
+					tableModelItemServico = new ItemServico.TableModelItemServico();
+					tableItemServico = new JTable(tableModelItemServico);
+					JScrollPane scrollPane = new JScrollPane(tableItemServico);
 					sectionPanel_2.add(scrollPane);
 
 					JPanel footer = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -282,9 +292,11 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 					sectionPanel_2.add(footer, BorderLayout.SOUTH);
 					{
 						JButton btnAdicionarPeca = new JButton("Adicionar Peça");
+						btnAdicionarPeca.addActionListener(e -> adicionarPeca());
 						footer.add(btnAdicionarPeca);
 
 						JButton btnRemoverPeca = new JButton("Remover Peça");
+						btnRemoverPeca.addActionListener(e -> removerPeca());
 						footer.add(btnRemoverPeca);
 					}
 				}
@@ -303,7 +315,118 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 				JButton btnSalvar = new JButton("Salvar");
 				footerPanel.add(btnSalvar);
 			} // END footerPanel
-		}// END Panel
+		} // END Panel
 	}
 
+	private void adicionarPeca() {
+		JPanel panel = new JPanel(new GridLayout(3, 2, 5, 5));
+
+		JLabel lblDexcricao = new JLabel("Descrição:");
+		panel.add(lblDexcricao);
+
+		JTextField txtDescricao = new JTextField();
+		panel.add(txtDescricao);
+
+		JLabel lblQuantidade = new JLabel("Quantidade:");
+		panel.add(lblQuantidade);
+
+		JTextField txtQuantidade = new JTextField(10);
+		txtQuantidade.setText("1");
+		FilterField.decimal(txtQuantidade);
+		panel.add(txtQuantidade);
+
+		JLabel lblValor = new JLabel("Valor Unitario (R$):");
+		panel.add(lblValor);
+
+		JTextField txtValor = new JTextField(10);
+		txtValor.setText("0,00");
+		FilterField.decimal(txtValor);
+		panel.add(txtValor);
+
+		int confirm = JOptionPane.showConfirmDialog(this, panel, "Adicionar Peça", JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE);
+
+		if (confirm == JOptionPane.OK_OPTION) {
+			try {
+				String descricao = txtDescricao.getText();
+				double quantidade = Double.parseDouble(txtQuantidade.getText().replace(",", "."));
+				double valor = Double.parseDouble(txtValor.getText().replace(",", "."));
+
+				if (descricao.trim().isEmpty())
+					throw new IllegalArgumentException("Descrição não pode ser vazia.");
+
+				ItemServico pecas = new ItemServico(descricao, quantidade, valor);
+				tableModelItemServico.add(pecas);
+				atualizarValoresPecas();
+			} catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(this, "Valores inválidos para quantidade ou valor unitário.", "Erro",
+						JOptionPane.ERROR_MESSAGE);
+			} catch (IllegalArgumentException e) {
+				JOptionPane.showMessageDialog(this, e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	private void removerPeca() {
+		int selectedRow = tableItemServico.getSelectedRow();
+		if (selectedRow >= 0) {
+			tableModelItemServico.remove(selectedRow);
+			atualizarValoresPecas();
+		} else {
+			JOptionPane.showMessageDialog(this, "Selecione uma peça para remover", "Atenção",
+					JOptionPane.WARNING_MESSAGE);
+		}
+	}
+
+	private void atualizarValoresPecas() {
+		txtValorPecas.setText(String.format("%.2f", getSomaPecas()));
+		calcularTotal();
+	}
+
+	public double getSomaPecas() {
+		return tableModelItemServico.getItensServico().stream().mapToDouble(peca -> peca.getValor() * peca.getQuantidade())
+				.sum();
+	}
+
+	private void calcularTotal() {
+		try {
+			double valorServico = 0;
+			if (!txtValorServico.getText().trim().isEmpty())
+				valorServico = Double.parseDouble(txtValorServico.getText().trim().replace(",", "."));
+
+			double total = valorServico + getSomaPecas();
+			txtValorTotal.setText(String.format("%.2f", total));
+		} catch (NumberFormatException e) {
+			txtValorTotal.setText(String.format("%.2f", getSomaPecas()));
+		}
+	}
+
+	// Classe interna para monitorar alterações no campo de valor do serviço
+	class ValorDocumentListener implements javax.swing.event.DocumentListener {
+		@Override
+		public void insertUpdate(javax.swing.event.DocumentEvent e) {
+			calcularTotal();
+		}
+
+		@Override
+		public void removeUpdate(javax.swing.event.DocumentEvent e) {
+			calcularTotal();
+		}
+
+		@Override
+		public void changedUpdate(javax.swing.event.DocumentEvent e) {
+			calcularTotal();
+		}
+	}
+
+	/*
+	 * Controller Methods
+	 */
+	
+	public void exibirClientes(List<Cliente> listCliente) {
+		listModelCliente = new DefaultComboBoxModel<Cliente>();
+		listCliente.forEach(listModelCliente::addElement);
+		cbClientes.setModel(listModelCliente);
+	}
+	
 }

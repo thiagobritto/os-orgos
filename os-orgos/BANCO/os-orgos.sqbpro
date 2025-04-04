@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/Thiago/git/repository2/os-orgos/BANCO/os-orgos.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="3109"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,10:mainpermissoes"/><default_encoding codec=""/><browse_table_settings/></tab_browse><tab_sql><sql name="SQL 1">-- data_abertura TEXT NOT NULL DEFAULT current_timestamp,
+-- CONSTRAINT ordem_servico_cliente_FK FOREIGN KEY (cliente_id) REFERENCES cliente(id_cliente) ON DELETE RESTRICT ON UPDATE SET DEFAULT,
+-- CONSTRAINT ordem_servico_tecnico_FK FOREIGN KEY (tecnico_id) REFERENCES tecnico(id_tecnico) ON DELETE RESTRICT ON UPDATE SET DEFAULT
+
+CREATE TABLE tecnico (
+	id_tecnico INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+	nome TEXT NOT NULL,
+	cpf TEXT,
+	telefone TEXTL,
+	email TEXT,
+	especializacao TEXT
+);
+
+-- insert into cliente (nome) VALUES ('CLIENTE PADRÂO');
+-- select * from cliente;
+
+-- insert into tecnico (nome) VALUES ('TÉCNICO PADRÂO');
+-- select * from tecnico;</sql><current_tab id="0"/></tab_sql></sqlb_project>

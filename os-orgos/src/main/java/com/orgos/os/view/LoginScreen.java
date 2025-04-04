@@ -31,7 +31,7 @@ public class LoginScreen extends JFrame {
 	private JButton btnCancelar;
 	
 	public LoginScreen() {
-		setTitle("Login");
+		setTitle("Sistema de Ordem de Serviço - Login");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(300, 200);
 		setLocationRelativeTo(null);

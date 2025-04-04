@@ -1,4 +1,4 @@
-package com.orgos.os.model;
+package com.orgos.os.util;
 
 public class OperacaoResultado {
 

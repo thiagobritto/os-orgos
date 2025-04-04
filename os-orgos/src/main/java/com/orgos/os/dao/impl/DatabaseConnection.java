@@ -1,4 +1,4 @@
-package com.orgos.os.dao;
+package com.orgos.os.dao.impl;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
