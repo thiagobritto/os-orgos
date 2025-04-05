@@ -11,6 +11,7 @@ import com.orgos.os.service.BackupService;
 import com.orgos.os.util.AppFactory;
 import com.orgos.os.view.CadastroClienteScreen;
 import com.orgos.os.view.CadastroOrdemServicoScreen;
+import com.orgos.os.view.CadastroTecnicoScreen;
 import com.orgos.os.view.DashboardScreen;
 
 public class DashboardController implements Controller {
@@ -27,6 +28,7 @@ public class DashboardController implements Controller {
 		screen.addImportarBackupListener(this::importarBackup);
 		screen.addExportarBackupListener(this::exportarBackup);
 		screen.addCadastroClienteListener(this::cadastroCliente);
+		screen.addCadastroTecnicoListener(this::cadastroTecnico);		
 		screen.addCadastroOrdemServicoListener(this::cadastroOrdemServico);
 	}
 	
@@ -74,11 +76,18 @@ public class DashboardController implements Controller {
 		CadastroClienteScreen cadastroClienteScreen = AppFactory.getCadastroClienteScreen(screen);
 		cadastroClienteScreen.setVisible(true);
 	}
+	
+	private void cadastroTecnico(ActionEvent actionevent1) {
+		CadastroTecnicoScreen cadastroTecnicoScreen = AppFactory.getCadastroTecnicoScreen(screen);
+		cadastroTecnicoScreen.setVisible(true);
+	}
 
 	private void cadastroOrdemServico(ActionEvent actionevent1) {
 		CadastroOrdemServicoScreen cadastroOrdemServicoScreen = AppFactory.getCadastroOrdemServicoScreen();
 		screen.addDesktop(cadastroOrdemServicoScreen);
 	}
+
+	
 
 	
 

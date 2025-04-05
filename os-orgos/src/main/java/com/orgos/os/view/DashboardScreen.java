@@ -4,9 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionListener;
-import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
@@ -19,6 +17,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import com.orgos.os.util.ImageUtil;
+
 public class DashboardScreen extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -28,6 +28,7 @@ public class DashboardScreen extends JFrame {
 	private JMenuItem mntmCadastroCliente;
 	private JMenuItem mntmImportarBackup;
 	private JMenuItem mntmExportarBackup;
+	private JMenuItem mntmCadastroTecnico;
 
 	public DashboardScreen() {
 		setTitle("Sistema de Ordem de Serviço - Dashboaed");
@@ -36,8 +37,7 @@ public class DashboardScreen extends JFrame {
 		setLocationRelativeTo(null);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-		URL resource = DashboardScreen.class.getResource("/images/logo_jframe_48x48.png");
-		image = Toolkit.getDefaultToolkit().getImage(resource);
+		image = ImageUtil.getImage("logo_icon_48x48.png");
 		setIconImage(image);
 
 		iniciarComponentes();
@@ -70,7 +70,7 @@ public class DashboardScreen extends JFrame {
 				mntmCadastroCliente = new JMenuItem("Cliente");
 				mnCadastro.add(mntmCadastroCliente);
 
-				JMenuItem mntmCadastroTecnico = new JMenuItem("Técnico");
+				mntmCadastroTecnico = new JMenuItem("Técnico");
 				mnCadastro.add(mntmCadastroTecnico);
 
 				mntmCadastroOrdemServico = new JMenuItem("Ordem de Serviço");
@@ -141,6 +141,10 @@ public class DashboardScreen extends JFrame {
 	
 	public void addCadastroClienteListener(ActionListener listener) {
 		mntmCadastroCliente.addActionListener(listener);
+	}
+	
+	public void addCadastroTecnicoListener(ActionListener listener) {
+		mntmCadastroTecnico.addActionListener(listener);
 	}
 	
 	public void addCadastroOrdemServicoListener(ActionListener listener) {

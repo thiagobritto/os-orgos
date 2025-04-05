@@ -1,10 +1,14 @@
 package com.orgos.os.controller;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.List;
 import java.util.Objects;
 
 import com.orgos.os.model.Cliente;
 import com.orgos.os.service.ClienteService;
+import com.orgos.os.util.Consulta;
 import com.orgos.os.util.OperacaoResultado;
 import com.orgos.os.view.CadastroClienteScreen;
 
@@ -19,11 +23,13 @@ public class CadastroClienteController implements Controller {
 
 	@Override
 	public void inicializar() {
+		screen.exibirConsultas(getListConsulta());
 		screen.exibirClientes(clienteService.listarTodos());
 		screen.addNovoListener(this::novo);
 		screen.addAlterarListener(this::alterar);
 		screen.addExcluirListener(this::excluir);
 		screen.addSalvarListener(this::salvar);
+		screen.addConsultaKeyListener(new ConsultaKeyAdapter());
 	}
 
 	private void novo(ActionEvent actionevent1) {
@@ -45,7 +51,8 @@ public class CadastroClienteController implements Controller {
 		if (Objects.isNull(clienteSelecionado)) {
 			screen.exibirMensagem("Selecione um 'Cliente' para continuar.");
 		} else {
-			boolean resposta = screen.exibirMensagemConfirmacao("Tem certeza que deseja excluir: " + clienteSelecionado.getNome());
+			boolean resposta = screen
+					.exibirMensagemConfirmacao("Tem certeza que deseja excluir: " + clienteSelecionado.getNome());
 			if (resposta) {
 				OperacaoResultado resultado = clienteService.remover(clienteSelecionado);
 				if (resultado.isSucesso()) {
@@ -108,4 +115,46 @@ public class CadastroClienteController implements Controller {
 		}
 	}
 
+	private Consulta[] getListConsulta() {
+		return new Consulta[] { new ConsultaClienteId(), new ConsultaClienteNome() };
+	}
+
+	private class ConsultaClienteId implements Consulta {
+		private int id;
+
+		@Override
+		public void procurar(String text) {
+			try {
+				id = Integer.parseInt(text);
+			} catch (NumberFormatException e) {
+				return;
+			}
+			screen.exibirClientes(List.of(clienteService.buscarPorId(id)));
+		}
+
+		@Override
+		public String toString() {
+			return "Código";
+		}
+	}
+
+	private class ConsultaClienteNome implements Consulta {
+		@Override
+		public void procurar(String text) {
+			screen.exibirClientes(clienteService.listarPorNome(text));
+		}
+
+		@Override
+		public String toString() {
+			return "Nome";
+		}
+	}
+
+	private class ConsultaKeyAdapter extends KeyAdapter {
+		@Override
+		public void keyReleased(KeyEvent e) {
+			Consulta consulta = screen.getConsulta();
+			consulta.procurar(screen.getConsultaTexto());
+		}
+	}
 }

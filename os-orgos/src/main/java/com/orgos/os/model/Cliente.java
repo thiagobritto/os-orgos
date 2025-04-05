@@ -15,7 +15,6 @@ public class Cliente {
 	private String endereco;
 
 	public Cliente(int id, String nome, String cpfCnpj, String telefone, String email, String endereco) {
-		super();
 		this.id = id;
 		this.nome = nome;
 		this.cpfCnpj = cpfCnpj;

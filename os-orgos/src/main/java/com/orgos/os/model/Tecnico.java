@@ -1,6 +1,10 @@
 package com.orgos.os.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import javax.swing.table.AbstractTableModel;
 
 public class Tecnico {
 	private int id;
@@ -11,7 +15,6 @@ public class Tecnico {
 	private String especializacao;
 
 	public Tecnico(int id, String nome, String cpf, String telefone, String email, String especializacao) {
-		super();
 		this.id = id;
 		this.nome = nome;
 		this.cpf = cpf;
@@ -89,8 +92,68 @@ public class Tecnico {
 
 	@Override
 	public String toString() {
-		return "Tecnico [id=" + id + ", nome=" + nome + ", cpf=" + cpf + ", telefone=" + telefone + ", email=" + email
-				+ ", especializacao=" + especializacao + "]";
+		return nome;
+	}
+
+	public static class TableModelTecnico extends AbstractTableModel {
+
+		private static final long serialVersionUID = 1L;
+		private final String[] COLUMNS = { "Código", "Nome", "CPF/CNPJ", "Telefone" };
+		private List<Tecnico> listTecnico;
+
+		public TableModelTecnico() {
+			this.listTecnico = new ArrayList<>();
+		}
+
+		public TableModelTecnico(List<Tecnico> listTecnico) {
+			this.listTecnico = listTecnico;
+		}
+
+		public List<Tecnico> getListTecnico() {
+			return listTecnico;
+		}
+
+		public void setListTecnico(List<Tecnico> listTecnico) {
+			this.listTecnico = listTecnico;
+		}
+
+		public void add(Tecnico tecnico) {
+			listTecnico.add(tecnico);
+			fireTableRowsInserted(getRowCount() - 1, getRowCount() - 1);
+		}
+
+		public void remove(int rowIndex) {
+			listTecnico.remove(rowIndex);
+			fireTableRowsDeleted(rowIndex, rowIndex);
+		}
+
+		@Override
+		public int getRowCount() {
+			return listTecnico.size();
+		}
+
+		@Override
+		public int getColumnCount() {
+			return COLUMNS.length;
+		}
+
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			Tecnico tecnico = listTecnico.get(rowIndex);
+			return switch (columnIndex) {
+				case 0 -> tecnico.getId();
+				case 1 -> tecnico.getNome();
+				case 2 -> tecnico.getCpf();
+				case 3 -> tecnico.getTelefone();
+				default -> null;
+			};
+		}
+
+		@Override
+		public String getColumnName(int column) {
+			return COLUMNS[column];
+		}
+
 	}
 
 }

@@ -7,7 +7,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
@@ -21,6 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+
+import com.orgos.os.util.ImageUtil;
 
 public class LoginScreen extends JFrame {
 
@@ -37,8 +38,7 @@ public class LoginScreen extends JFrame {
 		setLocationRelativeTo(null);
 		setResizable(false);
 		
-		String sourceImg = LoginScreen.class.getResource("/images/").getPath();
-		Image image = Toolkit.getDefaultToolkit().getImage(sourceImg + "logo_jframe_48x48.png");
+		Image image = ImageUtil.getImage("logo_icon_48x48.png");
 		setIconImage(image);
 		
 		KeyStroke keyEscape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);

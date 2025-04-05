@@ -1,6 +1,6 @@
 package com.orgos.os.model;
 
-import com.orgos.os.util.PermissaoUtil;
+import com.orgos.os.util.Permissao;
 
 public class SessaoUsuario {
 	private static SessaoUsuario instancia;
@@ -23,7 +23,7 @@ public class SessaoUsuario {
 		if (getUsuarioLogado() == null) {
 			return false;
 		}
-		return PermissaoUtil.temPermissao(getUsuarioLogado(), funcionalidade);
+		return Permissao.temPermissao(getUsuarioLogado(), funcionalidade);
 	}
 
 	public Usuario getUsuarioLogado() {

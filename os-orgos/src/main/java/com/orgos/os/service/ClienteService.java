@@ -5,67 +5,74 @@ import java.util.Objects;
 
 import com.orgos.os.dao.ClienteDao;
 import com.orgos.os.model.Cliente;
+import com.orgos.os.util.ClienteValidator;
 import com.orgos.os.util.OperacaoResultado;
-import com.orgos.os.util.Validador;
 
 public class ClienteService {
 
-	private ClienteDao clienteDAO;
+	private ClienteDao dao;
+	private ClienteValidator validator;
 
-	public ClienteService(ClienteDao clienteDAO) {
-		this.clienteDAO = clienteDAO;
+	public ClienteService(ClienteValidator validator, ClienteDao dao) {
+		this.validator = validator;
+		this.dao = dao;
 	}
 
 	public List<Cliente> listarTodos() {
-		return clienteDAO.listarTodos();
-	}
-
-	public List<Cliente> buscarPorNome(String nome) {
-		return clienteDAO.listarPorNome(nome);
+		return dao.listarTodos();
 	}
 
 	public Cliente buscarPorId(int id) {
-		return clienteDAO.buscarPorId(id);
+		return dao.buscarPorId(id);
 	}
 
-	public OperacaoResultado salvar(Cliente cliente) {
-		if (Validador.isEmpty(cliente.getNome())) {
-			throw new IllegalArgumentException("O nome do Cliente não pode ser vazio.");			
+	public OperacaoResultado salvar(Cliente cliente) {	
+		validator.validar(cliente);
+		
+		Cliente clienteNoBanco = dao.buscarPorNome(cliente.getNome());
+		if (Objects.nonNull(clienteNoBanco)) {
+			throw new IllegalArgumentException("Já existe um Cliente com esse nome!");			
 		}
 		
-		Cliente cliente2 = clienteDAO.buscarPorNome(cliente.getNome());
-		if (Objects.nonNull(cliente2)) {
-			throw new IllegalArgumentException("Já existe um Cliente cadastrado com esse nome!");			
-		}
-		
-		return clienteDAO.salvar(prepararDadosCliente(cliente));
+		prepararDadosCliente(cliente);
+		return dao.salvar(cliente);
 	}
 
-	private Cliente prepararDadosCliente(Cliente cliente) {
-		cliente.setCpfCnpj(cliente.getCpfCnpj().replaceAll("\\D", "").length() < 11 ? null : cliente.getCpfCnpj());
-		cliente.setTelefone(cliente.getTelefone().replaceAll("\\D", "").length() < 10 ? null : cliente.getTelefone());
-		cliente.setEmail(cliente.getEmail().trim().isEmpty() ? null: cliente.getEmail());
-		cliente.setEndereco(cliente.getEndereco().trim().isEmpty() ? null: cliente.getEndereco());
-		return cliente;
-	}
-	
 	public OperacaoResultado atualizar(Cliente cliente) {
-		if (Validador.isEmpty(cliente.getNome())) {
-			throw new IllegalArgumentException("O nome do Cliente não pode ser vazio.");			
-		}
+		validator.validar(cliente);
 		
-		Cliente cliente2 = clienteDAO.buscarPorNome(cliente.getNome());
-		if (Objects.nonNull(cliente2)) {
-			if (cliente.getId() != cliente2.getId()) {
-				throw new IllegalArgumentException("Já existe um Cliente cadastrado com esse nome!");				
+		Cliente clienteNoBanco = dao.buscarPorNome(cliente.getNome());
+		if (Objects.nonNull(clienteNoBanco)) {
+			if (cliente.getId() != clienteNoBanco.getId()) {
+				throw new IllegalArgumentException("Já existe um Cliente com esse nome!");				
 			}
 		}
 
-		return clienteDAO.atualizar(prepararDadosCliente(cliente));
+		prepararDadosCliente(cliente);
+		return dao.atualizar(cliente);
+	}
+	
+	private void prepararDadosCliente(Cliente cliente) {
+		if (cliente.getCpfCnpj().replaceAll("\\D", "").length() < 11) {
+			cliente.setCpfCnpj(null);
+		}
+		if (cliente.getTelefone().replaceAll("\\D", "").length() < 10) {
+			cliente.setTelefone(null);
+		}
+		if (cliente.getEmail().trim().isEmpty()) {
+			cliente.setEmail(null);
+		}
+		if (cliente.getEndereco().trim().isEmpty()) {
+			cliente.setEndereco(null);
+		}
 	}
 
 	public OperacaoResultado remover(Cliente cliente) {
-		return clienteDAO.remover(cliente.getId());
+		return dao.remover(cliente.getId());
+	}
+
+	public List<Cliente> listarPorNome(String nome) {
+		return dao.listarPorNome(nome);
 	}
 
 }

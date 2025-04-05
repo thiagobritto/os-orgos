@@ -3,7 +3,7 @@ package com.orgos.os.util;
 import com.orgos.os.model.Funcionalidade;
 import com.orgos.os.model.Usuario;
 
-public class PermissaoUtil {
+public class Permissao {
 
 	public static boolean temPermissao(Usuario usuario, Funcionalidade funcionalidade) {
 		if (usuario == null || usuario.getPermissoes() == null) {

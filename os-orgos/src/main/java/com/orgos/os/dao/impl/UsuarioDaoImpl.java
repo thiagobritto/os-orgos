@@ -15,7 +15,7 @@ import com.orgos.os.model.Funcionalidade;
 import com.orgos.os.model.Permissao;
 import com.orgos.os.model.Usuario;
 import com.orgos.os.util.OperacaoResultado;
-import com.orgos.os.util.PasswordUtil;
+import com.orgos.os.util.Password;
 
 public class UsuarioDaoImpl implements UsuarioDao {
 
@@ -73,7 +73,7 @@ public class UsuarioDaoImpl implements UsuarioDao {
 			try (ResultSet rs = pstmt.executeQuery()) {
 				if (rs.next()) {
 					String hashedPassword = rs.getString("password_hash");
-					if (PasswordUtil.checkPassword(password, hashedPassword)) {
+					if (Password.checkPassword(password, hashedPassword)) {
 						int id = rs.getInt("id_usuario");
 						List<Permissao> permissoes = buscarPermissoes(id);
 

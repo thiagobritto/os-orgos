@@ -4,27 +4,35 @@ import javax.swing.JFrame;
 
 import com.orgos.os.controller.CadastroClienteController;
 import com.orgos.os.controller.CadastroOrdemServicoController;
+import com.orgos.os.controller.CadastroTecnicoController;
 import com.orgos.os.controller.DashboardController;
 import com.orgos.os.controller.LoginController;
 import com.orgos.os.dao.impl.ClienteDaoImpl;
+import com.orgos.os.dao.impl.TecnicoDaoImpl;
 import com.orgos.os.dao.impl.UsuarioDaoImpl;
 import com.orgos.os.service.BackupService;
 import com.orgos.os.service.ClienteService;
+import com.orgos.os.service.TecnicoService;
 import com.orgos.os.service.UsuarioService;
 import com.orgos.os.view.CadastroClienteScreen;
 import com.orgos.os.view.CadastroOrdemServicoScreen;
+import com.orgos.os.view.CadastroTecnicoScreen;
 import com.orgos.os.view.DashboardScreen;
 import com.orgos.os.view.LoginScreen;
 
 public class AppFactory {
 
 	// Instâncias únicas (Singleton)
-	private static ClienteDaoImpl clienteDAO = new ClienteDaoImpl();
+	private static ClienteValidator clienteValidator = new ClienteValidator(); 
+	
 	private static UsuarioDaoImpl usuarioDAO = new UsuarioDaoImpl();
+	private static ClienteDaoImpl clienteDAO = new ClienteDaoImpl();
+	private static TecnicoDaoImpl tecnicoDAO = new TecnicoDaoImpl();
 	
 	private static BackupService backupService = new BackupService();
-	private static ClienteService clienteService = new ClienteService(clienteDAO);
 	private static UsuarioService usuarioService = new UsuarioService(usuarioDAO);
+	private static ClienteService clienteService = new ClienteService(clienteValidator, clienteDAO);
+	private static TecnicoService tecnicoService = new TecnicoService(tecnicoDAO);
 	
 	/**
 	 * Devolve uma {@code JFrame} - 'LoginScreen'
@@ -61,6 +69,19 @@ public class AppFactory {
 		CadastroClienteController cadastroClienteController = new CadastroClienteController(cadastroClienteScreen, clienteService);
 		cadastroClienteController.inicializar();
 		return cadastroClienteScreen;
+	}
+	
+	/**
+	 * Devolve uma {@code JDialog} - 'CadastroTecnicoScreen'
+	 * 
+	 * @param owner O parente {@code JFreame} da janela {@code CadastroTecnicoScreen}.
+	 * @return A janela {@code CadastroTecnicoScreen}.
+	 */
+	public static CadastroTecnicoScreen getCadastroTecnicoScreen(JFrame owner) {
+		CadastroTecnicoScreen cadastroTecnicoScreen = new CadastroTecnicoScreen(owner);
+		CadastroTecnicoController cadastroTecnicoController = new CadastroTecnicoController(cadastroTecnicoScreen, tecnicoService);
+		cadastroTecnicoController.inicializar();
+		return cadastroTecnicoScreen;
 	}
 	
 	/**

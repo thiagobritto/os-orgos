@@ -11,7 +11,6 @@ import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.ParseException;
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.Objects;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
@@ -36,31 +34,27 @@ import javax.swing.ListSelectionModel;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 
-import com.orgos.os.model.Cliente;
-import com.orgos.os.model.Cliente.TableModelCliente;
-import com.orgos.os.util.Consulta;
+import com.orgos.os.model.Tecnico;
+import com.orgos.os.model.Tecnico.TableModelTecnico;
 import com.orgos.os.util.ImageUtil;
 import com.orgos.os.util.StringValidator;
 
-public class CadastroClienteScreen extends AbstractModalScreen {
+public class CadastroTecnicoScreen extends AbstractModalScreen {
 	private static final long serialVersionUID = 1L;
 	private MaskFormatter maskCPF, maskCNPJ, maskFixo, maskCelular;
-	private JFormattedTextField txtCpfcnpj, txtTelefone;
+	private JFormattedTextField txtCpfCnpj, txtTelefone;
 	private JRadioButton rbCPF, rbCNPJ, rbFixo, rbCelular;
-	private JTextField txtNome, txtEmail, txtEndereco;
+	private JTextField txtNome, txtEmail, txtEspecializacao;
 	private JButton btnNovo, btnAlterar, btnExcluir, btnSalvar, btnCancelar;
 
-	private TableModelCliente tableModelCliente = new Cliente.TableModelCliente();
-	private JTable tabelaCliente;
-	private Cliente clienteSelecionado;
-	private JComboBox<Consulta> cbConsulta;
-	private DefaultComboBoxModel<Consulta> listModelConsulta;
-	private JTextField txtConsulta;
+	private TableModelTecnico tableModelTecnico = new Tecnico.TableModelTecnico();
+	private JTable tabelaTecnico;
+	private Tecnico tecnicoSelecionado;
 
-	public CadastroClienteScreen(JFrame owner) {
+	public CadastroTecnicoScreen(JFrame owner) {
 		super(owner, true);
 		setSize(600, 500);
-		setTitle("Sistema de Ordem de Serviço - Cadastro de Clientes");
+		setTitle("Sistema de Ordem de Serviço - Cadastro de Técnico");
 		setLocationRelativeTo(owner);
 
 		iniciarComponente();
@@ -71,7 +65,7 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 		panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		setContentPane(panel);
 		{
-			JLabel title = new JLabel("Cadastro de Clientes");
+			JLabel title = new JLabel("Cadastro de Tecnicos");
 			title.setFont(new Font("Arial", Font.BOLD, 16));
 			panel.add(title, BorderLayout.NORTH);
 
@@ -112,8 +106,8 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 							e.printStackTrace();
 						}
 
-						txtCpfcnpj = new JFormattedTextField(maskCPF);
-						txtCpfcnpj.setEnabled(false);
+						txtCpfCnpj = new JFormattedTextField(maskCPF);
+						txtCpfCnpj.setEnabled(false);
 
 						rbCPF = new JRadioButton("CPF", true);
 						rbCPF.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
@@ -134,10 +128,10 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 							@Override
 							public void itemStateChanged(ItemEvent e) {
 								if (e.getStateChange() == ItemEvent.SELECTED) {
-									String text = txtCpfcnpj.getText().replaceAll("\\D", "");
-									txtCpfcnpj.setValue(null);
-									txtCpfcnpj.setFormatterFactory(new DefaultFormatterFactory(maskCPF));
-									txtCpfcnpj.setText(text);
+									String text = txtCpfCnpj.getText().replaceAll("\\D", "");
+									txtCpfCnpj.setValue(null);
+									txtCpfCnpj.setFormatterFactory(new DefaultFormatterFactory(maskCPF));
+									txtCpfCnpj.setText(text);
 								}
 							}
 						});
@@ -146,10 +140,10 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 							@Override
 							public void itemStateChanged(ItemEvent e) {
 								if (e.getStateChange() == ItemEvent.SELECTED) {
-									String text = txtCpfcnpj.getText().replaceAll("\\D", "");
-									txtCpfcnpj.setValue(null);
-									txtCpfcnpj.setFormatterFactory(new DefaultFormatterFactory(maskCNPJ));
-									txtCpfcnpj.setText(text);
+									String text = txtCpfCnpj.getText().replaceAll("\\D", "");
+									txtCpfCnpj.setValue(null);
+									txtCpfCnpj.setFormatterFactory(new DefaultFormatterFactory(maskCNPJ));
+									txtCpfCnpj.setText(text);
 								}
 							}
 						});
@@ -158,7 +152,7 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 					// coluna 4
 					gbc.gridx = 3;
 					gbc.weightx = 1.0; // add peso em x
-					section_1.add(txtCpfcnpj, gbc);
+					section_1.add(txtCpfCnpj, gbc);
 
 					// linha 2, coluna 1
 					gbc.gridy = 1;
@@ -245,9 +239,9 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 					gbc.gridx = 1;
 					gbc.weightx = 1.0; // add peso em x
 					gbc.gridwidth = 3;
-					txtEndereco = new JTextField();
-					txtEndereco.setEnabled(false);
-					section_1.add(txtEndereco, gbc);
+					txtEspecializacao = new JTextField();
+					txtEspecializacao.setEnabled(false);
+					section_1.add(txtEspecializacao, gbc);
 
 					// linha 4, coluna 1
 					gbc.gridy = 3;
@@ -304,24 +298,24 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 					header.setBorder(BorderFactory.createEmptyBorder(0, -5, 0, -5));
 					section_2.add(header, BorderLayout.NORTH);
 					{
-						cbConsulta = new JComboBox<Consulta>();
-						header.add(cbConsulta);
+						JComboBox<Object> tipo = new JComboBox<>(new Object[] { "Nome", "Codigo" });
+						header.add(tipo);
 
-						txtConsulta = new JTextField(15);
-						header.add(txtConsulta);
+						JTextField txtPesquise = new JTextField(15);
+						header.add(txtPesquise);
 					}
 
-					tabelaCliente = new JTable(tableModelCliente);
-					tabelaCliente.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					tabelaCliente.getSelectionModel().addListSelectionListener(e -> {
-						int selectedRow = tabelaCliente.getSelectedRow();
+					tabelaTecnico = new JTable(tableModelTecnico);
+					tabelaTecnico.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					tabelaTecnico.getSelectionModel().addListSelectionListener(e -> {
+						int selectedRow = tabelaTecnico.getSelectedRow();
 						if (selectedRow >= 0) {
-							setClienteSelecionado(tableModelCliente.getClientes().get(selectedRow));
-							exibirClienteSelecionado();
+							setTecnicoSelecionado(tableModelTecnico.getListTecnico().get(selectedRow));
+							exibirTecnicoSelecionado();
 						}
 					});
 
-					JScrollPane scrollPane = new JScrollPane(tabelaCliente);
+					JScrollPane scrollPane = new JScrollPane(tabelaTecnico);
 					section_2.add(scrollPane, BorderLayout.CENTER);
 
 				}
@@ -347,20 +341,10 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 		btnSalvar.addActionListener(listener);
 	}
 
-	public void addConsultaKeyListener(KeyAdapter adepter) {
-		txtConsulta.addKeyListener(adepter);
-	}
-
 	// Show
-	public void exibirConsultas(Consulta[] listConsulta) {
-		listModelConsulta = new DefaultComboBoxModel<Consulta>(listConsulta);
-		cbConsulta.setModel(listModelConsulta);
-		cbConsulta.setSelectedIndex(1);
-	}
-	
-	public void exibirClientes(List<Cliente> listarTodos) {
-		tableModelCliente = new Cliente.TableModelCliente(listarTodos);
-		tabelaCliente.setModel(tableModelCliente);
+	public void exibirTecnicos(List<Tecnico> listTecnico) {
+		tableModelTecnico = new Tecnico.TableModelTecnico(listTecnico);
+		tabelaTecnico.setModel(tableModelTecnico);
 	}
 
 	public void exibirMensagem(String mensagem) {
@@ -383,47 +367,47 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 
 	}
 
-	private void exibirClienteSelecionado() {
-		if (Objects.nonNull(clienteSelecionado)) {
-			txtNome.setText(clienteSelecionado.getNome());
+	private void exibirTecnicoSelecionado() {
+		if (Objects.nonNull(tecnicoSelecionado)) {
+			txtNome.setText(tecnicoSelecionado.getNome());
 			
-			String cpfCnpj = clienteSelecionado.getCpfCnpj();
+			String cpfCnpj = tecnicoSelecionado.getCpf();
 			if (Objects.isNull(cpfCnpj) || cpfCnpj.replaceAll("\\D", "").length() < 14) {
 				rbCPF.setSelected(true);
 			} else {
 				rbCNPJ.setSelected(true);
 			}
 			
-			txtCpfcnpj.setText(clienteSelecionado.getCpfCnpj());
-			txtEmail.setText(clienteSelecionado.getEmail());
+			txtCpfCnpj.setText(tecnicoSelecionado.getCpf());
+			txtEmail.setText(tecnicoSelecionado.getEmail());
 			
-			String telefone = clienteSelecionado.getTelefone();
+			String telefone = tecnicoSelecionado.getTelefone();
 			if (Objects.isNull(telefone) || telefone.replaceAll("\\D", "").length() < 11) {
 				rbFixo.setSelected(true);
 			} else {
 				rbCelular.setSelected(true);
 			}
 			
-			txtTelefone.setText(clienteSelecionado.getTelefone());
-			txtEndereco.setText(clienteSelecionado.getEndereco());
+			txtTelefone.setText(tecnicoSelecionado.getTelefone());
+			txtEspecializacao.setText(tecnicoSelecionado.getEspecializacao());
 		}
 	}
 
 	// Modify
-	public Cliente getClienteSelecionado() {
-		return clienteSelecionado;
+	public Tecnico getTecnicoSelecionado() {
+		return tecnicoSelecionado;
 	}
 
-	public void setClienteSelecionado(Cliente clienteSelecionado) {
-		this.clienteSelecionado = clienteSelecionado;
+	public void setTecnicoSelecionado(Tecnico tecnicoSelecionado) {
+		this.tecnicoSelecionado = tecnicoSelecionado;
 	}
 	
 	public String getNome() {
 		return txtNome.getText();
 	}
 	
-	public String getCpfcnpj() {
-		return txtCpfcnpj.getText();
+	public String getCpfCnpj() {
+		return txtCpfCnpj.getText();
 	}
 	
 	public String getEmail() {
@@ -434,16 +418,8 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 		return txtTelefone.getText();
 	}
 	
-	public String getEndereco() {
-		return txtEndereco.getText();
-	}
-	
-	public Consulta getConsulta() {
-		return listModelConsulta.getElementAt(cbConsulta.getSelectedIndex());
-	}
-	
-	public String getConsultaTexto() {
-		return txtConsulta.getText();
+	public String getgetEspecializacao() {
+		return txtEspecializacao.getText();
 	}
 
 	public void liberarParaInserir() {
@@ -460,35 +436,35 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 	public void resetarTela() {
 		limparCampos();
 		bloquearTela(true);
-		tabelaCliente.clearSelection();
-		setClienteSelecionado(null);
+		tabelaTecnico.clearSelection();
+		setTecnicoSelecionado(null);
 	}
 
 	private void limparCampos() {
 		txtNome.setText("");
 		rbCPF.setSelected(true);
-		txtCpfcnpj.setText("");
+		txtCpfCnpj.setText("");
 		txtEmail.setText("");
 		rbFixo.setSelected(true);
 		txtTelefone.setText("");
-		txtEndereco.setText("");
+		txtEspecializacao.setText("");
 	}
 
 	private void bloquearTela(boolean b) {
 		txtNome.setEnabled(!b);
 		rbCPF.setEnabled(!b);
 		rbCNPJ.setEnabled(!b);
-		txtCpfcnpj.setEnabled(!b);
+		txtCpfCnpj.setEnabled(!b);
 		txtEmail.setEnabled(!b);
 		rbFixo.setEnabled(!b);
 		rbCelular.setEnabled(!b);
 		txtTelefone.setEnabled(!b);
-		txtEndereco.setEnabled(!b);
+		txtEspecializacao.setEnabled(!b);
 
 		btnNovo.setEnabled(b);
 		btnAlterar.setEnabled(b);
 		btnExcluir.setEnabled(b);
-		tabelaCliente.setEnabled(b);
+		tabelaTecnico.setEnabled(b);
 		
 		btnSalvar.setEnabled(!b);
 		btnCancelar.setEnabled(!b);
@@ -496,13 +472,11 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 	
 	public boolean validarDados() {
 		if (StringValidator.isEmpty(txtNome.getText())) {
-			exibirMensagemAviso("O nome do Cliente não pode ser vazio.");
+			exibirMensagemAviso("O nome do Técnico não pode ser vazio.");
 			txtNome.requestFocus();
 			return false;
 		}
 		return true;
 	}
-
-	
 
 }
