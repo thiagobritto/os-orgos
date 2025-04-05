@@ -10,8 +10,8 @@ import com.orgos.os.util.OperacaoResultado;
 
 public class ClienteService {
 
-	private ClienteDao dao;
 	private ClienteValidator validator;
+	private ClienteDao dao;
 
 	public ClienteService(ClienteValidator validator, ClienteDao dao) {
 		this.validator = validator;

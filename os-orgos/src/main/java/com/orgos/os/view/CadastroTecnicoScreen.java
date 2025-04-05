@@ -239,7 +239,7 @@ public class CadastroTecnicoScreen extends AbstractModalScreen {
 					gbc.gridy = 2;
 					gbc.gridx = 0;
 					gbc.weightx = 0; // remove peso em x
-					section_1.add(new JLabel("Endereço:"), gbc);
+					section_1.add(new JLabel("Especialização:"), gbc);
 
 					// coluna 2
 					gbc.gridx = 1;
