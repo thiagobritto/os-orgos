@@ -54,7 +54,6 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 	private JTable tabelaCliente;
 	private Cliente clienteSelecionado;
 	private JComboBox<Consulta> cbConsulta;
-	private DefaultComboBoxModel<Consulta> listModelConsulta;
 	private JTextField txtConsulta;
 
 	public CadastroClienteScreen(JFrame owner) {
@@ -275,7 +274,7 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 							btnExcluir.setIcon(Images.getImageIcon("remove_icon_48x48.png", 16, 16));
 							leftButtonPanel.add(btnExcluir);
 						}
-						
+
 						JPanel rightButtonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 						rightButtonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, -5));
 						buttonPanel.add(rightButtonPanel);
@@ -312,7 +311,7 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 
 					JScrollPane scrollPane = new JScrollPane(tabelaCliente);
 					section_2.add(scrollPane, BorderLayout.CENTER);
-					
+
 					JPanel footer = new JPanel(new FlowLayout(FlowLayout.LEFT));
 					footer.setBorder(BorderFactory.createEmptyBorder(0, -5, 0, -5));
 					section_2.add(footer, BorderLayout.SOUTH);
@@ -353,11 +352,11 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 
 	// Show
 	public void exibirConsultas(Consulta[] listConsulta) {
-		listModelConsulta = new DefaultComboBoxModel<Consulta>(listConsulta);
+		DefaultComboBoxModel<Consulta> listModelConsulta = new DefaultComboBoxModel<>(listConsulta);
 		cbConsulta.setModel(listModelConsulta);
 		cbConsulta.setSelectedIndex(1);
 	}
-	
+
 	public void exibirClientes(List<Cliente> listarTodos) {
 		tableModelCliente = new Cliente.TableModelCliente(listarTodos);
 		tabelaCliente.setModel(tableModelCliente);
@@ -366,44 +365,42 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 	public void exibirMensagem(String mensagem) {
 		JOptionPane.showMessageDialog(this, mensagem);
 	}
-	
+
 	public void exibirMensagemAviso(String mensagem) {
-		JOptionPane.showMessageDialog(this, mensagem, "Aviso", 
-				JOptionPane.WARNING_MESSAGE);		
+		JOptionPane.showMessageDialog(this, mensagem, "Aviso", JOptionPane.WARNING_MESSAGE);
 	}
-	
+
 	public void exibirMensagemErro(String mensagem) {
-		JOptionPane.showMessageDialog(this, mensagem, "Erro", 
-				JOptionPane.ERROR_MESSAGE);		
+		JOptionPane.showMessageDialog(this, mensagem, "Erro", JOptionPane.ERROR_MESSAGE);
 	}
 
 	public boolean exibirMensagemConfirmacao(String mensagem) {
-		return JOptionPane.showConfirmDialog(this, mensagem, "Confimar Exclusão", 
-				JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
+		return JOptionPane.showConfirmDialog(this, mensagem, "Confimar Exclusão", JOptionPane.YES_NO_OPTION,
+				JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
 
 	}
 
 	private void exibirClienteSelecionado() {
 		if (Objects.nonNull(clienteSelecionado)) {
 			txtNome.setText(clienteSelecionado.getNome());
-			
+
 			String cpfCnpj = clienteSelecionado.getCpfCnpj();
 			if (Objects.isNull(cpfCnpj) || cpfCnpj.replaceAll("\\D", "").length() < 14) {
 				rbCPF.setSelected(true);
 			} else {
 				rbCNPJ.setSelected(true);
 			}
-			
+
 			txtCpfcnpj.setText(clienteSelecionado.getCpfCnpj());
 			txtEmail.setText(clienteSelecionado.getEmail());
-			
+
 			String telefone = clienteSelecionado.getTelefone();
 			if (Objects.isNull(telefone) || telefone.replaceAll("\\D", "").length() < 11) {
 				rbFixo.setSelected(true);
 			} else {
 				rbCelular.setSelected(true);
 			}
-			
+
 			txtTelefone.setText(clienteSelecionado.getTelefone());
 			txtEndereco.setText(clienteSelecionado.getEndereco());
 		}
@@ -417,32 +414,32 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 	public void setClienteSelecionado(Cliente clienteSelecionado) {
 		this.clienteSelecionado = clienteSelecionado;
 	}
-	
+
 	public String getNome() {
 		return txtNome.getText();
 	}
-	
+
 	public String getCpfcnpj() {
 		return txtCpfcnpj.getText();
 	}
-	
+
 	public String getEmail() {
 		return txtEmail.getText();
 	}
-	
+
 	public String getTelefone() {
 		return txtTelefone.getText();
 	}
-	
+
 	public String getEndereco() {
 		return txtEndereco.getText();
 	}
-	
-	public Consulta getConsulta() {
-		return listModelConsulta.getElementAt(cbConsulta.getSelectedIndex());
+
+	public int getConsultaIndex() {
+		return cbConsulta.getSelectedIndex();
 	}
-	
-	public String getConsultaTexto() {
+
+	public String getConsultaText() {
 		return txtConsulta.getText();
 	}
 
@@ -456,7 +453,7 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 		bloquearTela(false);
 		txtNome.requestFocus();
 	}
-	
+
 	public void resetarTela() {
 		limparCampos();
 		bloquearTela(true);
@@ -489,11 +486,11 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 		btnAlterar.setEnabled(b);
 		btnExcluir.setEnabled(b);
 		tabelaCliente.setEnabled(b);
-		
+
 		btnSalvar.setEnabled(!b);
 		btnCancelar.setEnabled(!b);
 	}
-	
+
 	public boolean validarDados() {
 		if (StringValidator.isEmpty(txtNome.getText())) {
 			exibirMensagemAviso("O nome do Cliente não pode ser vazio.");
@@ -502,7 +499,5 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 		}
 		return true;
 	}
-
-	
 
 }

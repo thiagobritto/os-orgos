@@ -11,6 +11,7 @@ import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.text.ParseException;
 import java.util.List;
@@ -54,7 +55,7 @@ public class CadastroTecnicoScreen extends AbstractModalScreen {
 	private Tecnico tecnicoSelecionado;
 	
 	private JComboBox<Consulta> cbConsulta;
-	private DefaultComboBoxModel<Consulta> listModelConsulta;
+	private JTextField txtConsulta;
 
 	public CadastroTecnicoScreen(JFrame owner) {
 		super(owner, true);
@@ -319,8 +320,8 @@ public class CadastroTecnicoScreen extends AbstractModalScreen {
 						cbConsulta = new JComboBox<Consulta>();
 						footer.add(cbConsulta);
 
-						JTextField txtPesquise = new JTextField(15);
-						footer.add(txtPesquise);
+						txtConsulta = new JTextField(15);
+						footer.add(txtConsulta);
 					}
 				}
 			} // end section
@@ -343,6 +344,10 @@ public class CadastroTecnicoScreen extends AbstractModalScreen {
 
 	public void addSalvarListener(ActionListener listener) {
 		btnSalvar.addActionListener(listener);
+	}
+	
+	public void addConsultaKeyListener(KeyAdapter adapter) {
+		txtConsulta.addKeyListener(adapter);
 	}
 
 	// Show
@@ -484,9 +489,17 @@ public class CadastroTecnicoScreen extends AbstractModalScreen {
 	}
 
 	public void exibirConsultas(Consulta[] listConsilta) {
-		listModelConsulta = new DefaultComboBoxModel<>(listConsilta);
+		DefaultComboBoxModel<Consulta> listModelConsulta = new DefaultComboBoxModel<>(listConsilta);
 		cbConsulta.setModel(listModelConsulta);
 		cbConsulta.setSelectedIndex(1);
+	}
+
+	public int getConsultaIndex() {
+		return cbConsulta.getSelectedIndex();
+	}
+
+	public String getConsultaText() {
+		return txtConsulta.getText();
 	}
 
 }

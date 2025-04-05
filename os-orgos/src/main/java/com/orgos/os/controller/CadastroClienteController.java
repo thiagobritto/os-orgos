@@ -13,6 +13,7 @@ import com.orgos.os.util.OperacaoResultado;
 import com.orgos.os.view.CadastroClienteScreen;
 
 public class CadastroClienteController implements Controller {
+	private final Consulta[] CONSULTAS = { new ConsultaId(), new ConsultaNome() };
 	private CadastroClienteScreen screen;
 	private ClienteService clienteService;
 
@@ -23,7 +24,7 @@ public class CadastroClienteController implements Controller {
 
 	@Override
 	public void inicializar() {
-		screen.exibirConsultas(getListConsulta());
+		screen.exibirConsultas(CONSULTAS);
 		screen.exibirClientes(clienteService.listarTodos());
 		screen.addNovoListener(this::novo);
 		screen.addAlterarListener(this::alterar);
@@ -115,11 +116,7 @@ public class CadastroClienteController implements Controller {
 		}
 	}
 
-	private Consulta[] getListConsulta() {
-		return new Consulta[] { new ConsultaClienteId(), new ConsultaClienteNome() };
-	}
-
-	private class ConsultaClienteId implements Consulta {
+	private class ConsultaId implements Consulta {
 		private int id;
 
 		@Override
@@ -129,7 +126,11 @@ public class CadastroClienteController implements Controller {
 			} catch (NumberFormatException e) {
 				return;
 			}
-			screen.exibirClientes(List.of(clienteService.buscarPorId(id)));
+
+			Cliente cliente = clienteService.buscarPorId(id);
+			if (Objects.nonNull(cliente)) {
+				screen.exibirClientes(List.of(cliente));
+			}
 		}
 
 		@Override
@@ -138,7 +139,7 @@ public class CadastroClienteController implements Controller {
 		}
 	}
 
-	private class ConsultaClienteNome implements Consulta {
+	private class ConsultaNome implements Consulta {
 		@Override
 		public void procurar(String text) {
 			screen.exibirClientes(clienteService.listarPorNome(text));
@@ -153,8 +154,7 @@ public class CadastroClienteController implements Controller {
 	private class ConsultaKeyAdapter extends KeyAdapter {
 		@Override
 		public void keyReleased(KeyEvent e) {
-			Consulta consulta = screen.getConsulta();
-			consulta.procurar(screen.getConsultaTexto());
+			CONSULTAS[screen.getConsultaIndex()].procurar(screen.getConsultaText());
 		}
 	}
 }
