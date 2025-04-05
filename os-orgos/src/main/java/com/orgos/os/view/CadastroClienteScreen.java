@@ -296,21 +296,10 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 					}
 				}
 
-				JPanel section_2 = new JPanel(new BorderLayout(0, 0));
+				JPanel section_2 = new JPanel(new BorderLayout(5, 5));
 				section_2.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 				section.add(section_2);
 				{
-					JPanel header = new JPanel(new FlowLayout(FlowLayout.LEFT));
-					header.setBorder(BorderFactory.createEmptyBorder(0, -5, 0, -5));
-					section_2.add(header, BorderLayout.NORTH);
-					{
-						cbConsulta = new JComboBox<Consulta>();
-						header.add(cbConsulta);
-
-						txtConsulta = new JTextField(15);
-						header.add(txtConsulta);
-					}
-
 					tabelaCliente = new JTable(tableModelCliente);
 					tabelaCliente.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					tabelaCliente.getSelectionModel().addListSelectionListener(e -> {
@@ -323,6 +312,17 @@ public class CadastroClienteScreen extends AbstractModalScreen {
 
 					JScrollPane scrollPane = new JScrollPane(tabelaCliente);
 					section_2.add(scrollPane, BorderLayout.CENTER);
+					
+					JPanel footer = new JPanel(new FlowLayout(FlowLayout.LEFT));
+					footer.setBorder(BorderFactory.createEmptyBorder(0, -5, 0, -5));
+					section_2.add(footer, BorderLayout.SOUTH);
+					{
+						cbConsulta = new JComboBox<Consulta>();
+						footer.add(cbConsulta);
+
+						txtConsulta = new JTextField(15);
+						footer.add(txtConsulta);
+					}
 
 				}
 			} // end section
