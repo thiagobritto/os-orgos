@@ -21,7 +21,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
-import com.orgos.os.util.ImageUtil;
+import com.orgos.os.util.Images;
 
 public class LoginScreen extends JFrame {
 
@@ -38,7 +38,7 @@ public class LoginScreen extends JFrame {
 		setLocationRelativeTo(null);
 		setResizable(false);
 		
-		Image image = ImageUtil.getImage("logo_icon_48x48.png");
+		Image image = Images.getImage("logo_icon_48x48.png");
 		setIconImage(image);
 		
 		KeyStroke keyEscape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);

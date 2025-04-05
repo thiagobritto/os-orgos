@@ -17,7 +17,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import com.orgos.os.util.ImageUtil;
+import com.orgos.os.util.Images;
 
 public class DashboardScreen extends JFrame {
 
@@ -37,7 +37,7 @@ public class DashboardScreen extends JFrame {
 		setLocationRelativeTo(null);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-		image = ImageUtil.getImage("logo_icon_48x48.png");
+		image = Images.getImage("logo_icon_48x48.png");
 		setIconImage(image);
 
 		iniciarComponentes();

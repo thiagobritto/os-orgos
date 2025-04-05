@@ -36,7 +36,7 @@ import javax.swing.text.MaskFormatter;
 
 import com.orgos.os.model.Tecnico;
 import com.orgos.os.model.Tecnico.TableModelTecnico;
-import com.orgos.os.util.ImageUtil;
+import com.orgos.os.util.Images;
 import com.orgos.os.util.StringValidator;
 
 public class CadastroTecnicoScreen extends AbstractModalScreen {
@@ -256,17 +256,17 @@ public class CadastroTecnicoScreen extends AbstractModalScreen {
 						{
 							btnNovo = new JButton("Novo");
 							btnNovo.setMnemonic(KeyEvent.VK_N);
-							btnNovo.setIcon(ImageUtil.getImageIcon("new_icon_48x48.png", 16, 16));
+							btnNovo.setIcon(Images.getImageIcon("new_icon_48x48.png", 16, 16));
 							leftButtonPanel.add(btnNovo);
 
 							btnAlterar = new JButton("Alterar");
 							btnAlterar.setMnemonic(KeyEvent.VK_A);
-							btnAlterar.setIcon(ImageUtil.getImageIcon("edit_icon_48x48.png", 16, 16));
+							btnAlterar.setIcon(Images.getImageIcon("edit_icon_48x48.png", 16, 16));
 							leftButtonPanel.add(btnAlterar);
 
 							btnExcluir = new JButton("Excluir");
 							btnExcluir.setMnemonic(KeyEvent.VK_E);
-							btnExcluir.setIcon(ImageUtil.getImageIcon("remove_icon_48x48.png", 16, 16));
+							btnExcluir.setIcon(Images.getImageIcon("remove_icon_48x48.png", 16, 16));
 							leftButtonPanel.add(btnExcluir);
 						}
 						
@@ -276,13 +276,13 @@ public class CadastroTecnicoScreen extends AbstractModalScreen {
 						{
 							btnSalvar = new JButton("Salvar");
 							btnSalvar.setMnemonic(KeyEvent.VK_S);
-							btnSalvar.setIcon(ImageUtil.getImageIcon("check_icon_48x48.png", 16, 16));
+							btnSalvar.setIcon(Images.getImageIcon("check_icon_48x48.png", 16, 16));
 							btnSalvar.setEnabled(false);
 							rightButtonPanel.add(btnSalvar);
 
 							btnCancelar = new JButton("Cancelar");
 							btnCancelar.setMnemonic(KeyEvent.VK_C);
-							btnCancelar.setIcon(ImageUtil.getImageIcon("cancel_icon_48x48.png", 16, 16));
+							btnCancelar.setIcon(Images.getImageIcon("cancel_icon_48x48.png", 16, 16));
 							btnCancelar.setEnabled(false);
 							btnCancelar.addActionListener(e -> resetarTela());
 							rightButtonPanel.add(btnCancelar);

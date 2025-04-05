@@ -5,9 +5,9 @@ import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
 
-public class ImageUtil {
+public class Images {
 
-	private static String resource = ImageUtil.class.getResource("/images/").getPath();
+	private static String resource = Images.class.getResource("/images/").getPath();
 	
 	public static Image getImage(String source) {
 		return Toolkit.getDefaultToolkit().getImage(resource + source);
