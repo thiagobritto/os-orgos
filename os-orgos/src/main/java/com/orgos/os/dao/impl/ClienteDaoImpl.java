@@ -102,7 +102,7 @@ public class ClienteDaoImpl implements ClienteDao {
 
 	@Override
 	public List<Cliente> listarPorNome(String nomeDigitado) {
-		String sql = "SELECT id_cliente, nome, cpf_cnpj, telefone, email, endereco  FROM cliente WHERE nome LIKE ?";
+		String sql = "SELECT id_cliente, nome, cpf_cnpj, telefone, email, endereco  FROM cliente WHERE nome LIKE ? LIMIT 10";
 		List<Cliente> clientes = new ArrayList<Cliente>();
 
 		try (Connection conn = DatabaseConnection.getConnection();

@@ -27,6 +27,7 @@ import com.orgos.os.model.Cliente;
 import com.orgos.os.model.ItemServico;
 import com.orgos.os.model.ItemServico.TableModelItemServico;
 import com.orgos.os.model.OrdemServico;
+import com.orgos.os.model.Tecnico;
 import com.orgos.os.util.FilterField;
 
 public class CadastroOrdemServicoScreen extends JInternalFrame {
@@ -39,6 +40,8 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 	private TableModelItemServico tableModelItemServico;
 	private JComboBox<Cliente> cbClientes;
 	private DefaultComboBoxModel<Cliente> listModelCliente;
+	private JComboBox<Tecnico> cbTecnicos;
+	private DefaultComboBoxModel<Tecnico> listModelTecnico;
 
 	public CadastroOrdemServicoScreen() {
 		super("OS", false, true, true, true);
@@ -124,9 +127,7 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 						JLabel lblTecnico = new JLabel("Técnico:");
 						header.add(lblTecnico);
 
-						String[] tecnicos = { "Joares", "Antônio", "Jorge", "Vitor", "Manoel da Mercedes" };
-
-						JComboBox<String> cbTecnicos = new JComboBox<>(tecnicos);
+						cbTecnicos = new JComboBox<Tecnico>();
 						header.add(cbTecnicos);
 
 						JButton btnBuscarTecnico = new JButton("...");
@@ -427,6 +428,12 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 		listModelCliente = new DefaultComboBoxModel<Cliente>();
 		listCliente.forEach(listModelCliente::addElement);
 		cbClientes.setModel(listModelCliente);
+	}
+
+	public void exibirTecnicos(List<Tecnico> listTecnico) {
+		listModelTecnico = new DefaultComboBoxModel<Tecnico>();
+		listTecnico.forEach(listModelTecnico::addElement);
+		cbTecnicos.setModel(listModelTecnico);
 	}
 	
 }
