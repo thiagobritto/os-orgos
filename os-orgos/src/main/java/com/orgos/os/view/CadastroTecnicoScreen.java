@@ -19,6 +19,7 @@ import java.util.Objects;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
@@ -36,6 +37,7 @@ import javax.swing.text.MaskFormatter;
 
 import com.orgos.os.model.Tecnico;
 import com.orgos.os.model.Tecnico.TableModelTecnico;
+import com.orgos.os.util.Consulta;
 import com.orgos.os.util.Images;
 import com.orgos.os.util.StringValidator;
 
@@ -50,6 +52,9 @@ public class CadastroTecnicoScreen extends AbstractModalScreen {
 	private TableModelTecnico tableModelTecnico = new Tecnico.TableModelTecnico();
 	private JTable tabelaTecnico;
 	private Tecnico tecnicoSelecionado;
+	
+	private JComboBox<Consulta> cbConsulta;
+	private DefaultComboBoxModel<Consulta> listModelConsulta;
 
 	public CadastroTecnicoScreen(JFrame owner) {
 		super(owner, true);
@@ -311,8 +316,8 @@ public class CadastroTecnicoScreen extends AbstractModalScreen {
 					footer.setBorder(BorderFactory.createEmptyBorder(0, -5, 0, -5));
 					section_2.add(footer, BorderLayout.SOUTH);
 					{
-						JComboBox<Object> tipo = new JComboBox<>(new Object[] { "Nome", "Codigo" });
-						footer.add(tipo);
+						cbConsulta = new JComboBox<Consulta>();
+						footer.add(cbConsulta);
 
 						JTextField txtPesquise = new JTextField(15);
 						footer.add(txtPesquise);
@@ -476,6 +481,12 @@ public class CadastroTecnicoScreen extends AbstractModalScreen {
 			return false;
 		}
 		return true;
+	}
+
+	public void exibirConsultas(Consulta[] listConsilta) {
+		listModelConsulta = new DefaultComboBoxModel<>(listConsilta);
+		cbConsulta.setModel(listModelConsulta);
+		cbConsulta.setSelectedIndex(1);
 	}
 
 }
