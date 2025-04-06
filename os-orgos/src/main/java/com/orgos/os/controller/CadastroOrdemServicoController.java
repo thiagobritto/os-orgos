@@ -33,9 +33,9 @@ public class CadastroOrdemServicoController implements Controller {
 		screen.exibirTecnicos(tecnicoService.listarTodos());
 		screen.addBuscarClienteListener(this::buscarCliente);
 		screen.addBuscarTecnicoListener(this::buscarTecnico);
+		screen.addNovoOsActionListener(this::novaOS);
+		
 	}
-	
-	
 
 	private void buscarCliente(ActionEvent actionevent1) {
 		Busca<Cliente> busca = screen.getBusca();
@@ -91,6 +91,11 @@ public class CadastroOrdemServicoController implements Controller {
 		});
 		
 		busca.setVisible(true);
+	}
+
+	private void novaOS(ActionEvent actionevent1) {
+		screen.limparCampos();
+		screen.setNumeroOS("NOVA");
 	}
 	
 	

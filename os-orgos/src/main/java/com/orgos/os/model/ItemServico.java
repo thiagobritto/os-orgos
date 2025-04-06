@@ -12,9 +12,9 @@ public class ItemServico {
 	private double valor;
 
 	public ItemServico(String descricao, double quantidade, double valor) {
-		setDescricao(descricao);
-		setQuantidade(quantidade);
-		setValor(valor);
+		this.descricao = descricao;
+		this.quantidade = quantidade;
+		this.valor = valor;
 	}
 
 	public String getDescricao() {
@@ -71,6 +71,13 @@ public class ItemServico {
 		public void remove(int rowIndex) {
 			itensServico.remove(rowIndex);
 			fireTableRowsDeleted(rowIndex, rowIndex);
+		}
+
+		public void clear() {
+			for (int index = 0; index < itensServico.size(); index++) {
+				fireTableRowsDeleted(index, index);
+			}
+			itensServico.clear();
 		}
 
 		// Methods

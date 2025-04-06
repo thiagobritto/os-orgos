@@ -7,41 +7,32 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.orgos.os.dao.ClienteDao;
 import com.orgos.os.model.Cliente;
 import com.orgos.os.util.OperacaoResultado;
 
 public class ClienteDaoImpl implements ClienteDao {
-	private static final Logger logger = LogManager.getLogger(ClienteDaoImpl.class);
 
 	@Override
-	public OperacaoResultado salvar(Cliente cliente) {
+	public OperacaoResultado salvar(Cliente cliente, Connection conn) throws SQLException {
 		String sql = "INSERT INTO cliente (nome, cpf_cnpj, telefone, email, endereco) VALUES (?,?,?,?,?)";
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, cliente.getNome());
 			pstmt.setString(2, cliente.getCpfCnpj());
 			pstmt.setString(3, cliente.getTelefone());
 			pstmt.setString(4, cliente.getEmail());
 			pstmt.setString(5, cliente.getEndereco());
 
-			return pstmt.executeUpdate() > 0 ? new OperacaoResultado(true, "Cliente inserido com sucesso.")
-					: new OperacaoResultado(false, "Nenhum cliente foi inserido.");
-
-		} catch (SQLException e) {
-			logger.error("Erro ao inserir cliente: " + e.getMessage(), e);
-			return new OperacaoResultado(false, "Erro ao inserir cliente: " + e.getMessage());
+			return pstmt.executeUpdate() > 0 
+					? OperacaoResultado.sucesso("Cliente inserido com sucesso.")
+					: OperacaoResultado.erro("Nenhum cliente foi inserido.");
 		}
 	}
 
 	@Override
-	public OperacaoResultado atualizar(Cliente cliente) {
+	public OperacaoResultado atualizar(Cliente cliente, Connection conn) throws SQLException {
 		String sql = "UPDATE cliente SET nome=?, cpf_cnpj=?, telefone=?, email=?, endereco=? WHERE id_cliente = ?";
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, cliente.getNome());
 			pstmt.setString(2, cliente.getCpfCnpj());
 			pstmt.setString(3, cliente.getTelefone());
@@ -49,40 +40,29 @@ public class ClienteDaoImpl implements ClienteDao {
 			pstmt.setString(5, cliente.getEndereco());
 			pstmt.setInt(6, cliente.getId());
 
-			return pstmt.executeUpdate() > 0 ? new OperacaoResultado(true, "Cliente atualizado com sucesso.")
-					: new OperacaoResultado(false, "Nenhum cliente foi atualizado.");
-
-		} catch (SQLException e) {
-			logger.error("Erro ao atualizar cliente: " + e.getMessage(), e);
-			return new OperacaoResultado(false, "Erro ao atualizar cliente: " + e.getMessage());
+			return pstmt.executeUpdate() > 0 
+					? OperacaoResultado.sucesso("Cliente atualizado com sucesso.")
+					: OperacaoResultado.erro("Nenhum cliente foi atualizado.");
 		}
 	}
 
 	@Override
-	public OperacaoResultado remover(int id) {
+	public OperacaoResultado remover(int id, Connection conn) throws SQLException {
 		String sql = "DELETE FROM cliente WHERE id_cliente = ?";
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, id);
 
-			return pstmt.executeUpdate() > 0 ? new OperacaoResultado(true, "Cliente removido com sucesso.")
-					: new OperacaoResultado(false, "Nenhum cliente foi removido.");
-
-		} catch (SQLException e) {
-			logger.error("Erro ao excluir cliente: " + e.getMessage(), e);
-			return new OperacaoResultado(false, "Erro ao remover cliente: " + e.getMessage());
+			return pstmt.executeUpdate() > 0 
+					? OperacaoResultado.sucesso("Cliente removido com sucesso.")
+					: OperacaoResultado.erro("Nenhum cliente foi removido.");
 		}
 	}
 
 	@Override
-	public List<Cliente> listarTodos() {
+	public List<Cliente> listarTodos(Connection conn) throws SQLException {
 		String sql = "SELECT id_cliente, nome, cpf_cnpj, telefone, email, endereco  FROM cliente LIMIT 10";
 		List<Cliente> clientes = new ArrayList<Cliente>();
-
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(sql);
-				ResultSet rs = pstmt.executeQuery()) {
-
+		try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
 			while (rs.next()) {
 				int id = rs.getInt("id_cliente");
 				String nome = rs.getString("nome");
@@ -93,21 +73,15 @@ public class ClienteDaoImpl implements ClienteDao {
 
 				clientes.add(new Cliente(id, nome, cpfCnpj, telefone, email, endereco));
 			}
-
-		} catch (SQLException e) {
-			logger.error("Erro ao listar clientes: " + e.getMessage(), e);
 		}
 		return clientes;
 	}
 
 	@Override
-	public List<Cliente> listarPorNome(String nomeDigitado) {
+	public List<Cliente> listarPorNome(String nomeDigitado, Connection conn) throws SQLException {
 		String sql = "SELECT id_cliente, nome, cpf_cnpj, telefone, email, endereco  FROM cliente WHERE nome LIKE ? LIMIT 10";
 		List<Cliente> clientes = new ArrayList<Cliente>();
-
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, "%" + nomeDigitado + "%");
 			try (ResultSet rs = pstmt.executeQuery()) {
 				while (rs.next()) {
@@ -121,18 +95,14 @@ public class ClienteDaoImpl implements ClienteDao {
 					clientes.add(new Cliente(id, nome, cpfCnpj, telefone, email, endereco));
 				}
 			}
-		} catch (SQLException e) {
-			logger.error("Erro ao buscar clientes com nome: (" + nomeDigitado + "): " + e.getMessage(), e);
 		}
 		return clientes;
 	}
 
 	@Override
-	public Cliente buscarPorId(int id) {
+	public Cliente buscarPorId(int id, Connection conn) throws SQLException {
 		String sql = "SELECT nome, cpf_cnpj, telefone, email, endereco  FROM cliente WHERE id_cliente = ?";
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, id);
 			try (ResultSet rs = pstmt.executeQuery()) {
 				if (rs.next()) {
@@ -144,20 +114,15 @@ public class ClienteDaoImpl implements ClienteDao {
 
 					return new Cliente(id, nome, cpfCnpj, telefone, email, endereco);
 				}
+				return null;
 			}
-
-		} catch (SQLException e) {
-			logger.error("Erro ao buscar cliente (" + id + "): " + e.getMessage(), e);
 		}
-		return null;
 	}
 
 	@Override
-	public Cliente buscarPorNome(String nomeDigitado) {
+	public Cliente buscarPorNome(String nomeDigitado, Connection conn) throws SQLException {
 		String sql = "SELECT id_cliente, nome, cpf_cnpj, telefone, email, endereco  FROM cliente WHERE nome = ?";
-		try (Connection conn = DatabaseConnection.getConnection();
-				PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, nomeDigitado);
 			try (ResultSet rs = pstmt.executeQuery()) {
 				if (rs.next()) {
@@ -170,12 +135,9 @@ public class ClienteDaoImpl implements ClienteDao {
 
 					return new Cliente(id, nome, cpfCnpj, telefone, email, endereco);
 				}
+				return null;
 			}
-
-		} catch (SQLException e) {
-			logger.error("Erro ao buscar cliente por nome: " + e.getMessage(), e);
 		}
-		return null;
 	}
 
 }

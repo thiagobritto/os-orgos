@@ -25,6 +25,8 @@ public class AppFactory {
 	// Instâncias únicas (Singleton)
 	private static ClienteValidator clienteValidator = new ClienteValidator();
 	private static TecnicoValidator tecnicoValidator = new TecnicoValidator();
+	
+	private static ClienteSanitizer clienteSanitizer = new ClienteSanitizer();	
 
 	private static UsuarioDaoImpl usuarioDAO = new UsuarioDaoImpl();
 	private static ClienteDaoImpl clienteDAO = new ClienteDaoImpl();
@@ -32,7 +34,7 @@ public class AppFactory {
 
 	private static BackupService backupService = new BackupService();
 	private static UsuarioService usuarioService = new UsuarioService(usuarioDAO);
-	private static ClienteService clienteService = new ClienteService(clienteValidator, clienteDAO);
+	private static ClienteService clienteService = new ClienteService(clienteValidator, clienteSanitizer, clienteDAO);
 	private static TecnicoService tecnicoService = new TecnicoService(tecnicoValidator, tecnicoDAO);
 
 	/**

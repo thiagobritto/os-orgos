@@ -9,6 +9,14 @@ public class OperacaoResultado {
 		this.sucesso = sucesso;
 		this.mensagem = mensagem;
 	}
+	
+	public static OperacaoResultado sucesso(String mensagem) {
+		return new OperacaoResultado(true, mensagem);
+	}
+
+	public static OperacaoResultado erro(String mensagem) {
+		return new OperacaoResultado(false, mensagem);
+	}
 
 	public boolean isSucesso() {
 		return sucesso;

@@ -39,18 +39,21 @@ import com.orgos.os.util.FilterField;
 public class CadastroOrdemServicoScreen extends JInternalFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JTextField txtValorServico;
-	private JTextField txtValorPecas;
-	private JTextField txtValorTotal;
-	private JTable tableItemServico;
-	private TableModelItemServico tableModelItemServico;
-	private JComboBox<Cliente> cbClientes;
 	private DefaultComboBoxModel<Cliente> listModelCliente;
-	private JComboBox<Tecnico> cbTecnicos;
 	private DefaultComboBoxModel<Tecnico> listModelTecnico;
-	private JButton btnBuscarCliente;
-	private JButton btnBuscarTecnico;
-
+	private JComboBox<Cliente> cbClientes;
+	private JComboBox<Tecnico> cbTecnicos;
+	private JComboBox<OrdemServico.Type> cbTipoOS;
+	private JComboBox<OrdemServico.Status> cbStatusOS;
+	private TableModelItemServico tableModelItemServico;
+	private JTable tableItemServico;
+	private JFormattedTextField txtDataOS;
+	private JTextField txtValorServico, txtValorPecas, txtValorTotal, txtNumeroOS, 
+	txtEquipamento, txtMarcaModelo, txtServico;
+	private JTextArea txtDecricaoServico, txtSolucaoAplicada;
+	private JButton btnBuscarCliente, btnBuscarTecnico, btnAdicionarPeca, btnRemoverPeca, 
+	btnNovo, btnSalvar, btnEditar, btnCancelar, btnImprimir, btnPesquisar;
+	
 	public CadastroOrdemServicoScreen() {
 		super("OS", false, true, true, true);
 		setSize(800, 540);
@@ -72,9 +75,8 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 					JLabel title = new JLabel("Nº OS:");
 					columnPanel_1.add(title);
 
-					JTextField txtNumeroOS = new JTextField(10);
+					txtNumeroOS = new JTextField(10);
 					txtNumeroOS.setEditable(false);
-					txtNumeroOS.setText("OS-20250330-000001");
 					columnPanel_1.add(txtNumeroOS);
 				}
 				JPanel columnPanel_2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -83,10 +85,9 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 					JLabel title = new JLabel("Data:");
 					columnPanel_2.add(title);
 
-					JFormattedTextField txtDataOS = new JFormattedTextField();
+					txtDataOS = new JFormattedTextField();
 					txtDataOS.setColumns(10);
 					txtDataOS.setEditable(false);
-					txtDataOS.setText("24/05/2025");
 					columnPanel_2.add(txtDataOS);
 				}
 				JPanel columnPanel_3 = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -95,7 +96,7 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 					JLabel title = new JLabel("Tipo:");
 					columnPanel_3.add(title);
 
-					JComboBox<OrdemServico.Type> cbTipoOS = new JComboBox<>(OrdemServico.Type.values());
+					cbTipoOS = new JComboBox<>(OrdemServico.Type.values());
 					columnPanel_3.add(cbTipoOS);
 				}
 				JPanel columnPanel_4 = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -104,7 +105,7 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 					JLabel title = new JLabel("Status:");
 					columnPanel_4.add(title);
 
-					JComboBox<OrdemServico.Status> cbStatusOS = new JComboBox<>(OrdemServico.Status.values());
+					cbStatusOS = new JComboBox<>(OrdemServico.Status.values());
 					columnPanel_4.add(cbStatusOS);
 				}
 			} // END headerPanel
@@ -161,7 +162,7 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 							gbc.gridy = 0;
 							gbc.gridx = 1;
 							gbc.weightx = 1.0;
-							JTextField txtEquipamento = new JTextField();
+							txtEquipamento = new JTextField();
 							formLeft.add(txtEquipamento, gbc);
 
 							gbc.gridy = 1;
@@ -173,7 +174,7 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 							gbc.gridy = 1;
 							gbc.gridx = 1;
 							gbc.weightx = 1.0;
-							JTextField txtMarcaModelo = new JTextField();
+							txtMarcaModelo = new JTextField();
 							formLeft.add(txtMarcaModelo, gbc);
 
 							gbc.gridy = 2;
@@ -185,7 +186,7 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 							gbc.gridy = 2;
 							gbc.gridx = 1;
 							gbc.weightx = 1.0;
-							JTextField txtServico = new JTextField();
+							txtServico = new JTextField();
 							formLeft.add(txtServico, gbc);
 
 							gbc.gridy = 3;
@@ -202,7 +203,7 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 							gbc.weighty = 1.0;
 							gbc.weightx = 1.0;
 							gbc.fill = GridBagConstraints.BOTH;
-							JTextArea txtDecricaoServico = new JTextArea();
+							txtDecricaoServico = new JTextArea();
 							txtDecricaoServico.setRows(3);
 							JScrollPane scrollPane = new JScrollPane(txtDecricaoServico);
 							formLeft.add(scrollPane, gbc);
@@ -272,9 +273,9 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 							gbc2.weighty = 1.0;
 							gbc2.weightx = 1.0;
 							gbc2.fill = GridBagConstraints.BOTH;
-							JTextArea txtDecricaoServico = new JTextArea();
-							txtDecricaoServico.setRows(3);
-							JScrollPane scrollPane = new JScrollPane(txtDecricaoServico);
+							txtSolucaoAplicada = new JTextArea();
+							txtSolucaoAplicada.setRows(3);
+							JScrollPane scrollPane = new JScrollPane(txtSolucaoAplicada);
 							formReight.add(scrollPane, gbc2);
 						}
 					}
@@ -300,11 +301,11 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 					footer.setBorder(BorderFactory.createEmptyBorder(0, -5, 0, 0));
 					sectionPanel_2.add(footer, BorderLayout.SOUTH);
 					{
-						JButton btnAdicionarPeca = new JButton("Adicionar Peça");
+						btnAdicionarPeca = new JButton("Adicionar Peça");
 						btnAdicionarPeca.addActionListener(e -> adicionarPeca());
 						footer.add(btnAdicionarPeca);
 
-						JButton btnRemoverPeca = new JButton("Remover Peça");
+						btnRemoverPeca = new JButton("Remover Peça");
 						btnRemoverPeca.addActionListener(e -> removerPeca());
 						footer.add(btnRemoverPeca);
 					}
@@ -315,24 +316,28 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 			footerPanel.setBorder(BorderFactory.createEmptyBorder(0, -5, 5, -5));
 			panel.add(footerPanel, BorderLayout.SOUTH);
 			{
-				JButton btnNovo = new JButton("Nova OS");
+				btnNovo = new JButton("Nova OS");
 				footerPanel.add(btnNovo);
-				
-				JButton btnSalvar = new JButton("Salvar");
+
+				btnSalvar = new JButton("Salvar");
+				btnSalvar.setEnabled(false);
 				footerPanel.add(btnSalvar);
-				
-				JButton btnEditar = new JButton("Editar");
+
+				btnEditar = new JButton("Editar");
+				btnEditar.setEnabled(false);
 				footerPanel.add(btnEditar);
-				
-				JButton btnCancelar = new JButton("Cancelar");
+
+				btnCancelar = new JButton("Cancelar");
+				btnCancelar.setEnabled(false);
 				footerPanel.add(btnCancelar);
-				
-				JButton btnImprimir = new JButton("Imprimir");
+
+				btnImprimir = new JButton("Imprimir");
+				btnImprimir.setEnabled(false);
 				footerPanel.add(btnImprimir);
 
-				JButton btnPesquisar = new JButton("Pesquisar");
+				btnPesquisar = new JButton("Pesquisar");
 				footerPanel.add(btnPesquisar);
-				
+
 			} // END footerPanel
 		} // END Panel
 	}
@@ -437,6 +442,36 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 			calcularTotal();
 		}
 	}
+	
+	/*
+	 * Tela
+	 */
+	public void setNumeroOS(String text) {
+		txtNumeroOS.setText(text);
+	}
+	
+	public String getNumeroOS() {
+		return txtNumeroOS.getText();
+	}
+	
+	public void addNovoOsActionListener(ActionListener listener) {
+		btnNovo.addActionListener(listener);
+	}
+	
+	public void limparCampos() {
+		txtNumeroOS.setText("");
+		txtDataOS.setText("");
+		txtEquipamento.setText("");
+		txtMarcaModelo.setText("");
+		txtServico.setText("");
+		txtDecricaoServico.setText(""); 
+		txtValorServico.setText(""); 
+		txtValorPecas.setText("0,00");
+		txtValorTotal.setText("0,00");
+		txtSolucaoAplicada.setText("");
+		tableItemServico.clearSelection();
+		tableModelItemServico.clear();
+	}
 
 	/*
 	 * Controller Methods
@@ -445,11 +480,10 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 	public void addBuscarClienteListener(ActionListener listene) {
 		btnBuscarCliente.addActionListener(listene);
 	}
-	
+
 	public void addBuscarTecnicoListener(ActionListener listene) {
 		btnBuscarTecnico.addActionListener(listene);
 	}
-
 
 	public void exibirClientes(List<Cliente> listCliente) {
 		listModelCliente = new DefaultComboBoxModel<Cliente>();
@@ -466,7 +500,7 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 	public <T> Busca<T> getBusca() {
 		return new Busca<T>(this, "");
 	}
-	
+
 	public class Busca<T> {
 
 		private JTextField txtConsulta;
@@ -484,49 +518,41 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 			list = new JList<>(listModel);
 			panel.add(list, BorderLayout.CENTER);
 
-			optionPane = new JOptionPane(
-					panel, 
-					JOptionPane.PLAIN_MESSAGE, 
-					JOptionPane.DEFAULT_OPTION, 
-					null,
-					new Object[] {}, 
-					null);
-			
-			
-			
+			optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION, null,
+					new Object[] {}, null);
+
 			dialog = optionPane.createDialog(parentComponent, title);
 			dialog.setSize(300, 180);
-		}	
-		
+		}
+
 		public String getTextConsulta() {
 			return txtConsulta.getText();
 		}
-		
+
 		public void addConsultaKeyListener(KeyAdapter adapter) {
 			txtConsulta.addKeyListener(adapter);
 		}
-		
+
 		public void addListMouseListener(MouseAdapter adapter) {
 			list.addMouseListener(adapter);
 		}
-		
+
 		public void exibirLista(List<T> list) {
 			listModel.clear();
 			list.forEach(listModel::addElement);
 		}
-		
+
 		public T getSelectedValue() {
 			return list.getSelectedValue();
 		}
-		
+
 		public void setVisible(boolean vsible) {
 			dialog.setVisible(vsible);
 		}
-		
+
 		public void dispose() {
 			dialog.dispose();
 		}
 	}
 
-	
 }
