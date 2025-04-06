@@ -171,8 +171,7 @@ public class DashboardScreen extends JFrame {
 		internalFrame.setFrameIcon(imageIcon);
 		
 		int width = (desktopPane.getWidth() - internalFrame.getWidth()) / 2;
-		int height = (desktopPane.getHeight() - internalFrame.getHeight()) / 2;
-		internalFrame.setLocation(width, height);
+		internalFrame.setLocation(width, 0);
 		
 		internalFrame.setVisible(true);		
 		desktopPane.add(internalFrame);
