@@ -6,16 +6,22 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.MouseAdapter;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -42,6 +48,8 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 	private DefaultComboBoxModel<Cliente> listModelCliente;
 	private JComboBox<Tecnico> cbTecnicos;
 	private DefaultComboBoxModel<Tecnico> listModelTecnico;
+	private JButton btnBuscarCliente;
+	private JButton btnBuscarTecnico;
 
 	public CadastroOrdemServicoScreen() {
 		super("OS", false, true, true, true);
@@ -120,7 +128,7 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 						cbClientes = new JComboBox<Cliente>();
 						header.add(cbClientes);
 
-						JButton btnBuscarCliente = new JButton("...");
+						btnBuscarCliente = new JButton("...");
 						header.add(btnBuscarCliente);
 
 						// TÉCNICOS
@@ -130,7 +138,7 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 						cbTecnicos = new JComboBox<Tecnico>();
 						header.add(cbTecnicos);
 
-						JButton btnBuscarTecnico = new JButton("...");
+						btnBuscarTecnico = new JButton("...");
 						header.add(btnBuscarTecnico);
 					}
 
@@ -385,8 +393,8 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 	}
 
 	public double getSomaPecas() {
-		return tableModelItemServico.getItensServico().stream().mapToDouble(peca -> peca.getValor() * peca.getQuantidade())
-				.sum();
+		return tableModelItemServico.getItensServico().stream()
+				.mapToDouble(peca -> peca.getValor() * peca.getQuantidade()).sum();
 	}
 
 	private void calcularTotal() {
@@ -423,7 +431,16 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 	/*
 	 * Controller Methods
 	 */
+
+	public void addBuscarClienteListener(ActionListener listene) {
+		btnBuscarCliente.addActionListener(listene);
+	}
 	
+	public void addBuscarTecnicoListener(ActionListener listene) {
+		btnBuscarTecnico.addActionListener(listene);
+	}
+
+
 	public void exibirClientes(List<Cliente> listCliente) {
 		listModelCliente = new DefaultComboBoxModel<Cliente>();
 		listCliente.forEach(listModelCliente::addElement);
@@ -435,5 +452,71 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 		listTecnico.forEach(listModelTecnico::addElement);
 		cbTecnicos.setModel(listModelTecnico);
 	}
+
+	public <T> Busca<T> getBusca() {
+		return new Busca<T>(this, "");
+	}
+	
+	public class Busca<T> {
+
+		private JTextField txtConsulta;
+		private DefaultListModel<T> listModel;
+		private JList<T> list;
+		private JOptionPane optionPane;
+		private JDialog dialog;
+
+		public Busca(java.awt.Component parentComponent, String title) {
+			JPanel panel = new JPanel(new BorderLayout(0, 0));
+			txtConsulta = new JTextField();
+			panel.add(txtConsulta, BorderLayout.NORTH);
+
+			listModel = new DefaultListModel<>();
+			list = new JList<>(listModel);
+			panel.add(list, BorderLayout.CENTER);
+
+			optionPane = new JOptionPane(
+					panel, 
+					JOptionPane.PLAIN_MESSAGE, 
+					JOptionPane.DEFAULT_OPTION, 
+					null,
+					new Object[] {}, 
+					null);
+			
+			
+			
+			dialog = optionPane.createDialog(parentComponent, title);
+			dialog.setSize(300, 180);
+		}	
+		
+		public String getTextConsulta() {
+			return txtConsulta.getText();
+		}
+		
+		public void addConsultaKeyListener(KeyAdapter adapter) {
+			txtConsulta.addKeyListener(adapter);
+		}
+		
+		public void addListMouseListener(MouseAdapter adapter) {
+			list.addMouseListener(adapter);
+		}
+		
+		public void exibirLista(List<T> list) {
+			listModel.clear();
+			list.forEach(listModel::addElement);
+		}
+		
+		public T getSelectedValue() {
+			return list.getSelectedValue();
+		}
+		
+		public void setVisible(boolean vsible) {
+			dialog.setVisible(vsible);
+		}
+		
+		public void dispose() {
+			dialog.dispose();
+		}
+	}
+
 	
 }
