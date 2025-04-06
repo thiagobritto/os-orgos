@@ -315,14 +315,24 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 			footerPanel.setBorder(BorderFactory.createEmptyBorder(0, -5, 5, -5));
 			panel.add(footerPanel, BorderLayout.SOUTH);
 			{
+				JButton btnNovo = new JButton("Nova OS");
+				footerPanel.add(btnNovo);
+				
+				JButton btnSalvar = new JButton("Salvar");
+				footerPanel.add(btnSalvar);
+				
+				JButton btnEditar = new JButton("Editar");
+				footerPanel.add(btnEditar);
+				
+				JButton btnCancelar = new JButton("Cancelar");
+				footerPanel.add(btnCancelar);
+				
 				JButton btnImprimir = new JButton("Imprimir");
 				footerPanel.add(btnImprimir);
 
-				JButton btnCancelar = new JButton("Cancelar");
-				footerPanel.add(btnCancelar);
-
-				JButton btnSalvar = new JButton("Salvar");
-				footerPanel.add(btnSalvar);
+				JButton btnPesquisar = new JButton("Pesquisar");
+				footerPanel.add(btnPesquisar);
+				
 			} // END footerPanel
 		} // END Panel
 	}
