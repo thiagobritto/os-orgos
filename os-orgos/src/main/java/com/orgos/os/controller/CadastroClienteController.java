@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
-import java.util.Objects;
 
 import com.orgos.os.model.Cliente;
 import com.orgos.os.service.ClienteService;
@@ -40,7 +39,7 @@ public class CadastroClienteController implements Controller {
 
 	private void alterar(ActionEvent actionevent1) {
 		Cliente clienteSelecionado = screen.getClienteSelecionado();
-		if (Objects.isNull(clienteSelecionado)) {
+		if (clienteSelecionado == null) {
 			screen.exibirMensagem("Selecione um 'Cliente' para continuar.");
 		} else {
 			screen.liberarParaAlterar();
@@ -49,21 +48,24 @@ public class CadastroClienteController implements Controller {
 
 	private void excluir(ActionEvent actionevent1) {
 		Cliente clienteSelecionado = screen.getClienteSelecionado();
-		if (Objects.isNull(clienteSelecionado)) {
+		if (clienteSelecionado == null) {
 			screen.exibirMensagem("Selecione um 'Cliente' para continuar.");
+			return;
+		}
+		
+		String nome = clienteSelecionado.getNome();
+		boolean confirma = screen.exibirMensagemConfirmacao("Tem certeza que deseja excluir: " + nome);
+		if (!confirma) {
+			return;
+		}
+		
+		OperacaoResultado resultado = clienteService.remover(clienteSelecionado);
+		if (resultado.isSucesso()) {
+			screen.resetarTela();
+			screen.exibirMensagem(resultado.getMensagem());
+			screen.exibirClientes(clienteService.listarTodos());
 		} else {
-			boolean resposta = screen
-					.exibirMensagemConfirmacao("Tem certeza que deseja excluir: " + clienteSelecionado.getNome());
-			if (resposta) {
-				OperacaoResultado resultado = clienteService.remover(clienteSelecionado);
-				if (resultado.isSucesso()) {
-					screen.resetarTela();
-					screen.exibirMensagem(resultado.getMensagem());
-					screen.exibirClientes(clienteService.listarTodos());
-				} else {
-					screen.exibirMensagemAviso(resultado.getMensagem());
-				}
-			}
+			screen.exibirMensagemAviso(resultado.getMensagem());
 		}
 	}
 
@@ -77,7 +79,7 @@ public class CadastroClienteController implements Controller {
 			Cliente clienteData = new Cliente(0, nome, cpfCnpj, telefone, email, endereco);
 
 			Cliente clienteSelecionado = screen.getClienteSelecionado();
-			if (Objects.isNull(clienteSelecionado)) {
+			if (clienteSelecionado == null) {
 				salvar(clienteData);
 			} else {
 				atualizar(clienteSelecionado, clienteData);
@@ -86,33 +88,25 @@ public class CadastroClienteController implements Controller {
 	}
 
 	private void salvar(Cliente cliente) {
-		try {
-			OperacaoResultado resultado = clienteService.salvar(cliente);
-			if (resultado.isSucesso()) {
-				screen.resetarTela();
-				screen.exibirMensagem(resultado.getMensagem());
-				screen.exibirClientes(clienteService.listarTodos());
-			} else {
-				screen.exibirMensagemAviso(resultado.getMensagem());
-			}
-		} catch (IllegalArgumentException e) {
-			screen.exibirMensagemErro(e.getMessage());
+		OperacaoResultado resultado = clienteService.salvar(cliente);
+		if (resultado.isSucesso()) {
+			screen.resetarTela();
+			screen.exibirMensagem(resultado.getMensagem());
+			screen.exibirClientes(clienteService.listarTodos());
+		} else {
+			screen.exibirMensagemAviso(resultado.getMensagem());
 		}
 	}
 
 	private void atualizar(Cliente oldClienteData, Cliente newClienteData) {
 		newClienteData.setId(oldClienteData.getId());
-		try {
-			OperacaoResultado resultado = clienteService.atualizar(newClienteData);
-			if (resultado.isSucesso()) {
-				screen.resetarTela();
-				screen.exibirMensagem(resultado.getMensagem());
-				screen.exibirClientes(clienteService.listarTodos());
-			} else {
-				screen.exibirMensagemAviso(resultado.getMensagem());
-			}
-		} catch (IllegalArgumentException e) {
-			screen.exibirMensagemErro(e.getMessage());
+		OperacaoResultado resultado = clienteService.atualizar(newClienteData);
+		if (resultado.isSucesso()) {
+			screen.resetarTela();
+			screen.exibirMensagem(resultado.getMensagem());
+			screen.exibirClientes(clienteService.listarTodos());
+		} else {
+			screen.exibirMensagemAviso(resultado.getMensagem());
 		}
 	}
 
@@ -128,7 +122,7 @@ public class CadastroClienteController implements Controller {
 			}
 
 			Cliente cliente = clienteService.buscarPorId(id);
-			if (Objects.nonNull(cliente)) {
+			if (cliente != null) {
 				screen.exibirClientes(List.of(cliente));
 			}
 		}

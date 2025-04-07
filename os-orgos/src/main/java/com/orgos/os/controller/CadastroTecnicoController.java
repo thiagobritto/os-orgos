@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
-import java.util.Objects;
 
 import com.orgos.os.model.Tecnico;
 import com.orgos.os.service.TecnicoService;
@@ -41,7 +40,7 @@ public class CadastroTecnicoController implements Controller {
 
 	private void alterar(ActionEvent actionevent1) {
 		Tecnico tecnicoSelecionado = screen.getTecnicoSelecionado();
-		if (Objects.isNull(tecnicoSelecionado)) {
+		if (tecnicoSelecionado == null) {
 			screen.exibirMensagem("Selecione um 'Técnico' para continuar.");
 		} else {
 			screen.liberarParaAlterar();
@@ -50,21 +49,24 @@ public class CadastroTecnicoController implements Controller {
 
 	private void excluir(ActionEvent actionevent1) {
 		Tecnico tecnicoSelecionado = screen.getTecnicoSelecionado();
-		if (Objects.isNull(tecnicoSelecionado)) {
+		if (tecnicoSelecionado == null) {
 			screen.exibirMensagem("Selecione um 'Técnico' para continuar.");
+			return;
+		}
+
+		String nome = tecnicoSelecionado.getNome();
+		boolean confirma = screen.exibirMensagemConfirmacao("Tem certeza que deseja excluir: " + nome);
+		if (!confirma) {
+			return;
+		}
+
+		OperacaoResultado resultado = tecnicoService.remover(tecnicoSelecionado);
+		if (resultado.isSucesso()) {
+			screen.resetarTela();
+			screen.exibirMensagem(resultado.getMensagem());
+			screen.exibirTecnicos(tecnicoService.listarTodos());
 		} else {
-			boolean resposta = screen
-					.exibirMensagemConfirmacao("Tem certeza que deseja excluir: " + tecnicoSelecionado.getNome());
-			if (resposta) {
-				OperacaoResultado resultado = tecnicoService.remover(tecnicoSelecionado);
-				if (resultado.isSucesso()) {
-					screen.resetarTela();
-					screen.exibirMensagem(resultado.getMensagem());
-					screen.exibirTecnicos(tecnicoService.listarTodos());
-				} else {
-					screen.exibirMensagemAviso(resultado.getMensagem());
-				}
-			}
+			screen.exibirMensagemAviso(resultado.getMensagem());
 		}
 	}
 
@@ -76,47 +78,38 @@ public class CadastroTecnicoController implements Controller {
 			String telefone = screen.getTelefone();
 			String especializacao = screen.getgetEspecializacao();
 			Tecnico tecnicoData = new Tecnico(0, nome, cpf, telefone, email, especializacao);
-			
+
 			Tecnico tecnicoSelecionado = screen.getTecnicoSelecionado();
-			if (Objects.isNull(tecnicoSelecionado)) {
+			if (tecnicoSelecionado == null) {
 				salvar(tecnicoData);
 			} else {
 				atualizar(tecnicoSelecionado, tecnicoData);
 			}
 		}
 	}
-	
+
 	private void salvar(Tecnico tecnico) {
-		try {
-			OperacaoResultado resultado = tecnicoService.salvar(tecnico);
-			if (resultado.isSucesso()) {
-				screen.resetarTela();
-				screen.exibirMensagem(resultado.getMensagem());
-				screen.exibirTecnicos(tecnicoService.listarTodos());
-			} else {
-				screen.exibirMensagemAviso(resultado.getMensagem());
-			}
-		} catch (IllegalArgumentException e) {
-			screen.exibirMensagemErro(e.getMessage());
+		OperacaoResultado resultado = tecnicoService.salvar(tecnico);
+		if (resultado.isSucesso()) {
+			screen.resetarTela();
+			screen.exibirMensagem(resultado.getMensagem());
+			screen.exibirTecnicos(tecnicoService.listarTodos());
+		} else {
+			screen.exibirMensagemAviso(resultado.getMensagem());
 		}
 	}
 
 	private void atualizar(Tecnico oldTecnico, Tecnico newTecnico) {
 		newTecnico.setId(oldTecnico.getId());
-		try {
-			OperacaoResultado resultado = tecnicoService.atualizar(newTecnico);
-			if (resultado.isSucesso()) {
-				screen.resetarTela();
-				screen.exibirMensagem(resultado.getMensagem());
-				screen.exibirTecnicos(tecnicoService.listarTodos());
-			} else {
-				screen.exibirMensagemAviso(resultado.getMensagem());
-			}
-		} catch (IllegalArgumentException e) {
-			screen.exibirMensagemErro(e.getMessage());
+		OperacaoResultado resultado = tecnicoService.atualizar(newTecnico);
+		if (resultado.isSucesso()) {
+			screen.resetarTela();
+			screen.exibirMensagem(resultado.getMensagem());
+			screen.exibirTecnicos(tecnicoService.listarTodos());
+		} else {
+			screen.exibirMensagemAviso(resultado.getMensagem());
 		}
 	}
-
 
 	private class ConsultaId implements Consulta {
 		private int id;
@@ -130,7 +123,7 @@ public class CadastroTecnicoController implements Controller {
 			}
 
 			Tecnico tecnico = tecnicoService.buscarPorId(id);
-			if (Objects.nonNull(tecnico)) {
+			if (tecnico != null) {
 				screen.exibirTecnicos(List.of(tecnico));
 			}
 		}

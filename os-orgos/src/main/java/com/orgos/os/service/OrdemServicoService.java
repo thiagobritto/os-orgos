@@ -35,6 +35,9 @@ public class OrdemServicoService {
 		}  catch (SQLException e) {
 			logger.error("Erro ao salvar OS", e);
 			return OperacaoResultado.erro("Falha ao inserir OS: " + e.getMessage());
+		} catch (Exception e) {
+			logger.error("Erro ao salvar OS", e);
+			return OperacaoResultado.erro("Erro inesperado: " + e.getMessage());
 		}
 	}	
 	
