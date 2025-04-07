@@ -27,6 +27,7 @@ public class AppFactory {
 	private static TecnicoValidator tecnicoValidator = new TecnicoValidator();
 	
 	private static ClienteSanitizer clienteSanitizer = new ClienteSanitizer();	
+	private static TecnicoSanitizer tecnicoSanitizer = new TecnicoSanitizer();	
 
 	private static UsuarioDaoImpl usuarioDAO = new UsuarioDaoImpl();
 	private static ClienteDaoImpl clienteDAO = new ClienteDaoImpl();
@@ -35,7 +36,7 @@ public class AppFactory {
 	private static BackupService backupService = new BackupService();
 	private static UsuarioService usuarioService = new UsuarioService(usuarioDAO);
 	private static ClienteService clienteService = new ClienteService(clienteValidator, clienteSanitizer, clienteDAO);
-	private static TecnicoService tecnicoService = new TecnicoService(tecnicoValidator, tecnicoDAO);
+	private static TecnicoService tecnicoService = new TecnicoService(tecnicoValidator, tecnicoSanitizer, tecnicoDAO);
 
 	/**
 	 * Devolve uma {@code JFrame} - 'LoginScreen'

@@ -1,81 +1,127 @@
 package com.orgos.os.service;
 
+import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.orgos.os.dao.TecnicoDao;
+import com.orgos.os.dao.impl.TransactionManager;
 import com.orgos.os.model.Tecnico;
 import com.orgos.os.util.OperacaoResultado;
+import com.orgos.os.util.TecnicoSanitizer;
 import com.orgos.os.util.TecnicoValidator;
 
 public class TecnicoService {
 
+	private static final Logger logger = LogManager.getLogger(TecnicoService.class);
 	private TecnicoValidator validator;
+	private TecnicoSanitizer sanitizer;
 	private TecnicoDao dao;
 
-	public TecnicoService(TecnicoValidator validator, TecnicoDao dao) {
+	public TecnicoService(TecnicoValidator validator, TecnicoSanitizer sanitizer, TecnicoDao dao) {
 		this.validator = validator;
+		this.sanitizer = sanitizer;
 		this.dao = dao;
 	}
 
 	public OperacaoResultado salvar(Tecnico tecnico) {
-		validator.validar(tecnico);
-		
-		Tecnico tecnicoBanco = dao.buscarPorNome(tecnico.getNome());
-		if (Objects.nonNull(tecnicoBanco)) {
-			throw new IllegalArgumentException("Já existe um Técnico com esse nome!");
+		try {
+			validator.validar(tecnico);
+			sanitizer.sanitizar(tecnico);
+			
+			return TransactionManager.executeInTransaction(conn -> {
+				Tecnico existente = dao.buscarPorNome(tecnico.getNome(), conn);
+				if (existente != null) {
+					return OperacaoResultado.erro("Nome já está sendo usado por outro técnico.");
+				}		
+				return dao.salvar(tecnico, conn);
+			});
+						
+		} catch (IllegalArgumentException e) {
+			logger.error("Erro ao salvar técnico", e);
+			return OperacaoResultado.erro("Erro de validação: " + e.getMessage());
+		} catch (SQLException e) {
+			logger.error("Erro ao salvar técnico", e);
+			return OperacaoResultado.erro("Erro ao salvar técnico: " + e.getMessage());
+		} catch (Exception e) {
+			logger.error("Erro ao salvar técnico", e);
+			return OperacaoResultado.erro("Erro de inesperado: " + e.getMessage());			
 		}
-
-		prepararDadosTecnico(tecnico);
-		return dao.salvar(tecnico);
 	}
 
 	public OperacaoResultado atualizar(Tecnico tecnico) {
-		validator.validar(tecnico);
-		
-		Tecnico tecnicoBanco = dao.buscarPorNome(tecnico.getNome());
-		if (Objects.nonNull(tecnicoBanco)) {
-			if (tecnico.getId() != tecnicoBanco.getId()) {
-				throw new IllegalArgumentException("Já existe um Técnico com esse nome!");
-			}
+		try {
+			validator.validar(tecnico);
+			sanitizer.sanitizar(tecnico);
+			
+			return TransactionManager.executeInTransaction(conn -> {
+				Tecnico existente = dao.buscarPorNome(tecnico.getNome(), conn);
+				if (existente != null && existente.getId() != tecnico.getId()) {
+					return OperacaoResultado.erro("Nome já está sendo usado por outro técnico.");
+				}		
+				return dao.atualizar(tecnico, conn);
+			});
+						
+		} catch (IllegalArgumentException e) {
+			logger.error("Erro ao atualizar técnico", e);
+			return OperacaoResultado.erro("Erro de validação: " + e.getMessage());
+		} catch (SQLException e) {
+			logger.error("Erro ao atualizar técnico", e);
+			return OperacaoResultado.erro("Erro ao atualizar técnico: " + e.getMessage());
+		} catch (Exception e) {
+			logger.error("Erro ao atualizar técnico", e);
+			return OperacaoResultado.erro("Erro de inesperado: " + e.getMessage());			
 		}
-
-		prepararDadosTecnico(tecnico);
-		return dao.atualizar(tecnico);
 	}
 
 	public OperacaoResultado remover(Tecnico tecnico) {
-		return dao.remover(tecnico.getId());
+		try {
+			return TransactionManager.executeInTransaction(conn -> dao.remover(tecnico.getId(), conn));
+		} catch (SQLException e) {
+			logger.error("Erro ao remover técnico", e);
+			return OperacaoResultado.erro("Erro ao remover técnico: " + e.getMessage());
+		} catch (Exception e) {
+			logger.error("Erro ao remover técnico", e);
+			return OperacaoResultado.erro("Erro inesperado: " + e.getMessage());
+		}
 	}
 
 	public List<Tecnico> listarTodos() {
-		return dao.listarTodos();
+		try {
+			return TransactionManager.executeInTransaction(dao::listarTodos);
+		} catch (SQLException e) {
+			logger.error("Erro ao listar todos os técnicos", e);
+			return Collections.emptyList();
+		}
 	}
 
 	public List<Tecnico> listarPorNome(String nome) {
-		return dao.listarPorNome(nome);
+		try {
+			return TransactionManager.executeInTransaction(conn -> dao.listarPorNome(nome, conn));
+		} catch (SQLException e) {
+			logger.error("Erro ao listar técnicos pelo nome: " + nome, e);
+			return Collections.emptyList();
+		}
 	}
 
 	public Tecnico buscarPorId(int id) {
-		return dao.buscarPorId(id);
+		try {
+			return TransactionManager.executeInTransaction(conn -> dao.buscarPorId(id, conn));
+		} catch (SQLException e) {
+			logger.error("Erro ao buscar técnico por ID: " + id, e);
+			return null;
+		}
 	}
 
 	public Tecnico buscarPorNome(String nome) {
-		return dao.buscarPorNome(nome);
-	}
-
-	private void prepararDadosTecnico(Tecnico tecnico) {
-		if (tecnico.getCpf().replaceAll("\\D", "").length() < 11) {
-			tecnico.setCpf(null);
-		}
-		if (tecnico.getTelefone().replaceAll("\\D", "").length() < 10) {
-			tecnico.setTelefone(null);
-		}
-		if (tecnico.getEmail().trim().isEmpty()) {
-			tecnico.setEmail(null);
-		}
-		if (tecnico.getEspecializacao().trim().isEmpty()) {
-			tecnico.setEspecializacao(null);
+		try {
+			return TransactionManager.executeInTransaction(conn -> dao.buscarPorNome(nome, conn));
+		} catch (SQLException e) {
+			logger.error("Erro ao buscar técnico por nome: " + nome, e);
+			return null;
 		}
 	}
 

@@ -27,33 +27,6 @@ public class ClienteService {
 		this.dao = dao;
 	}
 
-	public List<Cliente> listarTodos() {
-		try {
-			return TransactionManager.executeInTransaction(dao::listarTodos);
-		} catch (SQLException e) {
-			logger.error("Erro ao listar todos os clientes", e);
-			return Collections.emptyList();
-		}
-	}
-
-	public List<Cliente> listarPorNome(String nome) {
-		try {
-			return TransactionManager.executeInTransaction(conn -> dao.listarPorNome(nome, conn));
-		} catch (SQLException e) {
-			logger.error("Erro ao listar clientes pelo nome: " + nome, e);
-			return Collections.emptyList();
-		}
-	}
-
-	public Cliente buscarPorId(int id) {
-		try {
-			return TransactionManager.executeInTransaction(conn -> dao.buscarPorId(id, conn));
-		} catch (SQLException e) {
-			logger.error("Erro ao buscar cliente por ID: " + id, e);
-			return null;
-		}
-	}
-
 	public OperacaoResultado salvar(Cliente cliente) {
 		try {
 			validator.validar(cliente);
@@ -115,4 +88,41 @@ public class ClienteService {
 			return OperacaoResultado.erro("Erro inesperado: " + e.getMessage());
 		}
 	}
+
+	public List<Cliente> listarTodos() {
+		try {
+			return TransactionManager.executeInTransaction(dao::listarTodos);
+		} catch (SQLException e) {
+			logger.error("Erro ao listar todos os clientes", e);
+			return Collections.emptyList();
+		}
+	}
+
+	public List<Cliente> listarPorNome(String nome) {
+		try {
+			return TransactionManager.executeInTransaction(conn -> dao.listarPorNome(nome, conn));
+		} catch (SQLException e) {
+			logger.error("Erro ao listar clientes pelo nome: " + nome, e);
+			return Collections.emptyList();
+		}
+	}
+
+	public Cliente buscarPorId(int id) {
+		try {
+			return TransactionManager.executeInTransaction(conn -> dao.buscarPorId(id, conn));
+		} catch (SQLException e) {
+			logger.error("Erro ao buscar cliente por ID: " + id, e);
+			return null;
+		}
+	}
+
+	public Cliente buscarPorNome(String nome) {
+		try {
+			return TransactionManager.executeInTransaction(conn -> dao.buscarPorNome(nome, conn));
+		} catch (SQLException e) {
+			logger.error("Erro ao buscar técnico por nome: " + nome, e);
+			return null;
+		}
+	}
+
 }
