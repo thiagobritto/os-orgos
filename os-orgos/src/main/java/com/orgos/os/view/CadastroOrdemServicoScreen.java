@@ -8,6 +8,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.util.List;
 
@@ -35,6 +36,7 @@ import com.orgos.os.model.ItemServico.TableModelItemServico;
 import com.orgos.os.model.OrdemServico;
 import com.orgos.os.model.Tecnico;
 import com.orgos.os.util.FilterField;
+import com.orgos.os.util.Images;
 
 public class CadastroOrdemServicoScreen extends JInternalFrame {
 
@@ -317,25 +319,37 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 			panel.add(footerPanel, BorderLayout.SOUTH);
 			{
 				btnNovo = new JButton("Nova OS");
+				btnNovo.setMnemonic(KeyEvent.VK_N);
+				btnNovo.setIcon(Images.getImageIconBtnNew());
 				footerPanel.add(btnNovo);
 
 				btnSalvar = new JButton("Salvar");
 				btnSalvar.setEnabled(false);
+				btnSalvar.setMnemonic(KeyEvent.VK_S);
+				btnSalvar.setIcon(Images.getImageIconBtnSave());
 				footerPanel.add(btnSalvar);
 
 				btnEditar = new JButton("Editar");
 				btnEditar.setEnabled(false);
+				btnEditar.setMnemonic(KeyEvent.VK_E);
+				btnEditar.setIcon(Images.getImageIconBtnEdit());
 				footerPanel.add(btnEditar);
 
 				btnCancelar = new JButton("Cancelar");
 				btnCancelar.setEnabled(false);
+				btnCancelar.setMnemonic(KeyEvent.VK_C);
+				btnCancelar.setIcon(Images.getImageIconBtnCancel());
 				footerPanel.add(btnCancelar);
 
 				btnImprimir = new JButton("Imprimir");
 				btnImprimir.setEnabled(false);
+				btnImprimir.setMnemonic(KeyEvent.VK_I);
+				btnImprimir.setIcon(Images.getImageIconBtnPrint());
 				footerPanel.add(btnImprimir);
 
 				btnPesquisar = new JButton("Pesquisar");
+				btnPesquisar.setMnemonic(KeyEvent.VK_P);
+				btnPesquisar.setIcon(Images.getImageIconBtnSearch());
 				footerPanel.add(btnPesquisar);
 
 			} // END footerPanel

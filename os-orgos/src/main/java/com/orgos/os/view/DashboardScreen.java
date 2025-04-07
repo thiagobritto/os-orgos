@@ -37,7 +37,7 @@ public class DashboardScreen extends JFrame {
 		setLocationRelativeTo(null);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-		image = Images.getImage("logo_icon_48x48.png");
+		image = Images.getImageLogo();
 		setIconImage(image);
 
 		iniciarComponentes();

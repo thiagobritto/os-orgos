@@ -262,17 +262,17 @@ public class CadastroTecnicoScreen extends AbstractModalScreen {
 						{
 							btnNovo = new JButton("Novo");
 							btnNovo.setMnemonic(KeyEvent.VK_N);
-							btnNovo.setIcon(Images.getImageIcon("new_icon_48x48.png", 16, 16));
+							btnNovo.setIcon(Images.getImageIconBtnNew());
 							leftButtonPanel.add(btnNovo);
 
 							btnAlterar = new JButton("Alterar");
 							btnAlterar.setMnemonic(KeyEvent.VK_A);
-							btnAlterar.setIcon(Images.getImageIcon("edit_icon_48x48.png", 16, 16));
+							btnAlterar.setIcon(Images.getImageIconBtnEdit());
 							leftButtonPanel.add(btnAlterar);
 
 							btnExcluir = new JButton("Excluir");
 							btnExcluir.setMnemonic(KeyEvent.VK_E);
-							btnExcluir.setIcon(Images.getImageIcon("remove_icon_48x48.png", 16, 16));
+							btnExcluir.setIcon(Images.getImageIconBtnRemove());
 							leftButtonPanel.add(btnExcluir);
 						}
 						
@@ -282,13 +282,13 @@ public class CadastroTecnicoScreen extends AbstractModalScreen {
 						{
 							btnSalvar = new JButton("Salvar");
 							btnSalvar.setMnemonic(KeyEvent.VK_S);
-							btnSalvar.setIcon(Images.getImageIcon("check_icon_48x48.png", 16, 16));
+							btnSalvar.setIcon(Images.getImageIconBtnSave());
 							btnSalvar.setEnabled(false);
 							rightButtonPanel.add(btnSalvar);
 
 							btnCancelar = new JButton("Cancelar");
 							btnCancelar.setMnemonic(KeyEvent.VK_C);
-							btnCancelar.setIcon(Images.getImageIcon("cancel_icon_48x48.png", 16, 16));
+							btnCancelar.setIcon(Images.getImageIconBtnCancel());
 							btnCancelar.setEnabled(false);
 							btnCancelar.addActionListener(e -> resetarTela());
 							rightButtonPanel.add(btnCancelar);

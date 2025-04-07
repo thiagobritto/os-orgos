@@ -38,8 +38,7 @@ public class LoginScreen extends JFrame {
 		setLocationRelativeTo(null);
 		setResizable(false);
 		
-		Image image = Images.getImage("logo_icon_48x48.png");
-		setIconImage(image);
+		setIconImage(Images.getImageLogo());
 		
 		KeyStroke keyEscape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
 		getRootPane().registerKeyboardAction(e -> dispose(), keyEscape, JComponent.WHEN_IN_FOCUSED_WINDOW);
