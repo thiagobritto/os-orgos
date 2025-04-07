@@ -8,11 +8,11 @@ import com.orgos.os.model.Cliente;
 import com.orgos.os.util.OperacaoResultado;
 
 public interface ClienteDao {
-	OperacaoResultado salvar(Cliente cliente, Connection conn) throws SQLException;
-	OperacaoResultado atualizar(Cliente cliente, Connection conn) throws SQLException;
-	OperacaoResultado remover(int id, Connection conn) throws SQLException;
-	List<Cliente> listarTodos(Connection conn) throws SQLException;
-	List<Cliente> listarPorNome(String nome, Connection conn) throws SQLException;
-	Cliente buscarPorId(int id, Connection conn) throws SQLException;
-	Cliente buscarPorNome(String nome, Connection conn) throws SQLException;
+	OperacaoResultado inserirCliente(Cliente cliente, Connection conn) throws SQLException;
+	OperacaoResultado atualizarCliente(Cliente cliente, Connection conn) throws SQLException;
+	OperacaoResultado removerCliente(int id, Connection conn) throws SQLException;
+	List<Cliente> listarTodosOsClientes(Connection conn) throws SQLException;
+	List<Cliente> listarClientesPorNome(String nome, Connection conn) throws SQLException;
+	Cliente buscarClientePorId(int id, Connection conn) throws SQLException;
+	Cliente buscarClientePorNome(String nome, Connection conn) throws SQLException;
 }

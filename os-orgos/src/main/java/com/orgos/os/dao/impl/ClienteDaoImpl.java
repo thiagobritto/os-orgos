@@ -14,7 +14,7 @@ import com.orgos.os.util.OperacaoResultado;
 public class ClienteDaoImpl implements ClienteDao {
 
 	@Override
-	public OperacaoResultado salvar(Cliente cliente, Connection conn) throws SQLException {
+	public OperacaoResultado inserirCliente(Cliente cliente, Connection conn) throws SQLException {
 		String sql = "INSERT INTO cliente (nome, cpf_cnpj, telefone, email, endereco) VALUES (?,?,?,?,?)";
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, cliente.getNome());
@@ -30,7 +30,7 @@ public class ClienteDaoImpl implements ClienteDao {
 	}
 
 	@Override
-	public OperacaoResultado atualizar(Cliente cliente, Connection conn) throws SQLException {
+	public OperacaoResultado atualizarCliente(Cliente cliente, Connection conn) throws SQLException {
 		String sql = "UPDATE cliente SET nome=?, cpf_cnpj=?, telefone=?, email=?, endereco=? WHERE id_cliente = ?";
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, cliente.getNome());
@@ -47,7 +47,7 @@ public class ClienteDaoImpl implements ClienteDao {
 	}
 
 	@Override
-	public OperacaoResultado remover(int id, Connection conn) throws SQLException {
+	public OperacaoResultado removerCliente(int id, Connection conn) throws SQLException {
 		String sql = "DELETE FROM cliente WHERE id_cliente = ?";
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, id);
@@ -59,7 +59,7 @@ public class ClienteDaoImpl implements ClienteDao {
 	}
 
 	@Override
-	public List<Cliente> listarTodos(Connection conn) throws SQLException {
+	public List<Cliente> listarTodosOsClientes(Connection conn) throws SQLException {
 		String sql = "SELECT id_cliente, nome, cpf_cnpj, telefone, email, endereco  FROM cliente LIMIT 10";
 		List<Cliente> clientes = new ArrayList<Cliente>();
 		try (PreparedStatement pstmt = conn.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
@@ -78,7 +78,7 @@ public class ClienteDaoImpl implements ClienteDao {
 	}
 
 	@Override
-	public List<Cliente> listarPorNome(String nomeDigitado, Connection conn) throws SQLException {
+	public List<Cliente> listarClientesPorNome(String nomeDigitado, Connection conn) throws SQLException {
 		String sql = "SELECT id_cliente, nome, cpf_cnpj, telefone, email, endereco  FROM cliente WHERE nome LIKE ? LIMIT 10";
 		List<Cliente> clientes = new ArrayList<Cliente>();
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -100,7 +100,7 @@ public class ClienteDaoImpl implements ClienteDao {
 	}
 
 	@Override
-	public Cliente buscarPorId(int id, Connection conn) throws SQLException {
+	public Cliente buscarClientePorId(int id, Connection conn) throws SQLException {
 		String sql = "SELECT nome, cpf_cnpj, telefone, email, endereco  FROM cliente WHERE id_cliente = ?";
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, id);
@@ -120,7 +120,7 @@ public class ClienteDaoImpl implements ClienteDao {
 	}
 
 	@Override
-	public Cliente buscarPorNome(String nomeDigitado, Connection conn) throws SQLException {
+	public Cliente buscarClientePorNome(String nomeDigitado, Connection conn) throws SQLException {
 		String sql = "SELECT id_cliente, nome, cpf_cnpj, telefone, email, endereco  FROM cliente WHERE nome = ?";
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, nomeDigitado);

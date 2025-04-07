@@ -33,11 +33,11 @@ public class TecnicoService {
 			sanitizer.sanitizar(tecnico);
 			
 			return TransactionManager.executeInTransaction(conn -> {
-				Tecnico existente = dao.buscarPorNome(tecnico.getNome(), conn);
+				Tecnico existente = dao.buscarTecnicoPorNome(tecnico.getNome(), conn);
 				if (existente != null) {
 					return OperacaoResultado.erro("Nome já está sendo usado por outro técnico.");
 				}		
-				return dao.salvar(tecnico, conn);
+				return dao.inserirTecnico(tecnico, conn);
 			});
 						
 		} catch (IllegalArgumentException e) {
@@ -58,11 +58,11 @@ public class TecnicoService {
 			sanitizer.sanitizar(tecnico);
 			
 			return TransactionManager.executeInTransaction(conn -> {
-				Tecnico existente = dao.buscarPorNome(tecnico.getNome(), conn);
+				Tecnico existente = dao.buscarTecnicoPorNome(tecnico.getNome(), conn);
 				if (existente != null && existente.getId() != tecnico.getId()) {
 					return OperacaoResultado.erro("Nome já está sendo usado por outro técnico.");
 				}		
-				return dao.atualizar(tecnico, conn);
+				return dao.atualizarTecnico(tecnico, conn);
 			});
 						
 		} catch (IllegalArgumentException e) {
@@ -79,7 +79,7 @@ public class TecnicoService {
 
 	public OperacaoResultado remover(Tecnico tecnico) {
 		try {
-			return TransactionManager.executeInTransaction(conn -> dao.remover(tecnico.getId(), conn));
+			return TransactionManager.executeInTransaction(conn -> dao.removerTecnico(tecnico.getId(), conn));
 		} catch (SQLException e) {
 			logger.error("Erro ao remover técnico", e);
 			return OperacaoResultado.erro("Erro ao remover técnico: " + e.getMessage());
@@ -91,7 +91,7 @@ public class TecnicoService {
 
 	public List<Tecnico> listarTodos() {
 		try {
-			return TransactionManager.executeInTransaction(dao::listarTodos);
+			return TransactionManager.executeInTransaction(dao::listarTodosOsTecnicos);
 		} catch (SQLException e) {
 			logger.error("Erro ao listar todos os técnicos", e);
 			return Collections.emptyList();
@@ -100,7 +100,7 @@ public class TecnicoService {
 
 	public List<Tecnico> listarPorNome(String nome) {
 		try {
-			return TransactionManager.executeInTransaction(conn -> dao.listarPorNome(nome, conn));
+			return TransactionManager.executeInTransaction(conn -> dao.listarTecnicosPorNome(nome, conn));
 		} catch (SQLException e) {
 			logger.error("Erro ao listar técnicos pelo nome: " + nome, e);
 			return Collections.emptyList();
@@ -109,7 +109,7 @@ public class TecnicoService {
 
 	public Tecnico buscarPorId(int id) {
 		try {
-			return TransactionManager.executeInTransaction(conn -> dao.buscarPorId(id, conn));
+			return TransactionManager.executeInTransaction(conn -> dao.buscarTecnicoPorId(id, conn));
 		} catch (SQLException e) {
 			logger.error("Erro ao buscar técnico por ID: " + id, e);
 			return null;
@@ -118,7 +118,7 @@ public class TecnicoService {
 
 	public Tecnico buscarPorNome(String nome) {
 		try {
-			return TransactionManager.executeInTransaction(conn -> dao.buscarPorNome(nome, conn));
+			return TransactionManager.executeInTransaction(conn -> dao.buscarTecnicoPorNome(nome, conn));
 		} catch (SQLException e) {
 			logger.error("Erro ao buscar técnico por nome: " + nome, e);
 			return null;

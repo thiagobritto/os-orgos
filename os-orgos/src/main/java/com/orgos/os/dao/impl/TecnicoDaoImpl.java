@@ -14,7 +14,7 @@ import com.orgos.os.util.OperacaoResultado;
 public class TecnicoDaoImpl implements TecnicoDao {
 
 	@Override
-	public OperacaoResultado salvar(Tecnico tecnico, Connection conn) throws SQLException {
+	public OperacaoResultado inserirTecnico(Tecnico tecnico, Connection conn) throws SQLException {
 		String sql = "INSERT INTO tecnico (nome, cpf, email, telefone, especializacao) VALUES (?,?,?,?,?)";
 		
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -31,7 +31,7 @@ public class TecnicoDaoImpl implements TecnicoDao {
 	}
 
 	@Override
-	public OperacaoResultado atualizar(Tecnico tecnico, Connection conn) throws SQLException {
+	public OperacaoResultado atualizarTecnico(Tecnico tecnico, Connection conn) throws SQLException {
 		String sql = "UPDATE tecnico SET nome=?, cpf=?, email=?, telefone=?, especializacao=? WHERE id_tecnico=?";
 		
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -50,7 +50,7 @@ public class TecnicoDaoImpl implements TecnicoDao {
 	}
 
 	@Override
-	public OperacaoResultado remover(int id, Connection conn) throws SQLException {
+	public OperacaoResultado removerTecnico(int id, Connection conn) throws SQLException {
 		String sql = "DELETE FROM tecnico WHERE id_tecnico = ?";
 		
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -63,7 +63,7 @@ public class TecnicoDaoImpl implements TecnicoDao {
 	}
 
 	@Override
-	public List<Tecnico> listarTodos(Connection conn) throws SQLException {
+	public List<Tecnico> listarTodosOsTecnicos(Connection conn) throws SQLException {
 		String sql = "SELECT id_tecnico, nome, cpf, email, telefone, especializacao FROM tecnico LIMIT 10";
 		List<Tecnico> listTecnico = new ArrayList<>();		
 		
@@ -85,7 +85,7 @@ public class TecnicoDaoImpl implements TecnicoDao {
 	}
 
 	@Override
-	public List<Tecnico> listarPorNome(String nomeDigitado, Connection conn) throws SQLException {
+	public List<Tecnico> listarTecnicosPorNome(String nomeDigitado, Connection conn) throws SQLException {
 		List<Tecnico> listTecnico = new ArrayList<>();
 		String sql = "SELECT id_tecnico, nome, cpf, email, telefone, especializacao FROM tecnico WHERE nome LIKE ? LIMIT 10";
 		
@@ -109,7 +109,7 @@ public class TecnicoDaoImpl implements TecnicoDao {
 	}
 
 	@Override
-	public Tecnico buscarPorId(int id, Connection conn) throws SQLException {
+	public Tecnico buscarTecnicoPorId(int id, Connection conn) throws SQLException {
 		String sql = "SELECT nome, cpf, email, telefone, especializacao FROM tecnico WHERE id_tecnico=? LIMIT 10";		
 		
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -131,7 +131,7 @@ public class TecnicoDaoImpl implements TecnicoDao {
 	}
 
 	@Override
-	public Tecnico buscarPorNome(String nome, Connection conn) throws SQLException {
+	public Tecnico buscarTecnicoPorNome(String nome, Connection conn) throws SQLException {
 		String sql = "SELECT id_tecnico, cpf, email, telefone, especializacao FROM tecnico WHERE nome=? LIMIT 10";
 		
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {

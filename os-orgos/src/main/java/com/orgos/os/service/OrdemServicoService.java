@@ -30,11 +30,11 @@ public class OrdemServicoService {
 					dao.inserirItemServico(ordemId, item, conn);
 				}
 				
-				return new OperacaoResultado(true, "OS inserida com sucesso!");
+				return OperacaoResultado.sucesso("OS inserida com sucesso!");
 			});
 		}  catch (SQLException e) {
 			logger.error("Erro ao salvar OS", e);
-			return new OperacaoResultado(false, "Falha ao inserir OS: " + e.getMessage());
+			return OperacaoResultado.erro("Falha ao inserir OS: " + e.getMessage());
 		}
 	}	
 	

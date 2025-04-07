@@ -33,11 +33,11 @@ public class ClienteService {
 			sanitizer.sanitizar(cliente);
 
 			return TransactionManager.executeInTransaction(conn -> {
-				Cliente existente = dao.buscarPorNome(cliente.getNome(), conn);
+				Cliente existente = dao.buscarClientePorNome(cliente.getNome(), conn);
 				if (existente != null) {
 					return OperacaoResultado.erro("Já existe um cliente com esse nome.");
 				}
-				return dao.salvar(cliente, conn);
+				return dao.inserirCliente(cliente, conn);
 			});
 
 		} catch (IllegalArgumentException e) {
@@ -58,11 +58,11 @@ public class ClienteService {
 			sanitizer.sanitizar(cliente);
 
 			return TransactionManager.executeInTransaction(conn -> {
-				Cliente existente = dao.buscarPorNome(cliente.getNome(), conn);
+				Cliente existente = dao.buscarClientePorNome(cliente.getNome(), conn);
 				if (existente != null && existente.getId() != cliente.getId()) {
 					return OperacaoResultado.erro("Nome já está sendo usado por outro cliente.");
 				}
-				return dao.atualizar(cliente, conn);
+				return dao.atualizarCliente(cliente, conn);
 			});
 
 		} catch (IllegalArgumentException e) {
@@ -79,7 +79,7 @@ public class ClienteService {
 
 	public OperacaoResultado remover(Cliente cliente) {
 		try {
-			return TransactionManager.executeInTransaction(conn -> dao.remover(cliente.getId(), conn));
+			return TransactionManager.executeInTransaction(conn -> dao.removerCliente(cliente.getId(), conn));
 		} catch (SQLException e) {
 			logger.error("Erro ao remover cliente", e);
 			return OperacaoResultado.erro("Erro ao remover cliente: " + e.getMessage());
@@ -91,7 +91,7 @@ public class ClienteService {
 
 	public List<Cliente> listarTodos() {
 		try {
-			return TransactionManager.executeInTransaction(dao::listarTodos);
+			return TransactionManager.executeInTransaction(dao::listarTodosOsClientes);
 		} catch (SQLException e) {
 			logger.error("Erro ao listar todos os clientes", e);
 			return Collections.emptyList();
@@ -100,7 +100,7 @@ public class ClienteService {
 
 	public List<Cliente> listarPorNome(String nome) {
 		try {
-			return TransactionManager.executeInTransaction(conn -> dao.listarPorNome(nome, conn));
+			return TransactionManager.executeInTransaction(conn -> dao.listarClientesPorNome(nome, conn));
 		} catch (SQLException e) {
 			logger.error("Erro ao listar clientes pelo nome: " + nome, e);
 			return Collections.emptyList();
@@ -109,7 +109,7 @@ public class ClienteService {
 
 	public Cliente buscarPorId(int id) {
 		try {
-			return TransactionManager.executeInTransaction(conn -> dao.buscarPorId(id, conn));
+			return TransactionManager.executeInTransaction(conn -> dao.buscarClientePorId(id, conn));
 		} catch (SQLException e) {
 			logger.error("Erro ao buscar cliente por ID: " + id, e);
 			return null;
@@ -118,7 +118,7 @@ public class ClienteService {
 
 	public Cliente buscarPorNome(String nome) {
 		try {
-			return TransactionManager.executeInTransaction(conn -> dao.buscarPorNome(nome, conn));
+			return TransactionManager.executeInTransaction(conn -> dao.buscarClientePorNome(nome, conn));
 		} catch (SQLException e) {
 			logger.error("Erro ao buscar técnico por nome: " + nome, e);
 			return null;

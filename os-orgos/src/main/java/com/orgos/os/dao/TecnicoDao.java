@@ -9,12 +9,11 @@ import com.orgos.os.util.OperacaoResultado;
 
 public interface TecnicoDao {
 
-	OperacaoResultado salvar(Tecnico tecnico, Connection conn) throws SQLException;
-	OperacaoResultado atualizar(Tecnico tecnico, Connection conn) throws SQLException;
-	OperacaoResultado remover(int id, Connection conn) throws SQLException;
-	List<Tecnico> listarTodos(Connection conn) throws SQLException;
-	List<Tecnico> listarPorNome(String nome, Connection conn) throws SQLException;
-	Tecnico buscarPorId(int id, Connection conn) throws SQLException;
-	Tecnico buscarPorNome(String nome, Connection conn) throws SQLException;
-	
+	OperacaoResultado inserirTecnico(Tecnico tecnico, Connection conn) throws SQLException;
+	OperacaoResultado atualizarTecnico(Tecnico tecnico, Connection conn) throws SQLException;
+	OperacaoResultado removerTecnico(int id, Connection conn) throws SQLException;
+	List<Tecnico> listarTodosOsTecnicos(Connection conn) throws SQLException;
+	List<Tecnico> listarTecnicosPorNome(String nome, Connection conn) throws SQLException;
+	Tecnico buscarTecnicoPorId(int id, Connection conn) throws SQLException;
+	Tecnico buscarTecnicoPorNome(String nome, Connection conn) throws SQLException;
 }
