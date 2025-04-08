@@ -2,6 +2,7 @@ package com.orgos.os.view;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -511,8 +512,8 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 		cbTecnicos.setModel(listModelTecnico);
 	}
 
-	public <T> Busca<T> getBusca() {
-		return new Busca<T>(this, "");
+	public <T> Busca<T> getBusca(String title) {
+		return new Busca<T>(this, title);
 	}
 
 	public class Busca<T> {
@@ -524,7 +525,7 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 		private JDialog dialog;
 
 		public Busca(java.awt.Component parentComponent, String title) {
-			JPanel panel = new JPanel(new BorderLayout(0, 0));
+			JPanel panel = new JPanel(new BorderLayout(5, 5));
 			txtConsulta = new JTextField();
 			panel.add(txtConsulta, BorderLayout.NORTH);
 
@@ -532,6 +533,10 @@ public class CadastroOrdemServicoScreen extends JInternalFrame {
 			list = new JList<>(listModel);
 			panel.add(list, BorderLayout.CENTER);
 
+			JLabel tipLabel = new  JLabel("Selecione com \"Duplo Click\".");
+			tipLabel.setFont(new Font("Arial", Font.ITALIC, 10));
+			panel.add(tipLabel, BorderLayout.SOUTH);
+			
 			optionPane = new JOptionPane(panel, JOptionPane.PLAIN_MESSAGE, JOptionPane.DEFAULT_OPTION, null,
 					new Object[] {}, null);
 

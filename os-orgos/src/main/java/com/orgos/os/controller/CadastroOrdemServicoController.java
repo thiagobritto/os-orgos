@@ -38,7 +38,7 @@ public class CadastroOrdemServicoController implements Controller {
 	}
 
 	private void buscarCliente(ActionEvent actionevent1) {
-		Busca<Cliente> busca = screen.getBusca();
+		Busca<Cliente> busca = screen.getBusca("Encontrar Cliente");
 		busca.addConsultaKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
@@ -66,7 +66,7 @@ public class CadastroOrdemServicoController implements Controller {
 	}
 	
 	private void buscarTecnico(ActionEvent actionevent1) {
-		Busca<Tecnico> busca = screen.getBusca();
+		Busca<Tecnico> busca = screen.getBusca("Encontrar Técnico");
 		busca.addConsultaKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
